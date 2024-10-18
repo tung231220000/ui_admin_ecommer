@@ -1,6 +1,7 @@
-import { ReactNode, forwardRef } from 'react';
+import React, { ReactNode, forwardRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Box } from '@mui/material';
+
 
 interface Props {
   children: ReactNode;
@@ -8,15 +9,16 @@ interface Props {
   title?: string;
 }
 
-const Page = forwardRef<HTMLDivElement, Props> (({ children, meta, title = '', ...other }, ref) =>(
+const Page = forwardRef<HTMLDivElement, Props>(({ children, meta, title = '', ...other }, ref) => (
   <>
     <Helmet>
       <title>{`${title} | TuKun`}</title>
+      {meta}
     </Helmet>
     <Box ref={ref} {...other}>
       {children}
     </Box>
   </>
-))
- 
+));
+
 export default Page;

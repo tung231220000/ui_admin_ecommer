@@ -1,6 +1,7 @@
 import React from 'react';
 import Page from "@/components/Page";
 import { styled } from '@mui/material/styles';
+import Logo from '@/components/Logo';
 
 const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -29,7 +30,7 @@ export default function Login() {
       <Page title="Login">
         <RootStyle>
           <HeaderStyle>
-            <img alt="logo" src="/static/logo.svg" />
+            <Logo />
           </HeaderStyle>
         </RootStyle>
       </Page>

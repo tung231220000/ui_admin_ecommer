@@ -6,7 +6,7 @@ import Iconify from '../Iconify';
 import Image from '../Image';
 import { UploadMultiFileProps } from './type';
 import { alpha } from '@mui/material/styles';
-import { fData } from '../../utils/formatNumber';
+import { fData } from '@/utils/formatNumber';
 import getFileData from '../../utils/getFileData';
 import { varFade } from '../animate';
 
@@ -18,6 +18,7 @@ export default function MultiFilePreview({
   onRemove,
 }: UploadMultiFileProps) {
   const hasFile = files.length > 0;
+
 
   return (
     <List disablePadding sx={{ ...(hasFile && { my: 3 }) }}>

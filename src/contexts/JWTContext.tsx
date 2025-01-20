@@ -24,7 +24,7 @@ type JWTAuthPayload = {
   [Types.Initial]: {
     isAuthenticated: boolean;
     user: AuthUser;
-  };
+  };git
   [Types.Login]: {
     user: AuthUser;
   };

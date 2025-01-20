@@ -1,13 +1,13 @@
 import * as Yup from 'yup';
 
-import { Alert, IconButton, InputAdornment, Link, Stack } from '@mui/material';
+import { IconButton, InputAdornment, Link, Stack } from '@mui/material';
 import { FormProvider, RHFCheckbox, RHFTextField } from '../../../components/hook-form';
 
 import Iconify from '../../../components/Iconify';
 import { LoadingButton } from '@mui/lab';
 import { PATH_AUTH } from '../../../routes/paths';
 import { Link as RouterLink } from 'react-router-dom';
-import useAuth from '../../../hooks/useAuth';
+// import useAuth from '../../../hooks/useAuth';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -17,12 +17,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 type FormValuesProps = {
   email: string;
   password: string;
-  remember: boolean;
-  afterSubmit?: string;
+  // remember: boolean;
+  // afterSubmit?: string;
 };
 
 export default function LoginForm() {
-  const { login } = useAuth();
+  // const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -32,7 +32,7 @@ export default function LoginForm() {
   });
 
   const defaultValues = {
-    email: 'hieule@dts.com.vn',
+    email: 'Tukunnv@gmail.com.vn',
     password: 'demo1234',
     remember: true,
   };
@@ -51,7 +51,8 @@ export default function LoginForm() {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      await login(data);
+      // await login(data);
+      console.log(data);
     } catch (error) {
       console.error(error);
 
@@ -64,7 +65,7 @@ export default function LoginForm() {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
-        {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
+        {/*{!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}*/}
 
         <RHFTextField name="email" label="Email address" />
 

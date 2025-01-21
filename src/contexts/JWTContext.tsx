@@ -1,6 +1,6 @@
 import {ActionMap, AuthState, AuthUser, JWTContextType} from "@/@types/auth";
 import React, {createContext, ReactNode, useReducer, useEffect} from "react";
-import {useNavigate} from 'react-router';
+import {useNavigate} from 'react-router-dom';
 import {useSnackbar} from 'notistack';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import AuthRepository, {SignInPayload, SignInResponse} from "@/apis/service/auth";
@@ -24,7 +24,7 @@ type JWTAuthPayload = {
   [Types.Initial]: {
     isAuthenticated: boolean;
     user: AuthUser;
-  };git
+  };
   [Types.Login]: {
     user: AuthUser;
   };
@@ -70,7 +70,7 @@ type AuthProviderProps = {
   children: ReactNode;
 };
 
-function AuthProvider({children, }: AuthProviderProps) {
+function AuthProvider({children}: AuthProviderProps) {
   const [state, dispatch] = useReducer(JWTReducer, initialState);
   const navigate = useNavigate();
   const {enqueueSnackbar} = useSnackbar();
@@ -87,7 +87,7 @@ function AuthProvider({children, }: AuthProviderProps) {
       dispatch({
         type: Types.Login,
         payload: {
-          User: data.result.currentUser,
+          user: data.result.currentUser,
         },
       });
       enqueueSnackbar('Đăng nhập thành công!', {

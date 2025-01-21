@@ -8,6 +8,7 @@ import Logo from '@/components/Logo';
 import { Alert, Box, Card, Container, Link, Stack, Typography } from '@mui/material';
 import useResponsive from "@/hooks/useResponsive";
 import {PATH_AUTH} from "@/routes/paths";
+import useAuth from "@/hooks/useAuth";
 // import { capitalCase } from 'change-case';
 const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -51,7 +52,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Login() {
-  // const { method } = useAuth();
+  const { method } = useAuth();
 
   const smUp = useResponsive('up', 'sm');
 
@@ -108,7 +109,7 @@ export default function Login() {
             </Stack>
 
             <Alert severity="info" sx={{ mb: 3 }}>
-              Use email : <strong>hieule@dts.com.vn</strong> / password :<strong> demo1234</strong>
+              Use email : <strong>tungnv@gmail.com</strong> / password :<strong> demo1234</strong>
             </Alert>
 
             <LoginForm />

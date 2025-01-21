@@ -57,7 +57,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Register() {
-  const { method } = useAuth();
+  // const { method } = useAuth();
 
   const smUp = useResponsive('up', 'sm');
 

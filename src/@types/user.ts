@@ -6,7 +6,7 @@ export enum Gender {
 }
 
 export type User = {
-  _id: string;
+  id: string;
   authentication: {
     email: string;
     avatar: string;

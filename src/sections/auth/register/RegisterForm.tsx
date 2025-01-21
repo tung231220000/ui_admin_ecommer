@@ -2,12 +2,12 @@ import * as Yup from 'yup';
 
 import { Alert, IconButton, InputAdornment, Stack } from '@mui/material';
 import { FormProvider, RHFSelect, RHFTextField } from '../../../components/hook-form';
-import { GENDERS, phoneRegExp } from 'src/utils/constant';
+import { GENDERS, phoneRegExp } from '@/utils/constant';
 
 import Iconify from '../../../components/Iconify';
 import { LoadingButton } from '@mui/lab';
 import useAuth from '../../../hooks/useAuth';
-import { useForm } from 'react-hook-form';
+import {Resolver, useForm} from 'react-hook-form';
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {Gender} from "@/@types/user";
@@ -50,7 +50,7 @@ export default function RegisterForm() {
   };
 
   const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(RegisterSchema),
+    resolver: yupResolver(RegisterSchema) as Resolver<FormValuesProps>,
     defaultValues,
   });
 
@@ -64,10 +64,12 @@ export default function RegisterForm() {
   const onSubmit = async (data: FormValuesProps) => {
     try {
       await register(data);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
+      // Type assertion
+      const typedError = error as Error; // Assert that error is of type Error
       reset();
-      setError('afterSubmit', { ...error, message: error.message });
+      setError('afterSubmit', { type: 'manual', message: typedError.message });
     }
   };
 

@@ -1,9 +1,11 @@
 import { Currency } from "../@types/price";
 
+export const phoneRegExp = /(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/;
+
 /**
  * CONSTANT BY ENUM
  */
-export const GENDER = ['Ông', 'Bà'];
+export const GENDERS = ['Ông', 'Bà'];
 export const CURRENCIES:Currency [] = [Currency.VND];
 
 /**

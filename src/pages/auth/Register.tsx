@@ -2,9 +2,9 @@ import { Box, Card, Container, Link, Tooltip, Typography } from '@mui/material';
 
 import Image from '../../components/Image';
 import Logo from '../../components/Logo';
-import { PATH_AUTH } from '../../routes/paths';
+import { PATH_AUTH } from '@/routes/paths';
 import Page from '../../components/Page';
-import { RegisterForm } from 'src/sections/auth/register';
+import { RegisterForm } from '@/sections/auth/register';
 import { Link as RouterLink } from 'react-router-dom';
 import { capitalCase } from 'change-case';
 import { styled } from '@mui/material/styles';
@@ -57,7 +57,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Register() {
-  // const { method } = useAuth();
+  const { method } = useAuth();
 
   const smUp = useResponsive('up', 'sm');
 

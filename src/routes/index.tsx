@@ -6,6 +6,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 // import AuthGuard from "@/guards/AuthGuard";
 import DashboardLayout from "@/layouts/dashboard";
 import LogoOnlyLayout from "@/layouts/LogoOnlyLayout";
+import GuestGuard from "@/guards/GuestGuard";
 
 
 // ----------------------------------------------------------------------
@@ -40,17 +41,17 @@ export default function Router() {
         {
           path: 'login',
           element: (
-            // <GuestGuard>
+            <GuestGuard>
               <Login />
-            // </GuestGuard>
+            </GuestGuard>
           ),
         },
         {
           path: 'register',
           element: (
-            // <GuestGuard>
+            <GuestGuard>
               <Register />
-            // </GuestGuard>
+            </GuestGuard>
           ),
         },
         { path: 'login-unprotected', element: <Login /> },

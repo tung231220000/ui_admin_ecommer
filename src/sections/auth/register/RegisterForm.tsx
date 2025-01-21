@@ -4,13 +4,13 @@ import { Alert, IconButton, InputAdornment, Stack } from '@mui/material';
 import { FormProvider, RHFSelect, RHFTextField } from '../../../components/hook-form';
 import { GENDERS, phoneRegExp } from 'src/utils/constant';
 
-import { Gender } from 'src/apis/graphql/user';
 import Iconify from '../../../components/Iconify';
 import { LoadingButton } from '@mui/lab';
 import useAuth from '../../../hooks/useAuth';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import {Gender} from "@/@types/user";
 
 // ----------------------------------------------------------------------
 

@@ -5,11 +5,11 @@ import { LoginForm } from '@/sections/auth/login';
 import { styled } from '@mui/material/styles';
 import { Link as RouterLink } from 'react-router-dom';
 import Logo from '@/components/Logo';
-import { Alert, Box, Card, Container, Link, Stack, Typography } from '@mui/material';
+import { Alert, Box, Card, Container, Link, Stack, Typography, Tooltip } from '@mui/material';
 import useResponsive from "@/hooks/useResponsive";
 import {PATH_AUTH} from "@/routes/paths";
 import useAuth from "@/hooks/useAuth";
-// import { capitalCase } from 'change-case';
+import { capitalCase } from 'change-case';
 const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     display: 'flex',
@@ -97,15 +97,15 @@ export default function Login() {
                 <Typography sx={{ color: 'text.secondary' }}>Enter your details below.</Typography>
               </Box>
 
-              {/*<Tooltip title={capitalCase(method)} placement="right">*/}
-              {/*  <>*/}
-              {/*    <Image*/}
-              {/*      disabledEffect*/}
-              {/*      src={`https://minimal-assets-api-dev.vercel.app/assets/icons/auth/ic_${method}.png`}*/}
-              {/*      sx={{ width: 32, height: 32 }}*/}
-              {/*    />*/}
-              {/*  </>*/}
-              {/*</Tooltip>*/}
+              <Tooltip title={capitalCase(method)} placement="right">
+                <>
+                  <Image
+                    disabledEffect
+                    src={`https://minimal-assets-api-dev.vercel.app/assets/icons/auth/ic_${method}.png`}
+                    sx={{ width: 32, height: 32 }}
+                  />
+                </>
+              </Tooltip>
             </Stack>
 
             <Alert severity="info" sx={{ mb: 3 }}>

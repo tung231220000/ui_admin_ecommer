@@ -1,34 +1,35 @@
 import * as Yup from 'yup';
 
-import { IconButton, InputAdornment, Link, Stack } from '@mui/material';
+import {Alert, IconButton, InputAdornment, Link, Stack} from '@mui/material';
 import { FormProvider, RHFCheckbox, RHFTextField } from '../../../components/hook-form';
 
 import Iconify from '../../../components/Iconify';
 import { LoadingButton } from '@mui/lab';
-import { PATH_AUTH } from '../../../routes/paths';
+import { PATH_AUTH } from '@/routes/paths';
 import { Link as RouterLink } from 'react-router-dom';
-// import useAuth from '../../../hooks/useAuth';
-import { useForm } from 'react-hook-form';
+import {Resolver, useForm} from 'react-hook-form';
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import useAuth from "@/hooks/useAuth";
 
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
   email: string;
   password: string;
-  // remember: boolean;
-  // afterSubmit?: string;
+  remember: boolean;
+  afterSubmit?: string;
 };
 
 export default function LoginForm() {
-  // const { login } = useAuth();
+  const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
     password: Yup.string().required('Password is required'),
+    remember: Yup.boolean(),
   });
 
   const defaultValues = {
@@ -38,34 +39,35 @@ export default function LoginForm() {
   };
 
   const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(LoginSchema),
+    resolver: yupResolver(LoginSchema) as Resolver<FormValuesProps>,
     defaultValues,
   });
 
   const {
     reset,
-    // setError,
+    setError,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = methods;
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      // await login(data);
+      await login(data);
       console.log(data);
     } catch (error) {
       console.error(error);
 
+      const typedError = error as Error; // Assert that error is of type Error
       reset();
 
-      // setError('afterSubmit', { ...error, message: error.message });
+      setError('afterSubmit', { ...typedError, message: typedError.message });
     }
   };
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
-        {/*{!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}*/}
+        {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
 
         <RHFTextField name="email" label="Email address" />
 

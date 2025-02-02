@@ -7,6 +7,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 import DashboardLayout from "@/layouts/dashboard";
 import LogoOnlyLayout from "@/layouts/LogoOnlyLayout";
 import GuestGuard from "@/guards/GuestGuard";
+import AuthGuard from "@/guards/AuthGuard";
 
 
 // ----------------------------------------------------------------------
@@ -66,9 +67,9 @@ export default function Router() {
     {
       path: '/dashboard',
       element: (
-        // <AuthGuard>
+        <AuthGuard>
           <DashboardLayout />
-        // </AuthGuard>
+        </AuthGuard>
       ),
       children: [
         { element: <Navigate to="/dashboard/one" replace />, index: true },

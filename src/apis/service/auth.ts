@@ -6,13 +6,15 @@ import {AUTH_SERVICE_GET_USER_ENDPOINT, AUTH_SERVICE_SIGN_IN_ENDPOINT} from "@/u
 export type SignInPayload = {
   email: string;
   password: string;
+  rememberMe: boolean;
 };
 
 export type SignInResponse = {
-  result: {
-    accessToken: string;
+  // result: {
+    token: string;
+    refreshToken: string;
     currentUser: User;
-  };
+  // };
 } & RESTErrorResponse;
 
 type GetUserResponse = User & RESTErrorResponse;

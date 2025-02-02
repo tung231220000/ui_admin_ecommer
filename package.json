@@ -41,6 +41,8 @@
     "react-router-dom": "^7.1.1",
     "simplebar-react": "^3.2.6",
     "web-vitals": "^4.2.4",
+    "workbox-expiration": "^7.3.0",
+    "workbox-precaching": "^7.3.0",
     "yarn": "^1.22.22",
     "yup": "^1.6.1"
   },

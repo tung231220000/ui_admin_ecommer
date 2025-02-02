@@ -5,20 +5,25 @@ export enum Gender {
   MRS = 'Bà',
 }
 
+export type Role = {
+  id: number;
+  name: string;
+};
+
 export type User = {
-  id: string;
-  authentication: {
-    email: string;
-    avatar: string;
-  };
-  generalInformation: {
-    surnameAndMiddleName: string;
-    name: string;
-    gender: Gender;
-    dayOfBirth: Date;
-    address: string;
-    phoneNumber: string;
-  };
+  id: number;
+  email: string;
+  password: string | null;
+  name: string;
+  surnameAndMiddleName: string;
+  phone: string;
+  avatar: string;
+  address: string | null;
+  gender: string | null;
+  dateOfBirth: string;
+  createAt: string;
+  updateAt: string;
+  roles: Role[];
 };
 
 export type UserMock = {

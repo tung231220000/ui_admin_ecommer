@@ -33,7 +33,7 @@ export default function LoginForm() {
   });
 
   const defaultValues = {
-    email: 'Tukunnv@gmail.com.vn',
+    email: 'tungnv@gmail.com',
     password: 'demo1234',
     remember: true,
   };
@@ -53,11 +53,10 @@ export default function LoginForm() {
   const onSubmit = async (data: FormValuesProps) => {
     try {
       await login(data);
-      console.log(data);
     } catch (error) {
-      console.error(error);
 
       const typedError = error as Error; // Assert that error is of type Error
+      console.error(typedError);
       reset();
 
       setError('afterSubmit', { ...typedError, message: typedError.message });

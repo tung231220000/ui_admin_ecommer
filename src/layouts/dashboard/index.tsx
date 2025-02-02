@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
@@ -6,12 +6,14 @@ import { Box } from '@mui/material';
 // hooks
 
 // config
-import { HEADER, NAVBAR } from '../../config';
+import { HEADER, NAVBAR } from '@/config';
 //
 import DashboardHeader from './header';
 import NavbarVertical from './navbar/NavbarVertical';
 import NavbarHorizontal from './navbar/NavbarHorizontal';
-import React from 'react';
+import useSettings from "@/hooks/useSettings";
+import useCollapseDrawer from "@/hooks/useCollapseDrawer";
+import useResponsive from "@/hooks/useResponsive";
 
 // ----------------------------------------------------------------------
 

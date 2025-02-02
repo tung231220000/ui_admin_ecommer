@@ -21,7 +21,7 @@ const navConfig = [
   // GENERAL
   // ----------------------------------------------------------------------
   {
-    subheader: 'DTS Telecom Admin v0.1.0',
+    subheader: 'Tukun have version 1.0.0',
     items: [
       { title: 'One', path: '/dashboard/one', icon: ICONS.dashboard },
       { title: 'Two', path: '/dashboard/two', icon: ICONS.ecommerce },

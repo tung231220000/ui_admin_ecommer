@@ -43,7 +43,7 @@ type UpdatePageResponse = {
 
 const ApiPageRepository = {
   async fetchPages(): Promise<GetPagesResponse> {
-    const { data } = await apiBackend.post<GetPagesResponse>('/pages', {
+    const { data } = await apiBackend.get<GetPagesResponse>('/pages', {
       // query: RESTErrorResponse,
     });
 

@@ -9,13 +9,13 @@ import {
     TableContainer,
     TablePagination,
 } from '@mui/material';
-import {PageTableRow, PageTableToolbar} from 'src/sections/@dashboard/page/list';
+import {PageTableRow, PageTableToolbar} from '@/sections/@dashboard/page/list';
 import {TableEmptyRows, TableHeadCustom, TableNoData} from '../../components/table';
 import useTable, {emptyRows, getComparator} from '../../hooks/useTable';
 
 import ApiPageRepository from '@/apis/apiService/page.api';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import {PATH_DASHBOARD} from '../../routes/paths';
+import {PATH_DASHBOARD} from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
 import {Page as TPage} from 'src/@types/page';
@@ -24,7 +24,7 @@ import {useNavigate} from 'react-router-dom';
 import {useQuery} from '@tanstack/react-query';
 import useSettings from '../../hooks/useSettings';
 import {useSnackbar} from 'notistack';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -57,25 +57,30 @@ export default function PageList() {
     const [tableData, setTableData] = useState<TPage[]>([]);
     const [filterName, setFilterName] = useState('');
 
-    useQuery({
+    const { data, error } = useQuery({
       queryKey: ['fetchPages'],
       queryFn: () => ApiPageRepository.fetchPages(),
       refetchOnWindowFocus: false,
-      onError() {
-        enqueueSnackbar('Không thể lấy danh sách các trang!', {
+    });
+
+    useEffect(() => {
+      if (error) {
+        enqueueSnackbar(error.message || 'Không thể lấy danh sách các trang!', {
           variant: 'error',
         });
-      },
-      onSuccess: (data) => {
-        if (!data.errors) {
-          setTableData(data.data.pages);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    });
+      }
+    }, [error]);
+
+    useEffect(() => {
+      if (data && !data.error) {
+        setTableData(data.pages);
+      } else {
+        console.log("du lieu:    ", data);
+        enqueueSnackbar(data?.error, {
+          variant: 'error',
+        });
+      }
+    }, [data]);
 
     const handleFilterName = (filterName: string) => {
         setFilterName(filterName);

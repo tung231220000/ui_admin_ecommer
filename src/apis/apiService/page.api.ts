@@ -3,12 +3,9 @@ import apiBackend from "@/apis/connection/api-backend";
 // import { GraphQLErrorResponse } from 'src/@types/api';
 import { Page } from 'src/@types/page';
 import {RESTErrorResponse} from "@/@types/api";
+import {AxiosResponse} from "axios";
 
-type GetPagesResponse = {
-  // data: {
-    pages: Page[];
-  // };
-} & RESTErrorResponse;
+type GetPagesResponse = Page[];
 
 export type GetPageDataPayload = {
   pageInput: {
@@ -43,11 +40,20 @@ type UpdatePageResponse = {
 
 const ApiPageRepository = {
   async fetchPages(): Promise<GetPagesResponse> {
-    const { data } = await apiBackend.get<GetPagesResponse>('/pages', {
-      // query: RESTErrorResponse,
-    });
+    try {
+      const response = await apiBackend.get<GetPagesResponse>('/pages', { });
+      // const response: AxiosResponse<GetPagesResponse>  = await apiBackend.get('/pages');
+      return response.data;
+    } catch (error: any){
+      // Nếu server trả về lỗi (có response)
+      if (error.response) {
+        const errorData: RESTErrorResponse = error.response.data;
+        throw new Error(`${errorData.statusCode}: ${errorData.message}`);
+      }
 
-    return data;
+      // Nếu lỗi do mạng hoặc server không phản hồi
+      throw new Error("Network error or server is unreachable");
+    }
   },
   async fetchPageData(variables: GetPageDataPayload): Promise<GetPageDataResponse> {
     const { data } = await apiBackend.post<GetPageDataResponse>('/page', {

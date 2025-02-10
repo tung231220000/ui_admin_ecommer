@@ -1,6 +1,8 @@
-import { Information } from './information';
+// import { Information } from './information';
 import { Office } from './office';
-import { Partner } from './partner';
+import {date} from "yup";
+import * as timers from "node:timers";
+// import { Partner } from './partner';
 
 export type Carousel = {
   title?: string;
@@ -13,8 +15,11 @@ export type Page = {
   name: string;
   title: string;
   banner?: string;
-  carousel?: Carousel[];
-  information?: Information[];
-  partners?: Partner[];
+  carousels?: Carousel[];
+  // information?: Information[];
+  // partners?: Partner[];
   offices?: Office[];
+  updatedDatetime: Date;
+  createDatetime: Date;
+
 };

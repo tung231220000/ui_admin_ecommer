@@ -56,31 +56,39 @@ export default function PageList() {
 
     const [tableData, setTableData] = useState<TPage[]>([]);
     const [filterName, setFilterName] = useState('');
-
-    const { data, error } = useQuery({
-      queryKey: ['fetchPages'],
-      queryFn: () => ApiPageRepository.fetchPages(),
-      refetchOnWindowFocus: false,
-    });
-
-    useEffect(() => {
-      if (error) {
-        enqueueSnackbar(error.message || 'Không thể lấy danh sách các trang!', {
-          variant: 'error',
-        });
-      }
-    }, [error]);
+    // console.log("Component Rendered");
+    // const usePages = useQuery({
+    //     queryKey: ['fetchPages'],
+    //     queryFn: () => ApiPageRepository.fetchPages(),
+    //     refetchOnWindowFocus: false,
+    //   });
+    // console.log("useQuery data:", usePages.data);
 
     useEffect(() => {
-      if (data && !data.error) {
-        setTableData(data.pages);
-      } else {
-        console.log("du lieu:    ", data);
-        enqueueSnackbar(data?.error, {
-          variant: 'error',
-        });
-      }
-    }, [data]);
+        ApiPageRepository.fetchPages().then(data => console.log("API Data:", data));
+    }, []);
+    // console.log("data response: ", usePages);
+    // const {data, error} = usePages;
+    // console.log("data : ", data);
+
+    // useEffect(() => {
+    //   console.log("error :", error);
+    //   if (error) {
+    //     enqueueSnackbar(error.message || 'Không thể lấy danh sách các trang!', {
+    //       variant: 'error',
+    //     });
+    //   }
+    // }, [error]);
+
+    // useEffect(() => {
+    //   if (data && !error) {
+    //     setTableData(data);
+    //   } else {
+    //     enqueueSnackbar(error?.message, {
+    //       variant: 'error',
+    //     });
+    //   }
+    // }, [data]);
 
     const handleFilterName = (filterName: string) => {
         setFilterName(filterName);

@@ -60,7 +60,7 @@ export default function AccountPopover() {
       >
         <Avatar
           src="https://minimal-assets-api-dev.vercel.app/assets/images/avatars/avatar_5.jpg"
-          alt="Hieu Le"
+          alt="Tu kun"
         />
       </IconButtonAnimate>
 
@@ -80,7 +80,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            Hieu Le
+            Tukun
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             hieu.le@dts.com.vn

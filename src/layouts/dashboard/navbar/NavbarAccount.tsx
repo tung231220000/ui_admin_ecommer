@@ -34,7 +34,7 @@ export default function NavbarAccount({ isCollapse }: Props) {
       >
         <Avatar
           src="https://minimal-assets-api-dev.vercel.app/assets/images/avatars/avatar_5.jpg"
-          alt="Hieu Le"
+          alt="Tukun"
         />
 
         <Box
@@ -51,7 +51,7 @@ export default function NavbarAccount({ isCollapse }: Props) {
           }}
         >
           <Typography variant="subtitle2" noWrap>
-            Hieu Le
+            Tukun
           </Typography>
           <Typography variant="body2" noWrap sx={{ color: "text.secondary" }}>
             user

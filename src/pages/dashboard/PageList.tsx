@@ -12,7 +12,6 @@ import {
 import {PageTableRow, PageTableToolbar} from '@/sections/@dashboard/page/list';
 import {TableEmptyRows, TableHeadCustom, TableNoData} from '../../components/table';
 import useTable, {emptyRows, getComparator} from '../../hooks/useTable';
-
 import ApiPageRepository from '@/apis/apiService/page.api';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import {PATH_DASHBOARD} from '@/routes/paths';
@@ -56,39 +55,37 @@ export default function PageList() {
 
     const [tableData, setTableData] = useState<TPage[]>([]);
     const [filterName, setFilterName] = useState('');
-    // console.log("Component Rendered");
-    // const usePages = useQuery({
-    //     queryKey: ['fetchPages'],
-    //     queryFn: () => ApiPageRepository.fetchPages(),
-    //     refetchOnWindowFocus: false,
-    //   });
-    // console.log("useQuery data:", usePages.data);
+    console.log("Component Rendered");
+    const {data, error, isLoading, isFetching} = useQuery({
+        queryKey: ['fetchPages'],
+        queryFn: () => ApiPageRepository.fetchPages(),
+        refetchOnWindowFocus: false,
+      });
 
     useEffect(() => {
-        ApiPageRepository.fetchPages().then(data => console.log("API Data:", data));
-    }, []);
-    // console.log("data response: ", usePages);
-    // const {data, error} = usePages;
-    // console.log("data : ", data);
+        if (isLoading || isFetching) {
+            return;
+        }
+        if (error) {
+            enqueueSnackbar(error?.message || 'Không thể lấy danh sách các trang!', {
+                variant: 'error',
+            });
+        }
+    }, [error]);
 
-    // useEffect(() => {
-    //   console.log("error :", error);
-    //   if (error) {
-    //     enqueueSnackbar(error.message || 'Không thể lấy danh sách các trang!', {
-    //       variant: 'error',
-    //     });
-    //   }
-    // }, [error]);
-
-    // useEffect(() => {
-    //   if (data && !error) {
-    //     setTableData(data);
-    //   } else {
-    //     enqueueSnackbar(error?.message, {
-    //       variant: 'error',
-    //     });
-    //   }
-    // }, [data]);
+    useEffect(() => {
+        if (isLoading || isFetching) {
+            return;
+        }
+        if (data) {
+            console.log("data response: ", data);
+            setTableData(data);
+        } else {
+            enqueueSnackbar(error?.message, {
+                variant: 'error',
+            });
+        }
+    }, [data]);
 
     const handleFilterName = (filterName: string) => {
         setFilterName(filterName);

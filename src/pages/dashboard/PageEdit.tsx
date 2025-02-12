@@ -1,10 +1,10 @@
 import { Container } from '@mui/material';
-import GraphqlPageRepository from 'src/apis/graphql/page';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
+import ApiPageRepository from '@/apis/apiService/page.api';
 import Page from '../../components/Page';
-import PageEditForm from 'src/sections/@dashboard/page/PageEditForm';
-import { Page as TPage } from 'src/@types/page';
+import PageEditForm from '@/sections/@dashboard/page/PageEditForm';
+import { Page as TPage } from '@/@types/page';
 import { capitalCase } from 'change-case';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -21,33 +21,27 @@ export default function PageEdit() {
 
   const [currentPage, setCurrentPage] = useState<TPage>();
 
-  useQuery(
-    ['fetchPageData', name],
-    () =>
-      GraphqlPageRepository.fetchPageData({
-        pageInput: {
-          name,
-        },
-      }),
-    {
-      enabled: name.length > 0,
-      refetchOnWindowFocus: false,
-      onError() {
-        enqueueSnackbar('Không thể lấy chi tiết trang!', {
-          variant: 'error',
-        });
-      },
-      onSuccess: (data) => {
-        if (!data.errors) {
-          setCurrentPage(data.data.getPageData);
+  useQuery({
+    queryKey: ['fetchPageData', name],
+    queryFn: async () =>  {
+      try {
+        const data = await ApiPageRepository.fetchPageData({name});
+        if (!data.error) {
+          setCurrentPage(data.getPageData);
         } else {
-          enqueueSnackbar(data.errors[0].message, {
+          enqueueSnackbar(data.message, {
             variant: 'error',
           });
         }
-      },
-    }
-  );
+      } catch (error) {
+        enqueueSnackbar('Không thể lấy chi tiết trang!', {
+          variant: 'error',
+        });
+      }
+    },
+    refetchOnWindowFocus: false,
+    enabled: name.length > 0,
+  });
 
   return (
     <Page title="Page: Edit a page">

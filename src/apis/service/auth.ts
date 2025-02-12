@@ -10,11 +10,9 @@ export type SignInPayload = {
 };
 
 export type SignInResponse = {
-  // result: {
-    token: string;
-    refreshToken: string;
-    currentUser: User;
-  // };
+  token: string;
+  refreshToken: string;
+  currentUser: User;
 } & RESTErrorResponse;
 
 type GetUserResponse = User & RESTErrorResponse;

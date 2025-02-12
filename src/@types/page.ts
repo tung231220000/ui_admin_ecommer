@@ -19,7 +19,7 @@ export type Page = {
   // information?: Information[];
   // partners?: Partner[];
   offices?: Office[];
-  updatedDatetime: Date;
-  createDatetime: Date;
+  updatedDatetime?: Date;
+  createDatetime?: Date;
 
 };

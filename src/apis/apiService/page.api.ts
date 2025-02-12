@@ -3,49 +3,65 @@ import apiBackend from "@/apis/connection/api-backend";
 // import { GraphQLErrorResponse } from 'src/@types/api';
 import { Page } from 'src/@types/page';
 import {RESTErrorResponse} from "@/@types/api";
-import {AxiosResponse} from "axios";
+import {PAGE_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT, PAGE_SERVICE_UPLOAD_CAROUSEL_IMAGE_ENDPOINT} from "@/utils/constant";
+// import {AxiosResponse} from "axios";
 
+export type UploadBannerImagePayload = FormData;
 type GetPagesResponse = Page[];
 
 export type GetPageDataPayload = {
-  pageInput: {
     name: string;
-  };
 };
 
+export type UploadBannerImageResponse = {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+} & RESTErrorResponse;
+
+export type UploadCarouselImagePayload = FormData;
+
+type UploadCarouselImageResponse = {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+} & RESTErrorResponse;
+
 type GetPageDataResponse = {
-  // data: {
     getPageData: Page;
-  // };
 } & RESTErrorResponse;
 
 export type UpdatePagePayload = {
-  pageInput: {
-    name: string;
-    title: string;
-    banner?: string | CustomFile | null;
-    carousel?: {
-      title?: string;
-      description?: string;
-      image: string | CustomFile;
-    }[];
-  };
+  name: string;
+  title: string;
+  banner?: string | CustomFile | null;
+  carousel?: {
+    title?: string;
+    description?: string;
+    image: string | CustomFile;
+  }[];
 };
 
 type UpdatePageResponse = {
-  data: {
-    updatePage: Page;
-  };
+  updatePage: Page;
 } & RESTErrorResponse;
 
 const ApiPageRepository = {
   async fetchPages(): Promise<GetPagesResponse> {
     try {
-      const response = await apiBackend.get<GetPagesResponse>('/pages', { });
-      // const response: AxiosResponse<GetPagesResponse>  = await apiBackend.get('/pages');
+      const response = await apiBackend.get<GetPagesResponse>('/pages', {});
       return response.data;
     } catch (error: any){
-      // Nếu server trả về lỗi (có response)
       if (error.response) {
         const errorData: RESTErrorResponse = error.response.data;
         throw new Error(`${errorData.statusCode}: ${errorData.message}`);
@@ -57,14 +73,41 @@ const ApiPageRepository = {
   },
   async fetchPageData(variables: GetPageDataPayload): Promise<GetPageDataResponse> {
     const { data } = await apiBackend.post<GetPageDataResponse>('/page', {
-      // query: RESTErrorResponse,
       variables,
     });
 
     return data;
   },
   async updatePage(variables: UpdatePagePayload): Promise<UpdatePageResponse> {
-    const { data } = await apiBackend.post<UpdatePageResponse>('/graphql', variables);
+    const { data } = await apiBackend.post<UpdatePageResponse>('/page/edit', variables);
+
+    return data;
+  },
+  async uploadBannerImage(payload: UploadBannerImagePayload): Promise<UploadBannerImageResponse> {
+    const { data } = await apiBackend.post<UploadBannerImageResponse>(
+      PAGE_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    return data;
+  },
+  async uploadCarouselImage(
+    payload: UploadCarouselImagePayload
+  ): Promise<UploadCarouselImageResponse> {
+    const { data } = await apiBackend.post<UploadCarouselImageResponse>(
+      PAGE_SERVICE_UPLOAD_CAROUSEL_IMAGE_ENDPOINT,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
 
     return data;
   },

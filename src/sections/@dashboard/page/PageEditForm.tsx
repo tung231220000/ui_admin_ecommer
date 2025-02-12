@@ -3,16 +3,16 @@ import * as Yup from 'yup';
 
 import { Box, Button, Card, Divider, Grid, Stack, Typography } from '@mui/material';
 import { FormProvider, RHFTextField, RHFUploadSingleFile } from '../../../components/hook-form';
-import PageGraphqlRepository, { UpdatePagePayload } from 'src/apis/graphql/page';
-import PageRepository, {
+import ApiPageRepository, {
+  UpdatePagePayload,
   UploadBannerImagePayload,
-  UploadCarouselImagePayload,
-} from 'src/apis/service/page';
+  UploadCarouselImagePayload
+} from '@/apis/apiService/page.api';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import { CustomFile } from 'src/components/upload';
-import { DTS_TELECOM_BACKEND_API_DOMAIN } from 'src/utils/constant';
+import { API_DOMAIN } from 'src/utils/constant';
 import Iconify from 'src/components/Iconify';
 import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from 'src/routes/paths';
@@ -22,6 +22,10 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
+// import {Simulate} from "react-dom/test-utils";
+// import mouseUp = Simulate.mouseUp;
+// import {AxiosError} from "axios";
+// import {RESTErrorResponse} from "@/@types/api";
 
 // ----------------------------------------------------------------------
 
@@ -53,19 +57,35 @@ export default function PageEditForm({ currentPage }: Props) {
   const NewPageSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     title: Yup.string().required('Title is required'),
+    banner: Yup.string(),
+    name: Yup.string(),
+    title: Yup.string(),
+    banner: Yup.string(),
+    carousel: Yup.array().of(
+      Yup.object().shape({
+        title: Yup.string(),
+        description: Yup.string(),
+        image: Yup.mixed().required('Image is required'),
+      })
+    ),
+    updatedDatetime: Yup.date().required(),
+    createDatetime: Yup.date().required(),
   });
-  const defaultValues = useMemo(
+
+  const defaultValues: FormValuesProps = useMemo(
     () => ({
       name: currentPage?.name || '',
       title: currentPage?.title || '',
       banner: currentPage?.banner || '',
-      carousel: currentPage?.carousel || [
+      carousel: currentPage?.carousels || [
         {
           title: '',
           description: '',
           image: '',
         },
       ],
+      updatedDatetime: currentPage?.updatedDatetime || new Date(),
+      createDatetime: currentPage?.createDatetime || new Date(),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentPage]
@@ -74,6 +94,7 @@ export default function PageEditForm({ currentPage }: Props) {
     resolver: yupResolver(NewPageSchema),
     defaultValues,
   });
+
   const {
     control,
     reset,
@@ -88,48 +109,45 @@ export default function PageEditForm({ currentPage }: Props) {
   });
   watch();
 
-  const { mutateAsync: mutateAsyncUploadBannerImage } = useMutation(
-    (payload: UploadBannerImagePayload) => PageRepository.uploadBannerImage(payload),
-    {
-      onError() {
+  const {mutateAsync: mutateAsyncUploadBannerImage} = useMutation({
+      mutationFn: (payload: UploadBannerImagePayload) => ApiPageRepository.uploadBannerImage(payload),
+      onError: () => {
         enqueueSnackbar('Không thể upload ảnh banner!', {
           variant: 'error',
         });
       },
     }
   );
-  const { mutateAsync: mutateAsyncUploadCarouselImage } = useMutation(
-    (payload: UploadCarouselImagePayload) => PageRepository.uploadCarouselImage(payload),
-    {
-      onError() {
+  const {mutateAsync: mutateAsyncUploadCarouselImage} = useMutation({
+      mutationFn: (payload: UploadCarouselImagePayload) => ApiPageRepository.uploadCarouselImage(payload),
+      onError: () => {
         enqueueSnackbar('Không thể upload ảnh carousel!', {
           variant: 'error',
         });
-      },
+      }
     }
   );
-  const { mutateAsync: mutateAsyncUpdatePage } = useMutation(
-    (payload: UpdatePagePayload) => PageGraphqlRepository.updatePage(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể cập nhật trang!', {
+  const {mutateAsync: mutateAsyncUpdatePage} = useMutation({
+    mutationFn: (payload: UpdatePagePayload) => ApiPageRepository.updatePage(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể cập nhật trang!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Cập nhật trang thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.page.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Cập nhật trang thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.page.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
+      }
     }
-  );
+  })
+
 
   useEffect(() => {
     if (currentPage) {
@@ -153,7 +171,7 @@ export default function PageEditForm({ currentPage }: Props) {
         const filesData = new FormData();
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadBannerImage(filesData);
-        setValue(`banner`, `${DTS_TELECOM_BACKEND_API_DOMAIN}/${response.path}`);
+        setValue(`banner`, `${API_DOMAIN}/${response.path}`);
       }
     },
     [mutateAsyncUploadBannerImage, setValue]
@@ -174,7 +192,7 @@ export default function PageEditForm({ currentPage }: Props) {
         const filesData = new FormData();
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadCarouselImage(filesData);
-        setValue(`carousel.${index}.image`, `${DTS_TELECOM_BACKEND_API_DOMAIN}/${response.path}`);
+        setValue(`carousel.${index}.image`, `${API_DOMAIN}/${response.path}`);
       }
     },
     [mutateAsyncUploadCarouselImage, setValue]

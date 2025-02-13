@@ -16,7 +16,7 @@ import { API_DOMAIN } from 'src/utils/constant';
 import Iconify from 'src/components/Iconify';
 import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from 'src/routes/paths';
-import { Page } from 'src/@types/page';
+import {Carousel, Page} from 'src/@types/page';
 import { styled } from '@mui/material/styles';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
@@ -37,9 +37,9 @@ const LabelStyle = styled(Typography)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-interface FormValuesProps extends Omit<Page, 'banner' | 'carousel'> {
+interface FormValuesProps extends Omit<Page, 'banner' | 'carousels'> {
   banner: CustomFile | string;
-  carousel: {
+  carousels: {
     title?: string;
     description?: string;
     image: CustomFile | string;
@@ -55,29 +55,36 @@ export default function PageEditForm({ currentPage }: Props) {
   const { enqueueSnackbar } = useSnackbar();
 
   const NewPageSchema = Yup.object().shape({
+    id: Yup.string().default(''),
     name: Yup.string().required('Name is required'),
     title: Yup.string().required('Title is required'),
-    banner: Yup.string(),
-    name: Yup.string(),
-    title: Yup.string(),
-    banner: Yup.string(),
-    carousel: Yup.array().of(
+    banner: Yup.mixed<CustomFile | string>().defined(),
+    carousels: Yup.array().of(
       Yup.object().shape({
         title: Yup.string(),
         description: Yup.string(),
-        image: Yup.mixed().required('Image is required'),
+        image: Yup.mixed<CustomFile | string>().required("Image is required").defined(),
       })
-    ),
-    updatedDatetime: Yup.date().required(),
-    createDatetime: Yup.date().required(),
+    )
+    .default([])
+    .defined(),
+    updatedDatetime: Yup.date(),
+    createDatetime: Yup.date(),
   });
 
-  const defaultValues: FormValuesProps = useMemo(
+  const defaultValues: {
+    createDatetime: Date;
+    name: string;
+    banner: string;
+    title: string;
+    carousels: Carousel[];
+    updatedDatetime: Date
+  } = useMemo(
     () => ({
       name: currentPage?.name || '',
       title: currentPage?.title || '',
       banner: currentPage?.banner || '',
-      carousel: currentPage?.carousels || [
+      carousels: currentPage?.carousels || [
         {
           title: '',
           description: '',
@@ -90,6 +97,7 @@ export default function PageEditForm({ currentPage }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentPage]
   );
+
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewPageSchema),
     defaultValues,
@@ -103,9 +111,10 @@ export default function PageEditForm({ currentPage }: Props) {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
+
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'carousel',
+    name: 'carousels',
   });
   watch();
 
@@ -183,7 +192,7 @@ export default function PageEditForm({ currentPage }: Props) {
 
       if (file) {
         setValue(
-          `carousel.${index}.image`,
+          `carousels.${index}.image`,
           Object.assign(file, {
             preview: URL.createObjectURL(file),
           })
@@ -192,7 +201,7 @@ export default function PageEditForm({ currentPage }: Props) {
         const filesData = new FormData();
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadCarouselImage(filesData);
-        setValue(`carousel.${index}.image`, `${API_DOMAIN}/${response.path}`);
+        setValue(`carousels.${index}.image`, `${API_DOMAIN}/${response.path}`);
       }
     },
     [mutateAsyncUploadCarouselImage, setValue]
@@ -212,10 +221,8 @@ export default function PageEditForm({ currentPage }: Props) {
 
   const onSubmit = async (data: FormValuesProps) => {
     mutateAsyncUpdatePage({
-      pageInput: {
         ...data,
         banner: (data.banner as string).length > 0 ? data.banner : null,
-      },
     });
   };
 

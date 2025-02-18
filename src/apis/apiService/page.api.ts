@@ -1,10 +1,8 @@
 import { CustomFile } from 'src/components/upload';
 import apiBackend from "@/apis/connection/api-backend";
-// import { GraphQLErrorResponse } from 'src/@types/api';
 import { Page } from 'src/@types/page';
 import {RESTErrorResponse} from "@/@types/api";
 import {PAGE_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT, PAGE_SERVICE_UPLOAD_CAROUSEL_IMAGE_ENDPOINT} from "@/utils/constant";
-// import {AxiosResponse} from "axios";
 
 export type UploadBannerImagePayload = FormData;
 type GetPagesResponse = Page[];
@@ -38,7 +36,7 @@ type UploadCarouselImageResponse = {
 } & RESTErrorResponse;
 
 type GetPageDataResponse = {
-    getPageData: Page;
+  result: Page
 } & RESTErrorResponse;
 
 export type UpdatePagePayload = {
@@ -71,12 +69,10 @@ const ApiPageRepository = {
       throw new Error("Network error or server is unreachable");
     }
   },
-  async fetchPageData(variables: GetPageDataPayload): Promise<GetPageDataResponse> {
-    const { data } = await apiBackend.post<GetPageDataResponse>('/page', {
-      variables,
-    });
-
-    return data;
+  async fetchPageData(variables: string): Promise<GetPageDataResponse> {
+      const { data } = await apiBackend.get<GetPageDataResponse>('/page?name=' + variables, {});
+      console.log("data fetch value: ", data);
+      return data;
   },
   async updatePage(variables: UpdatePagePayload): Promise<UpdatePageResponse> {
     const { data } = await apiBackend.post<UpdatePageResponse>('/page/edit', variables);

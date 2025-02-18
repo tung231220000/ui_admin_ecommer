@@ -55,7 +55,6 @@ export default function PageList() {
 
     const [tableData, setTableData] = useState<TPage[]>([]);
     const [filterName, setFilterName] = useState('');
-    console.log("Component Rendered");
     const {data, error, isLoading, isFetching} = useQuery({
         queryKey: ['fetchPages'],
         queryFn: () => ApiPageRepository.fetchPages(),
@@ -78,7 +77,6 @@ export default function PageList() {
             return;
         }
         if (data) {
-            console.log("data response: ", data);
             setTableData(data);
         } else {
             enqueueSnackbar(error?.message, {

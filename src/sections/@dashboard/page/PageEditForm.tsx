@@ -11,15 +11,15 @@ import ApiPageRepository, {
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
-import { CustomFile } from 'src/components/upload';
-import { API_DOMAIN } from 'src/utils/constant';
-import Iconify from 'src/components/Iconify';
+import { CustomFile } from '@/components/upload';
+import { API_DOMAIN } from '@/utils/constant';
+import Iconify from '@/components/Iconify';
 import { LoadingButton } from '@mui/lab';
-import { PATH_DASHBOARD } from 'src/routes/paths';
-import {Carousel, Page} from 'src/@types/page';
+import { PATH_DASHBOARD } from '@/routes/paths';
+import {Carousel, Page} from '@/@types/page';
 import { styled } from '@mui/material/styles';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
 // import {Simulate} from "react-dom/test-utils";

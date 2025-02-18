@@ -1,7 +1,6 @@
 // import { Information } from './information';
 import { Office } from './office';
-import {date} from "yup";
-import * as timers from "node:timers";
+
 // import { Partner } from './partner';
 
 export type Carousel = {

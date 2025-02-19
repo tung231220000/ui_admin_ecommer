@@ -97,15 +97,15 @@ export default function Login() {
                 <Typography sx={{ color: 'text.secondary' }}>Enter your details below.</Typography>
               </Box>
 
-              <Tooltip title={capitalCase(method)} placement="right">
-                <>
-                  <Image
-                    disabledEffect
-                    src={`https://minimal-assets-api-dev.vercel.app/assets/icons/auth/ic_${method}.png`}
-                    sx={{ width: 32, height: 32 }}
-                  />
-                </>
-              </Tooltip>
+              {/*<Tooltip title={capitalCase(method)} placement="right">*/}
+              {/*  <>*/}
+              {/*    <Image*/}
+              {/*      disabledEffect*/}
+              {/*      src={`https://minimal-assets-api-dev.vercel.app/assets/icons/auth/ic_${method}.png`}*/}
+              {/*      sx={{ width: 32, height: 32 }}*/}
+              {/*    />*/}
+              {/*  </>*/}
+              {/*</Tooltip>*/}
             </Stack>
 
             <Alert severity="info" sx={{ mb: 3 }}>

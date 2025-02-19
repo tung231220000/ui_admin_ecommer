@@ -8,7 +8,7 @@ type SignUpResponse = {
 
 const userModule = {
   async signUp(variables: SignUpPayload): Promise<SignUpResponse> {
-    const {data} = await apiBackend.post<SignUpResponse>('/new-user', variables);
+    const {data} = await apiBackend.post<SignUpResponse>('/create-user', variables);
     return data;
   }
 };

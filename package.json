@@ -25,6 +25,7 @@
     "framer-motion": "^11.11.9",
     "i18next": "^23.16.2",
     "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
     "notistack": "^3.0.1",
     "nprogress": "^0.2.0",
     "numeral": "^2.0.6",
@@ -49,6 +50,7 @@
   "devDependencies": {
     "@types/add": "^2",
     "@types/autosuggest-highlight": "^3",
+    "@types/lodash": "^4",
     "@types/node": "^20.12.12",
     "@types/nprogress": "^0",
     "@types/numeral": "^2",

@@ -6,7 +6,7 @@ export type InformationVariant = {
 };
 
 export type Information = {
-  _id: string;
+  id: string;
   page: string;
   title: string;
   subtitle: string;

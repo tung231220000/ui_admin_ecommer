@@ -12,7 +12,7 @@ import {
 import {
   InformationTableRow,
   InformationTableToolbar,
-} from 'src/sections/@dashboard/information/list';
+} from '@/sections/@dashboard/information/list';
 import {
   TableEmptyRows,
   TableHeadCustom,
@@ -20,16 +20,15 @@ import {
   TableSelectedActions,
 } from '../../components/table';
 import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
-
-import GraphqlInformationRepository from 'src/apis/graphql/information';
+import ApiInformationRepository from '@/apis/apiService/information.api'
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { Information } from 'src/@types/information';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { Information } from '@/@types/information';
+import {PATH_DASHBOARD} from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import { paramCase } from 'change-case';
+import { kebabCase } from 'change-case';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import {useQuery} from '@tanstack/react-query';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
@@ -70,86 +69,92 @@ export default function InformationList() {
   const [tableData, setTableData] = useState<Information[]>([]);
   const [filterTitle, setFilterTitle] = useState('');
 
-  useQuery(['fetchInformation'], () => GraphqlInformationRepository.fetchInformation(), {
-    refetchOnWindowFocus: false,
-    onError() {
-      enqueueSnackbar('Không thể lấy danh sách thông tin!', {
-        variant: 'error',
-      });
-    },
-    onSuccess: (data) => {
-      if (!data.errors) {
-        setTableData(data.data.information);
-      } else {
-        enqueueSnackbar(data.errors[0].message, {
+  useQuery({
+    queryKey: ['fetchInformation'],
+    queryFn: async () => {
+      try {
+        const data = await ApiInformationRepository.fetchInformation();
+        if (!data.error && data.result) {
+          console.log("data fetch: ", data.result);
+          setTableData(data.result);
+        } else {
+          enqueueSnackbar(data.error, {
+            variant: 'error',
+          });
+        }
+      } catch (error) {
+        enqueueSnackbar('Không thể lấy danh sách thông tin!', {
           variant: 'error',
         });
       }
     },
+    refetchOnWindowFocus: false,
   });
-  // const { mutateAsync: mutateAsyncDeleteInformation } = useMutation(
-  //   (payload: DeleteInformationPayload) => GraphqlInformationRepository.deleteInformation(payload),
-  //   {
-  //     onError() {
-  //       enqueueSnackbar('Không thể xóa thông tin!', {
+
+  // const {mutateAsync: mutateAsyncDeleteInformation} = useMutation<DeleteInformationResponse, AxiosError, DeleteInformationPayload>({
+  //   mutationFn: (payload: DeleteInformationPayload) =>
+  //     ApiInformationRepository.deleteInformation(payload) as unknown as Promise<DeleteInformationResponse>,
+  //   onSuccess: (data) => {
+  //     if (!data.error) {
+  //       setTableData(tableData.filter((info) => info.id !== data.result.id))
+  //       enqueueSnackbar('Xóa thông tin thành công!', {
+  //         variant: 'success',
+  //       });
+  //     } else {
+  //       enqueueSnackbar('Không thể xóa Information' + data.error, {
   //         variant: 'error',
   //       });
-  //     },
-  //     onSuccess(data) {
-  //       if (!data.errors) {
-  //         setTableData(tableData.filter((info) => info._id !== data.data.deleteInformation._id));
-  //         enqueueSnackbar('Xóa thông tin thành công!', {
-  //           variant: 'success',
-  //         });
-  //       } else {
-  //         enqueueSnackbar(data.errors[0].message, {
-  //           variant: 'error',
-  //         });
-  //       }
-  //     },
-  //   }
-  // );
-  // const { mutateAsync: mutateAsyncDeleteManyInformation } = useMutation(
-  //   (payload: DeleteManyInformationPayload) =>
-  //     GraphqlInformationRepository.deleteManyInformation(payload),
-  //   {
-  //     onError() {
-  //       enqueueSnackbar('Không thể xóa nhiều thông tin!', {
+  //     }
+  //   },
+  // });
+
+  // const {mutateAsync: mutateAsyncDeleteManyInformation} = useMutation<DeleteManyInformationResponse, AxiosError, DeleteManyInformationPayload>({
+  //   mutationFn: (payload: DeleteManyInformationPayload) =>
+  //     ApiInformationRepository.deleteManyInformation(payload) as unknown as Promise<DeleteManyInformationResponse>,
+  //   onSuccess: (data) => {
+  //     // if (!data.error) {
+  //     //   setTableData(tableData.filter((info) => info.id !== data.result.id))
+  //     //   enqueueSnackbar('Xóa thông tin thành công!', {
+  //     //     variant: 'success',
+  //     //   });
+  //     // } else {
+  //     if (data.error)
+  //       enqueueSnackbar('Không thể xóa Information' + data.error, {
   //         variant: 'error',
   //       });
-  //     },
-  //   }
-  // );
+  //   },
+  // });
+
 
   const handleFilterTitle = (filterTitle: string) => {
     setFilterTitle(filterTitle);
     setPage(0);
   };
 
-  // const handleDeleteRow = (_id: string) => {
+  // const handleDeleteRow = (id: string) => {
   //   setSelected([]);
   //   mutateAsyncDeleteInformation({
   //     informationInput: {
-  //       _id,
+  //       id,
   //     },
   //   });
   // };
 
-  // const handleDeleteRows = async (_ids: string[]) => {
+  // const handleDeleteRows = async (ids: string[]) => {
   //   setSelected([]);
   //   const response = await mutateAsyncDeleteManyInformation({
   //     informationInput: {
-  //       _ids,
+  //       ids,
   //     },
   //   });
-  //   setTableData(tableData.filter((info) => !_ids.includes(info._id)));
+  //   setTableData(tableData.filter((info) => !ids.includes(info.id)));
   //   enqueueSnackbar(response.data.deleteManyInformation, {
   //     variant: 'success',
   //   });
   // };
 
-  const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.information.edit(paramCase(_id)));
+  const handleEditRow = (id: string) => {
+    navigate(PATH_DASHBOARD.information.edit(kebabCase(id)));
   };
 
   const dataFiltered = applySortFilter({
@@ -187,7 +192,7 @@ export default function InformationList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row.id)
                     )
                   }
                   // actions={
@@ -211,7 +216,7 @@ export default function InformationList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row.id)
                     )
                   }
                 />
@@ -221,12 +226,12 @@ export default function InformationList() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <InformationTableRow
-                        key={row._id}
+                        key={row.id}
                         row={row}
-                        selected={selected.includes(row._id)}
-                        onSelectRow={() => onSelectRow(row._id)}
-                        // onDeleteRow={() => handleDeleteRow(row._id)}
-                        onEditRow={() => handleEditRow(row._id)}
+                        selected={selected.includes(row.id)}
+                        onSelectRow={() => onSelectRow(row.id)}
+                        // onDeleteRow={() => handleDeleteRow(row.id)}
+                        onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
 

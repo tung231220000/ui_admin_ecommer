@@ -22,12 +22,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
-// import {Simulate} from "react-dom/test-utils";
-// import mouseUp = Simulate.mouseUp;
-// import {AxiosError} from "axios";
-// import {RESTErrorResponse} from "@/@types/api";
 
-// ----------------------------------------------------------------------
 
 const LabelStyle = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle2,

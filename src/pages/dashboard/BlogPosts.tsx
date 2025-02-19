@@ -1,19 +1,20 @@
 import { BlogPostCard, BlogPostsSearch, BlogPostsSort } from 'src/sections/@dashboard/blog';
 import { Button, Container, Grid, Stack } from '@mui/material';
 
-import GraphqlPostRepository from 'src/apis/graphql/post';
+// import GraphqlPostRepository from 'src/apis/graphql/post';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import { Post } from '../../@types/post';
 import { Link as RouterLink } from 'react-router-dom';
-import { SkeletonPostItem } from 'src/components/skeleton';
+import { SkeletonPostItem } from '@/components/skeleton';
 import orderBy from 'lodash/orderBy';
 import { useQuery } from '@tanstack/react-query';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
+import {Post} from "@/@types/post";
+import ApiPostRepository from "@/apis/apiService/post.api";
 
 // ----------------------------------------------------------------------
 
@@ -47,22 +48,26 @@ export default function BlogPosts() {
 
   const sortedPosts = applySort(posts, filters);
 
-  useQuery(['fetchPosts'], () => GraphqlPostRepository.fetchPosts(), {
-    refetchOnWindowFocus: false,
-    onError() {
-      enqueueSnackbar('Không thể lấy danh sách bài viết!', {
-        variant: 'error',
-      });
-    },
-    onSuccess: (data) => {
-      if (!data.errors) {
-        setPosts(data.data.posts);
-      } else {
-        enqueueSnackbar(data.errors[0].message, {
+
+  useQuery({
+    queryKey: ['fetchPosts'],
+    queryFn: async () => {
+      try {
+        const data = await ApiPostRepository.fetchPosts();
+        if (!data.error) {
+          setPosts(data.data.posts);
+        } else {
+          enqueueSnackbar('Không thể lấy danh sách thông tin!', {
+            variant: 'error',
+          });
+        }
+      } catch (error) {
+        enqueueSnackbar('Không thể lấy danh sách thông tin!', {
           variant: 'error',
         });
       }
     },
+    refetchOnWindowFocus: false,
   });
 
   const handleChangeSort = (value: string) => {

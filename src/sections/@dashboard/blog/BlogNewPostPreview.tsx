@@ -6,7 +6,7 @@ import EmptyContent from '../../../components/EmptyContent';
 import { FormValuesProps } from './BlogNewPostForm';
 import Image from '../../../components/Image';
 import { LoadingButton } from '@mui/lab';
-import Markdown from 'src/components/MarkDown';
+import Markdown from '@/components/MarkDown';
 import Scrollbar from '../../../components/Scrollbar';
 import { alpha } from '@mui/material/styles';
 

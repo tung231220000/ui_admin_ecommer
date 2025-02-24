@@ -8,8 +8,8 @@ export type Post = {
   createdAt: Date | string | number;
   views: number;
   favorite: number;
-  author: UserMock;
+  author?: UserMock;
   tags: string[];
   body: string;
-  favoritePerson: UserMock[];
+  favoritePerson?: UserMock[];
 };

@@ -1,4 +1,4 @@
-import { BlogPostCard, BlogPostsSearch, BlogPostsSort } from 'src/sections/@dashboard/blog';
+import { BlogPostCard, BlogPostsSearch, BlogPostsSort } from '@/sections/@dashboard/blog';
 import { Button, Container, Grid, Stack } from '@mui/material';
 
 // import GraphqlPostRepository from 'src/apis/graphql/post';

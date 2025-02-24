@@ -2,7 +2,20 @@ import { CustomFile } from 'src/components/upload';
 import apiBackend from "@/apis/connection/api-backend";
 import { Post } from 'src/@types/post';
 import {RESTErrorResponse} from "@/@types/api";
+import {POST_SERVICE_UPLOAD_COVER_IMAGE_ENDPOINT} from "@/utils/constant";
 
+export type UploadCoverImagePayload = FormData;
+
+type UploadCoverImageResponse = {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+} & RESTErrorResponse;
 
 export type CreatePostPayload = {
   postInput: {
@@ -81,6 +94,19 @@ const ApiPostRepository = {
     const { data } = await apiBackend.post<UpdatePostResponse>('/post/update', {
       variables,
     });
+
+    return data;
+  },
+  async uploadCoverImage(payload: UploadCoverImagePayload): Promise<UploadCoverImageResponse> {
+    const { data } = await apiBackend.post<UploadCoverImageResponse>(
+      POST_SERVICE_UPLOAD_COVER_IMAGE_ENDPOINT,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
 
     return data;
   },

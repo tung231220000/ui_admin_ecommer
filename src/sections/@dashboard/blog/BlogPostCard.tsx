@@ -7,17 +7,17 @@ import Iconify from '../../../components/Iconify';
 // components
 import Image from '../../../components/Image';
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 // @types
 import { Post } from '../../../@types/post';
 import { Link as RouterLink } from 'react-router-dom';
 import SvgIconStyle from '../../../components/SvgIconStyle';
-import TextIconLabel from 'src/components/TextIconLabel';
-import TextMaxLine from 'src/components/TextMaxLine';
+import TextIconLabel from '@/components/TextIconLabel';
+import TextMaxLine from '@/components/TextMaxLine';
 // utils
 import { fDate } from '../../../utils/formatTime';
 import { fShortenNumber } from '../../../utils/formatNumber';
-import { paramCase } from 'change-case';
+import { kebabCase } from 'change-case';
 // hooks
 import useResponsive from '../../../hooks/useResponsive';
 
@@ -42,7 +42,7 @@ type Props = {
 export default function BlogPostCard({ post, index }: Props) {
   const isDesktop = useResponsive('up', 'md');
 
-  const { _id, cover, title, views, author, createdAt } = post;
+  const { id, cover, title, views, author, createdAt } = post;
 
   const latestPost = index === 0 || index === 1 || index === 2;
 
@@ -61,7 +61,7 @@ export default function BlogPostCard({ post, index }: Props) {
             position: 'absolute',
           }}
         />
-        <PostContent _id={_id} title={title} views={views} createdAt={createdAt} index={index} />
+        <PostContent id={id} title={title} views={views} createdAt={createdAt} index={index} />
         <OverlayStyle />
         <Image alt="cover" src={cover} sx={{ height: 360 }} />
       </Card>
@@ -97,7 +97,7 @@ export default function BlogPostCard({ post, index }: Props) {
         <Image alt="cover" src={cover} ratio="4/3" />
       </Box>
 
-      <PostContent _id={_id} title={title} views={views} createdAt={createdAt} />
+      <PostContent id={id} title={title} views={views} createdAt={createdAt} />
     </Card>
   );
 }
@@ -105,17 +105,17 @@ export default function BlogPostCard({ post, index }: Props) {
 // ----------------------------------------------------------------------
 
 type PostContentProps = {
-  _id: string;
+  id: string;
   title: string;
   views: number;
   createdAt: Date | string | number;
   index?: number;
 };
 
-export function PostContent({ _id, title, views, createdAt, index }: PostContentProps) {
+export function PostContent({ id, title, views, createdAt, index }: PostContentProps) {
   const isDesktop = useResponsive('up', 'md');
 
-  const linkTo = PATH_DASHBOARD.blog.view(paramCase(_id));
+  const linkTo = PATH_DASHBOARD.blog.view(kebabCase(id));
 
   const latestPostLarge = index === 0;
   const latestPostSmall = index === 1 || index === 2;

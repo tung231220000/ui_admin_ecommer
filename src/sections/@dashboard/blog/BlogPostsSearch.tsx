@@ -3,12 +3,12 @@ import { Autocomplete, InputAdornment, Link, Popper, PopperProps, Typography } f
 
 import Iconify from '../../../components/Iconify';
 import Image from '../../../components/Image';
-import InputStyle from 'src/components/InputStyle';
-import { PATH_DASHBOARD } from '../../../routes/paths';
-import { Post } from '../../../@types/post';
-import SearchNotFound from 'src/components/SearchNotFound';
+import InputStyle from '@/components/InputStyle';
+import { PATH_DASHBOARD } from '@/routes/paths';
+import { Post } from '@/@types/post';
+import SearchNotFound from '@/components/SearchNotFound';
 import match from 'autosuggest-highlight/match';
-import { paramCase } from 'change-case';
+import { kebabCase } from 'change-case';
 import parse from 'autosuggest-highlight/parse';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -47,7 +47,7 @@ export default function BlogPostsSearch() {
   // };
 
   const handleClick = (title: string) => {
-    navigate(PATH_DASHBOARD.blog.view(paramCase(title)));
+    navigate(PATH_DASHBOARD.blog.view(kebabCase(title)));
   };
 
   const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -66,7 +66,7 @@ export default function BlogPostsSearch() {
       // onInputChange={(event, value) => handleChangeSearch(value)}
       getOptionLabel={(post: Post) => post.title}
       noOptionsText={<SearchNotFound searchQuery={searchQuery} />}
-      isOptionEqualToValue={(option, value) => option._id === value._id}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
         <InputStyle
           {...params}

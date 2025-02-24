@@ -19,21 +19,25 @@ import {
   RHFTextField,
   RHFUploadSingleFile,
 } from '../../../components/hook-form';
-import GraphqlPostRepository, { CreatePostPayload, UpdatePostPayload } from 'src/apis/graphql/post';
-import PostRepository, { UploadCoverImagePayload } from 'src/apis/service/post';
 
 import BlogNewPostPreview from './BlogNewPostPreview';
-import { CustomFile } from 'src/components/upload';
-import { DTS_TELECOM_BACKEND_API_DOMAIN } from 'src/utils/constant';
+import { CustomFile } from '@/components/upload';
+import { API_DOMAIN } from "@/utils/constant";
 import { LoadingButton } from '@mui/lab';
-import { PATH_DASHBOARD } from '../../../routes/paths';
-import { Post } from 'src/@types/post';
+import { PATH_DASHBOARD } from '@/routes/paths';
+import { Post } from '@/@types/post';
 import { styled } from '@mui/material/styles';
-import useAuth from 'src/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
+import ApiPostRepository, {
+  CreatePostPayload,
+  UpdatePostPayload,
+  UploadCoverImagePayload
+} from "@/apis/apiService/post.api";
+// import {UserMock} from "@/@types/user";
 
 // ----------------------------------------------------------------------
 
@@ -78,26 +82,24 @@ const BlogNewPostForm: FC<Props> = ({ isEdit, currentPost }) => {
 
   const [open, setOpen] = useState(false);
 
-  const { mutateAsync: mutateAsyncUploadCoverImage } = useMutation(
-    (payload: UploadCoverImagePayload) => PostRepository.uploadCoverImage(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể upload ảnh cover!', {
-          variant: 'error',
-        });
-      },
+  const { mutateAsync: mutateAsyncUploadCoverImage } = useMutation({
+    mutationFn: (payload: UploadCoverImagePayload) => ApiPostRepository.uploadCoverImage(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể upload ảnh cover!', {
+        variant: 'error',
+      });
     }
-  );
-  const { mutateAsync: mutateAsyncCreatePost } = useMutation(
-    (payload: CreatePostPayload) => GraphqlPostRepository.createPost(payload),
-    {
-      onError() {
+  });
+
+  const {mutateAsync: mutateAsyncCreatePost} = useMutation({
+      mutationFn: (payload: CreatePostPayload) => ApiPostRepository.createPost(payload),
+      onError: () => {
         enqueueSnackbar('Không thể tạo bài viết!', {
           variant: 'error',
         });
       },
-      onSuccess(data) {
-        if (!data.errors) {
+      onSuccess: (data) => {
+        if (!data.error) {
           reset();
           handleClosePreview();
           enqueueSnackbar('Tạo bài viết thành công!', {
@@ -105,29 +107,7 @@ const BlogNewPostForm: FC<Props> = ({ isEdit, currentPost }) => {
           });
           navigate(PATH_DASHBOARD.blog.posts);
         } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncUpdatePost } = useMutation(
-    (payload: UpdatePostPayload) => GraphqlPostRepository.updatePost(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể cập nhật bài viết!', {
-          variant: 'error',
-        });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Cập nhật bài viết thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.blog.posts);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
+          enqueueSnackbar(data.error, {
             variant: 'error',
           });
         }
@@ -135,19 +115,48 @@ const BlogNewPostForm: FC<Props> = ({ isEdit, currentPost }) => {
     }
   );
 
+  const {mutateAsync: mutateAsyncUpdatePost} = useMutation({
+    mutationFn: (payload: UpdatePostPayload) => ApiPostRepository.updatePost(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể cập nhật bài viết!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Cập nhật bài viết thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.blog.posts);
+      } else {
+        enqueueSnackbar(data.error, {
+          variant: 'error',
+        });
+      }
+    },
+  });
+
   const NewBlogSchema = Yup.object().shape({
+    id: Yup.string().default(''),
+    cover: Yup.mixed<CustomFile | string>().defined().required('Cover is required'),
     title: Yup.string().required('Title is required'),
     description: Yup.string().required('Description is required'),
-    cover: Yup.string().required('Cover is required'),
+    createdAt: Yup.mixed<Date | string | number>().defined(),
+    views: Yup.number().default(0),
+    favorite:  Yup.number().default(0),
     body: Yup.string().min(1000).required('Content is required'),
-    tags: Yup.array().min(1, 'Tag is required'),
+    tags: Yup.array().min(1, 'Tag is required').defined(),
   });
   const defaultValues = {
+    id: currentPost?.id || '',
     cover: currentPost?.cover || '',
     title: currentPost?.title || '',
     description: currentPost?.description || '',
+    createdAt: currentPost?.createdAt || '',
     body: currentPost?.body || '',
-    tags: currentPost?.tags || [],
+    views: currentPost?.views ?? 0,
+    favorite: currentPost?.favorite ?? 0,
+    tags: currentPost?.tags ?? [],
   };
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewBlogSchema),
@@ -196,7 +205,7 @@ const BlogNewPostForm: FC<Props> = ({ isEdit, currentPost }) => {
         const filesData = new FormData();
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadCoverImage(filesData);
-        setValue(`cover`, `${DTS_TELECOM_BACKEND_API_DOMAIN}/${response.path}`);
+        setValue(`cover`, `${API_DOMAIN}/${response.path}`);
       }
     },
     [mutateAsyncUploadCoverImage, setValue]
@@ -207,7 +216,7 @@ const BlogNewPostForm: FC<Props> = ({ isEdit, currentPost }) => {
       mutateAsyncCreatePost({
         postInput: {
           ...data,
-          author: user?._id,
+          author: user?.id,
           createdAt: new Date(),
         },
       });
@@ -215,9 +224,9 @@ const BlogNewPostForm: FC<Props> = ({ isEdit, currentPost }) => {
       mutateAsyncUpdatePost({
         postInput: {
           ...data,
-          author: user?._id,
+          author: user?.id,
           createdAt: currentPost?.createdAt as Date,
-          _id: currentPost?._id as string,
+          id: currentPost?.id as string,
         },
       });
     }

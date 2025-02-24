@@ -2,9 +2,9 @@ import { useLocation, useParams } from 'react-router';
 
 import { BlogNewPostForm } from '../../sections/@dashboard/blog';
 import { Container } from '@mui/material';
-import GraphqlPostRepository from 'src/apis/graphql/post';
+import ApiPostRepository from '@/apis/apiService/post.api';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import { Post } from 'src/@types/post';
 import { capitalCase } from 'change-case';
@@ -17,39 +17,33 @@ import { useState } from 'react';
 
 export default function BlogNewPost() {
   const { pathname } = useLocation();
-  const { _id = '' } = useParams();
+  const { id = '' } = useParams();
 
   const { enqueueSnackbar } = useSnackbar();
   const { themeStretch } = useSettings();
 
   const [currentPost, setCurrentPost] = useState<Post>();
 
-  useQuery(
-    ['fetchPost', _id],
-    () =>
-      GraphqlPostRepository.fetchPost({
-        postInput: {
-          _id: _id as string,
-        },
-      }),
-    {
-      refetchOnWindowFocus: false,
-      onError() {
-        enqueueSnackbar('Không thể lấy bài viết!', {
-          variant: 'error',
-        });
-      },
-      onSuccess: (data) => {
-        if (!data.errors) {
+  useQuery({
+    queryKey: ['fetchPost', id],
+    queryFn: async () => {
+      try {
+        const data = await ApiPostRepository.fetchPost({id: id as string});
+        if (!data.error) {
           setCurrentPost(data.data.post);
         } else {
-          enqueueSnackbar(data.errors[0].message, {
+          enqueueSnackbar('Không thể lấy danh sách thông tin!', {
             variant: 'error',
           });
         }
-      },
-    }
-  );
+      } catch (error) {
+        enqueueSnackbar('Không thể lấy bài viết!', {
+          variant: 'error',
+        });
+      }
+    },
+    refetchOnWindowFocus: false,
+  });
 
   const isEdit = pathname.includes('edit');
 
@@ -61,7 +55,7 @@ export default function BlogNewPost() {
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             { name: 'Blog', href: PATH_DASHBOARD.blog.root },
-            { name: !isEdit ? 'New Post' : capitalCase(_id) },
+            { name: !isEdit ? 'New Post' : capitalCase(id) },
           ]}
         />
 

@@ -12,11 +12,11 @@ import {
   TablePagination,
   Tooltip,
 } from '@mui/material';
-import GraphqlPartnerRepository, {
-  DeleteManyPartnersPayload,
-  DeletePartnerPayload,
-} from 'src/apis/graphql/partner';
-import { PartnerTableRow, PartnerTableToolbar } from 'src/sections/@dashboard/partner/list';
+// import GraphqlPartnerRepository, {
+//   DeleteManyPartnersPayload,
+//   DeletePartnerPayload,
+// } from 'src/apis/graphql/partner';
+// import { PartnerTableRow, PartnerTableToolbar } from 'src/sections/@dashboard/partner/list';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   TableEmptyRows,
@@ -29,14 +29,24 @@ import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import { Partner } from 'src/@types/partner';
 import Scrollbar from '../../components/Scrollbar';
-import { paramCase } from 'change-case';
+import { kebabCase } from 'change-case';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
+import ApiPartnerRepository, {
+  DeleteManyPartnersPayload, DeleteManyPartnersResponse,
+  DeletePartnerPayload,
+  DeletePartnerResponse
+} from "@/apis/apiService/partner.api";
+// import AuthRepository, {SignInPayload, SignInResponse} from "@/apis/service/auth";
+import {AxiosError} from "axios";
+import {RESTErrorResponse} from "@/@types/api";
+// import {setSession} from "@/utils/jwt";
+import {PartnerTableRow, PartnerTableToolbar} from "@/sections/@dashboard/partner/list";
 
 // ----------------------------------------------------------------------
 
@@ -72,86 +82,83 @@ export default function PartnerList() {
 
   const [tableData, setTableData] = useState<Partner[]>([]);
   const [filterName, setFilterName] = useState('');
+  useQuery({
+    queryKey: ['fetchPartners'],
+    queryFn: async () => {
+      try {
+        const data = await ApiPartnerRepository.fetchPartners();
+        if (!data.error) {
+          setTableData(data.partners);
+        } else {
+          enqueueSnackbar(data.message, {
+            variant: 'error',
+          });
+        }
+      } catch (error) {
+        enqueueSnackbar('Không thể lấy danh sách đối tác!', {
+          variant: 'error',
+        });
+      }
+    }
+  })
 
-  useQuery(['fetchPartners'], () => GraphqlPartnerRepository.fetchPartners(), {
-    refetchOnWindowFocus: false,
-    onError() {
-      enqueueSnackbar('Không thể lấy danh sách đối tác!', {
+  const {mutateAsync: mutateAsyncDeletePartner} = useMutation<DeletePartnerResponse, AxiosError<RESTErrorResponse>, DeletePartnerPayload>({
+    mutationFn: (payload: DeletePartnerPayload) => ApiPartnerRepository.deletePartner(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa đối tác!', {
         variant: 'error',
       });
     },
-    onSuccess: (data) => {
-      if (!data.errors) {
-        setTableData(data.data.partners);
+    onSuccess: (data: DeletePartnerResponse) => {
+      if (!data.error) {
+        setTableData(tableData.filter((partner) => partner.id !== data.deletePartner.id));
+        enqueueSnackbar('Xóa đối tác thành công!', {
+          variant: 'success',
+        });
       } else {
-        enqueueSnackbar(data.errors[0].message, {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
       }
     },
   });
-  const { mutateAsync: mutateAsyncDeletePartner } = useMutation(
-    (payload: DeletePartnerPayload) => GraphqlPartnerRepository.deletePartner(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa đối tác!', {
-          variant: 'error',
-        });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          setTableData(tableData.filter((partner) => partner._id !== data.data.deletePartner._id));
-          enqueueSnackbar('Xóa đối tác thành công!', {
-            variant: 'success',
-          });
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncDeleteManyPartners } = useMutation(
-    (payload: DeleteManyPartnersPayload) => GraphqlPartnerRepository.deleteManyPartners(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa nhiều đối tác!', {
-          variant: 'error',
-        });
-      },
-    }
-  );
+
+
+  const {mutateAsync: mutateAsyncDeleteManyPartners} = useMutation<DeleteManyPartnersResponse, AxiosError<RESTErrorResponse>, DeleteManyPartnersPayload>({
+    mutationFn: (payload: DeleteManyPartnersPayload) => ApiPartnerRepository.deleteManyPartners(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa nhiều đối tác!', {
+        variant: 'error',
+      });
+    },
+  });
+
 
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName);
     setPage(0);
   };
 
-  const handleDeleteRow = (_id: string) => {
+  const handleDeleteRow = (id: string) => {
     setSelected([]);
     mutateAsyncDeletePartner({
-      partnerInput: {
-        _id,
-      },
+        id,
     });
   };
 
-  const handleDeleteRows = async (_ids: string[]) => {
+  const handleDeleteRows = async (ids: string[]) => {
     setSelected([]);
     const response = await mutateAsyncDeleteManyPartners({
-      partnerInput: {
-        _ids,
-      },
+      ids,
     });
-    setTableData(tableData.filter((partner) => !_ids.includes(partner._id)));
-    enqueueSnackbar(response.data.deleteManyPartners, {
+    setTableData(tableData.filter((partner) => !ids.includes(partner.id)));
+    enqueueSnackbar(response.deleteManyPartners, {
       variant: 'success',
     });
   };
 
-  const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.partner.edit(paramCase(_id)));
+  const handleEditRow = (id: string) => {
+    navigate(PATH_DASHBOARD.partner.edit(kebabCase(id)));
   };
 
   const dataFiltered = applySortFilter({
@@ -199,7 +206,7 @@ export default function PartnerList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row.id)
                     )
                   }
                   actions={
@@ -223,7 +230,7 @@ export default function PartnerList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row.id)
                     )
                   }
                 />
@@ -233,12 +240,12 @@ export default function PartnerList() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <PartnerTableRow
-                        key={row._id}
+                        key={row.id}
                         row={row}
-                        selected={selected.includes(row._id)}
-                        onSelectRow={() => onSelectRow(row._id)}
-                        onDeleteRow={() => handleDeleteRow(row._id)}
-                        onEditRow={() => handleEditRow(row._id)}
+                        selected={selected.includes(row.id)}
+                        onSelectRow={() => onSelectRow(row.id)}
+                        onDeleteRow={() => handleDeleteRow(row.id)}
+                        onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
 

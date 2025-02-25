@@ -12,10 +12,6 @@ import {
   TablePagination,
   Tooltip,
 } from '@mui/material';
-import GraphqlTrademarkRepository, {
-  DeleteManyTrademarksPayload,
-  DeleteTrademarkPayload,
-} from 'src/apis/graphql/trademark';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   TableEmptyRows,
@@ -29,14 +25,18 @@ import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
 import { Trademark } from 'src/@types/trademark';
-import { paramCase } from 'change-case';
+import { kebabCase } from 'change-case';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
+import ApiTrademarkRepository, {
+  DeleteManyTrademarksPayload,
+  DeleteTrademarkPayload
+} from "@/apis/apiService/trademark.api";
 
 // ----------------------------------------------------------------------
 
@@ -73,88 +73,86 @@ export default function TrademarkList() {
   const [tableData, setTableData] = useState<Trademark[]>([]);
   const [filterName, setFilterName] = useState('');
 
-  useQuery(['fetchTrademarks'], () => GraphqlTrademarkRepository.fetchTrademarks(), {
-    refetchOnWindowFocus: false,
-    onError() {
-      enqueueSnackbar('Không thể lấy danh sách thương hiệu!', {
-        variant: 'error',
-      });
-    },
-    onSuccess: (data) => {
-      if (!data.errors) {
-        setTableData(data.data.trademarks);
-      } else {
-        enqueueSnackbar(data.errors[0].message, {
+  useQuery({
+    queryKey: ['fetchTrademarks'],
+    queryFn : async () => {
+      try {
+        const data = await ApiTrademarkRepository.fetchTrademarks();
+        if (!data.error) {
+          setTableData(data.trademarks);
+        } else {
+          enqueueSnackbar(data.message, {
+            variant: 'error',
+          });
+        }
+      } catch (error) {
+        enqueueSnackbar('Không thể lấy danh sách thương hiệu!', {
           variant: 'error',
         });
       }
     },
+    refetchOnWindowFocus: false,
   });
-  const { mutateAsync: mutateAsyncDeleteTrademark } = useMutation(
-    (payload: DeleteTrademarkPayload) => GraphqlTrademarkRepository.deleteTrademark(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa thương hiệu!', {
+
+  const {mutateAsync: mutateAsyncDeleteTrademark} = useMutation({
+    mutationFn: (payload: DeleteTrademarkPayload) => ApiTrademarkRepository.deleteTrademark(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa thương hiệu!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        setTableData(
+          tableData.filter((trademark) => trademark.id !== data.deleteTrademark.id)
+        );
+        enqueueSnackbar('Xóa thương hiệu thành công!', {
+          variant: 'success',
+        });
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          setTableData(
-            tableData.filter((trademark) => trademark._id !== data.data.deleteTrademark._id)
-          );
-          enqueueSnackbar('Xóa thương hiệu thành công!', {
-            variant: 'success',
-          });
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
+      }
     }
-  );
-  const { mutateAsync: mutateAsyncDeleteManyTrademarks } = useMutation(
-    (payload: DeleteManyTrademarksPayload) =>
-      GraphqlTrademarkRepository.deleteManyTrademarks(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa nhiều thương hiệu!', {
-          variant: 'error',
-        });
-      },
-    }
-  );
+  });
+
+  const {mutateAsync: mutateAsyncDeleteManyTrademarks} = useMutation({
+    mutationFn: (payload: DeleteManyTrademarksPayload) =>
+      ApiTrademarkRepository.deleteManyTrademarks(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa nhiều thương hiệu!', {
+        variant: 'error',
+      });
+    },
+  });
+
 
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName);
     setPage(0);
   };
 
-  const handleDeleteRow = (_id: string) => {
+  const handleDeleteRow = (id: string) => {
     setSelected([]);
     mutateAsyncDeleteTrademark({
-      trademarkInput: {
-        _id,
-      },
+      id,
     });
   };
 
-  const handleDeleteRows = async (_ids: string[]) => {
+  const handleDeleteRows = async (ids: string[]) => {
     setSelected([]);
     const response = await mutateAsyncDeleteManyTrademarks({
-      trademarkInput: {
-        _ids,
-      },
+      ids,
     });
-    setTableData(tableData.filter((trademark) => !_ids.includes(trademark._id)));
-    enqueueSnackbar(response.data.deleteManyTrademarks, {
+    setTableData(tableData.filter((trademark) => !ids.includes(trademark.id)));
+    enqueueSnackbar(response.deleteManyTrademarks, {
       variant: 'success',
     });
   };
 
-  const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.trademark.edit(paramCase(_id)));
+  const handleEditRow = (id: string) => {
+    navigate(PATH_DASHBOARD.trademark.edit(kebabCase(id)));
   };
 
   const dataFiltered = applySortFilter({
@@ -202,7 +200,7 @@ export default function TrademarkList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row.id)
                     )
                   }
                   actions={
@@ -226,7 +224,7 @@ export default function TrademarkList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row.id)
                     )
                   }
                 />
@@ -236,12 +234,12 @@ export default function TrademarkList() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <TrademarkTableRow
-                        key={row._id}
+                        key={row.id}
                         row={row}
-                        selected={selected.includes(row._id)}
-                        onSelectRow={() => onSelectRow(row._id)}
-                        onDeleteRow={() => handleDeleteRow(row._id)}
-                        onEditRow={() => handleEditRow(row._id)}
+                        selected={selected.includes(row.id)}
+                        onSelectRow={() => onSelectRow(row.id)}
+                        onDeleteRow={() => handleDeleteRow(row.id)}
+                        onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
 

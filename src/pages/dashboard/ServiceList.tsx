@@ -12,12 +12,8 @@ import {
   TablePagination,
   Tooltip,
 } from '@mui/material';
-import GraphqlServiceRepository, {
-  DeleteManyServicesPayload,
-  DeleteServicePayload,
-} from 'src/apis/graphql/service';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { ServiceTableRow, ServiceTableToolbar } from 'src/sections/@dashboard/service/list';
+import { ServiceTableRow, ServiceTableToolbar } from '@/sections/@dashboard/service/list';
 import {
   TableEmptyRows,
   TableHeadCustom,
@@ -29,14 +25,15 @@ import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import { Service } from 'src/@types/service';
-import { paramCase } from 'change-case';
+import { Service } from '@/@types/service';
+import { kebabCase } from 'change-case';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
+import ServiceApiRepository, {DeleteManyServicesPayload, DeleteServicePayload} from "@/apis/apiService/service.api";
 
 // ----------------------------------------------------------------------
 
@@ -74,55 +71,55 @@ export default function ServiceList() {
   const [tableData, setTableData] = useState<Service[]>([]);
   const [filterKey, setFilterKey] = useState('');
 
-  useQuery(['fetchServices'], () => GraphqlServiceRepository.fetchServices(), {
-    refetchOnWindowFocus: false,
-    onError() {
-      enqueueSnackbar('Không thể lấy danh sách linh kiện!', {
+  useQuery({
+    queryKey: ['fetchServices'],
+    queryFn: async () => {
+      try {
+        const data = await ServiceApiRepository.fetchServices();
+        if (!data.error) {
+          setTableData(data.data.services);
+        } else {
+          enqueueSnackbar(data.message, {
+            variant: 'error',
+          });
+        }
+      } catch (e) {
+        enqueueSnackbar('Không thể lấy danh sách linh kiện!', {
+          variant: 'error',
+        });
+      }
+    }
+  });
+
+  const {mutateAsync: mutateAsyncDeleteService} = useMutation({
+    mutationFn: (payload: DeleteServicePayload) => ServiceApiRepository.deleteService(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa linh kiện!', {
         variant: 'error',
       });
     },
     onSuccess: (data) => {
-      if (!data.errors) {
-        setTableData(data.data.services);
+      if (!data.error) {
+        setTableData(tableData.filter((service) => service._id !== data.data.deleteService._id));
+        enqueueSnackbar('Xóa linh kiện thành công!', {
+          variant: 'success',
+        });
       } else {
-        enqueueSnackbar(data.errors[0].message, {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
       }
-    },
+    }
   });
-  const { mutateAsync: mutateAsyncDeleteService } = useMutation(
-    (payload: DeleteServicePayload) => GraphqlServiceRepository.deleteService(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa linh kiện!', {
-          variant: 'error',
-        });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          setTableData(tableData.filter((service) => service._id !== data.data.deleteService._id));
-          enqueueSnackbar('Xóa linh kiện thành công!', {
-            variant: 'success',
-          });
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
+
+  const { mutateAsync: mutateAsyncDeleteManyServices } = useMutation({
+    mutationFn: (payload: DeleteManyServicesPayload) => ServiceApiRepository.deleteManyServices(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa nhiều linh kiện!', {
+        variant: 'error',
+      });
     }
-  );
-  const { mutateAsync: mutateAsyncDeleteManyServices } = useMutation(
-    (payload: DeleteManyServicesPayload) => GraphqlServiceRepository.deleteManyServices(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa nhiều linh kiện!', {
-          variant: 'error',
-        });
-      },
-    }
-  );
+  });
 
   const handleFilterKey = (filterKey: string) => {
     setFilterKey(filterKey);
@@ -152,7 +149,7 @@ export default function ServiceList() {
   };
 
   const handleEditRow = (key: string) => {
-    navigate(PATH_DASHBOARD.service.edit(paramCase(key)));
+    navigate(PATH_DASHBOARD.service.edit(kebabCase(key)));
   };
 
   const dataFiltered = applySortFilter({

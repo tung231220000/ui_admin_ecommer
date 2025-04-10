@@ -12,7 +12,7 @@ import {
   TablePagination,
   Tooltip,
 } from '@mui/material';
-import { CategoryTableRow, CategoryTableToolbar } from 'src/sections/@dashboard/category/list';
+import { CategoryTableRow, CategoryTableToolbar } from '@/sections/@dashboard/category/list';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   TableEmptyRows,
@@ -23,14 +23,14 @@ import {
 import { useEffect, useState } from 'react';
 import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
-import { Category } from 'src/@types/category';
+import { Category } from '@/@types/category';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import { paramCase } from 'change-case';
-import useCategory from 'src/hooks/useCategory';
+import { kebabCase } from 'change-case';
+import useCategory from '@/hooks/useCategory';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------
@@ -88,7 +88,7 @@ export default function CategoryList() {
   };
 
   const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.category.edit(paramCase(_id)));
+    navigate(PATH_DASHBOARD.category.edit(kebabCase(_id)));
   };
 
   const dataFiltered = applySortFilter({

@@ -3,7 +3,7 @@ import { Avatar, Checkbox, MenuItem, TableCell, TableRow, Typography } from '@mu
 import Iconify from '../../../../components/Iconify';
 import Label from '../../../../components/Label';
 import { TableMoreMenu } from '../../../../components/table';
-import { UserMock } from '../../../../@types/user';
+import { UserMock } from '@/@types/user';
 import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 

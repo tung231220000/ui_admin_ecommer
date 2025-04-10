@@ -19,7 +19,7 @@ import {
   TableNoData,
   TableSelectedActions,
 } from '../../components/table';
-import { TrademarkTableRow, TrademarkTableToolbar } from 'src/sections/@dashboard/trademark/list';
+import { TrademarkTableRow, TrademarkTableToolbar } from '@/sections/@dashboard/trademark/list';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
@@ -28,7 +28,7 @@ import Iconify from '../../components/Iconify';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import { Trademark } from 'src/@types/trademark';
+import { Trademark } from '@/@types/trademark';
 import { kebabCase } from 'change-case';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';

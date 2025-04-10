@@ -1,5 +1,5 @@
 export type Office = {
-  _id: string;
+  id: string;
   name: string;
   hotline: string;
   fax: string;

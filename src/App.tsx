@@ -22,6 +22,7 @@ function App() {
           <NotistackProvider>
             <ProgressBarStyle />
             <ScrollToTop />
+
             <AuthProvider>
               <CategoryProvider>
                 <SolutionCategoryProvider>

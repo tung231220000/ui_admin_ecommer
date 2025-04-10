@@ -1,12 +1,12 @@
-import { capitalCase, paramCase } from 'change-case';
+import { capitalCase, kebabCase } from 'change-case';
 import { useLocation, useParams } from 'react-router-dom';
 
 import { Container } from '@mui/material';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import QaANewEditForm from 'src/sections/@dashboard/QaA/QaANewEditForm';
-import useQaA from 'src/hooks/useQaA';
+import useQaA from '@/hooks/useQaA';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------
@@ -19,7 +19,7 @@ export default function QaACreate() {
   const { QaAs } = useQaA();
 
   const isEdit = pathname.includes('edit');
-  const currentQaA = QaAs.find((QaA) => paramCase(QaA._id) === _id);
+  const currentQaA = QaAs.find((QaA) => kebabCase(QaA._id) === _id);
 
   return (
     <Page title={!isEdit ? 'QaA: Create a new QaA' : 'QaA: Edit a QaA'}>

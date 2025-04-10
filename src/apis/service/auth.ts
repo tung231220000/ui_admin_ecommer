@@ -6,7 +6,8 @@ import {AUTH_SERVICE_GET_USER_ENDPOINT, AUTH_SERVICE_SIGN_IN_ENDPOINT} from "@/u
 export type SignInPayload = {
   email: string;
   password: string;
-  rememberMe: boolean;
+  remember: boolean;
+  afterSubmit?: string;
 };
 
 export type SignInResponse = {

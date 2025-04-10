@@ -12,50 +12,47 @@ import {
   TablePagination,
   Tooltip,
 } from '@mui/material';
-import GraphqlOfficeRepository, {
-  DeleteManyOfficesPayload,
-  DeleteOfficePayload,
-} from 'src/apis/graphql/office';
-import { OfficeTableRow, OfficeTableToolbar } from 'src/sections/@dashboard/office/list';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import {OfficeTableRow, OfficeTableToolbar} from '@/sections/@dashboard/office/list';
+import {Link as RouterLink, useNavigate} from 'react-router-dom';
 import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
   TableSelectedActions,
 } from '../../components/table';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
+import {useMutation, useQuery} from '@tanstack/react-query';
+import useTable, {emptyRows, getComparator} from '../../hooks/useTable';
 
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { Office } from 'src/@types/office';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import {Office} from '@/@types/office';
+import {PATH_DASHBOARD} from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import { paramCase } from 'change-case';
+import {kebabCase} from 'change-case';
 import useSettings from '../../hooks/useSettings';
-import { useSnackbar } from 'notistack';
-import { useState } from 'react';
+import {useSnackbar} from 'notistack';
+import {useState} from 'react';
+import ApiOfficeRepository, {DeleteManyOfficesPayload, DeleteOfficePayload} from "@/apis/apiService/office.api";
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', align: 'left' },
-  { id: 'hotline', label: 'Hotline', align: 'left' },
-  { id: 'fax', label: 'Fax', align: 'left' },
-  { id: 'address', label: 'Address', align: 'left' },
-  { id: 'email', label: 'Email', align: 'left' },
-  { id: '' },
+  {id: 'name', label: 'Name', align: 'left'},
+  {id: 'hotline', label: 'Hotline', align: 'left'},
+  {id: 'fax', label: 'Fax', align: 'left'},
+  {id: 'address', label: 'Address', align: 'left'},
+  {id: 'email', label: 'Email', align: 'left'},
+  {id: ''},
 ];
 
 // ----------------------------------------------------------------------
 
 export default function OfficeList() {
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar();
+  const {enqueueSnackbar} = useSnackbar();
 
-  const { themeStretch } = useSettings();
+  const {themeStretch} = useSettings();
   const {
     dense,
     page,
@@ -76,85 +73,82 @@ export default function OfficeList() {
   const [tableData, setTableData] = useState<Office[]>([]);
   const [filterName, setFilterName] = useState('');
 
-  useQuery(['fetchOffices'], () => GraphqlOfficeRepository.fetchOffices(), {
-    refetchOnWindowFocus: false,
-    onError() {
-      enqueueSnackbar('Không thể lấy danh sách văn phòng!', {
+  useQuery({
+    queryKey: ['fetchOffices'],
+    queryFn: async () => {
+      try {
+        const data = await ApiOfficeRepository.fetchOffices();
+        if (!data.error) {
+          setTableData(data.offices);
+        } else {
+          enqueueSnackbar(data.message, {
+            variant: 'error',
+          });
+        }
+      } catch (error) {
+        enqueueSnackbar('Không thể lấy danh sách văn phòng!', {
+          variant: 'error',
+        });
+      }
+    }
+  })
+
+
+  const {mutateAsync: mutateAsyncDeleteOffice} = useMutation({
+    mutationFn: (payload: DeleteOfficePayload) => ApiOfficeRepository.deleteOffice(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa văn phòng!', {
         variant: 'error',
       });
     },
     onSuccess: (data) => {
-      if (!data.errors) {
-        setTableData(data.data.offices);
+      if (!data.error) {
+        setTableData(tableData.filter((office) => office.id !== data.deleteOffice.id));
+        enqueueSnackbar('Xóa văn phòng thành công!', {
+          variant: 'success',
+        });
       } else {
-        enqueueSnackbar(data.errors[0].message, {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
       }
-    },
+    }
   });
-  const { mutateAsync: mutateAsyncDeleteOffice } = useMutation(
-    (payload: DeleteOfficePayload) => GraphqlOfficeRepository.deleteOffice(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa văn phòng!', {
-          variant: 'error',
-        });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          setTableData(tableData.filter((office) => office._id !== data.data.deleteOffice._id));
-          enqueueSnackbar('Xóa văn phòng thành công!', {
-            variant: 'success',
-          });
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
+
+  const {mutateAsync: mutateAsyncDeleteManyOffices} = useMutation({
+    mutationFn: (payload: DeleteManyOfficesPayload) => ApiOfficeRepository.deleteManyOffices(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa nhiều văn phòng!', {
+        variant: 'error',
+      });
     }
-  );
-  const { mutateAsync: mutateAsyncDeleteManyOffices } = useMutation(
-    (payload: DeleteManyOfficesPayload) => GraphqlOfficeRepository.deleteManyOffices(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa nhiều văn phòng!', {
-          variant: 'error',
-        });
-      },
-    }
-  );
+  })
 
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName);
     setPage(0);
   };
 
-  const handleDeleteRow = (_id: string) => {
+  const handleDeleteRow = (id: string) => {
     setSelected([]);
     mutateAsyncDeleteOffice({
-      officeInput: {
-        _id,
-      },
+      id
     });
   };
 
-  const handleDeleteRows = async (_ids: string[]) => {
+  const handleDeleteRows = async (ids: string[]) => {
     setSelected([]);
     const response = await mutateAsyncDeleteManyOffices({
-      officeInput: {
-        _ids,
-      },
+      ids,
     });
-    setTableData(tableData.filter((office) => !_ids.includes(office._id)));
-    enqueueSnackbar(response.data.deleteManyOffices, {
+    setTableData(tableData.filter((office) => !ids.includes(office.id)));
+    enqueueSnackbar(response.deleteManyOffices, {
       variant: 'success',
     });
   };
 
-  const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.office.edit(paramCase(_id)));
+  const handleEditRow = (id: string) => {
+    navigate(PATH_DASHBOARD.office.edit(kebabCase(id)));
   };
 
   const dataFiltered = applySortFilter({
@@ -173,16 +167,16 @@ export default function OfficeList() {
         <HeaderBreadcrumbs
           heading="Office List"
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
-            { name: 'Office', href: PATH_DASHBOARD.office.list },
-            { name: 'List' },
+            {name: 'Dashboard', href: PATH_DASHBOARD.root},
+            {name: 'Office', href: PATH_DASHBOARD.office.list},
+            {name: 'List'},
           ]}
           action={
             <Button
               variant="contained"
               component={RouterLink}
               to={PATH_DASHBOARD.office.new}
-              startIcon={<Iconify icon={'eva:plus-fill'} />}
+              startIcon={<Iconify icon={'eva:plus-fill'}/>}
             >
               New Office
             </Button>
@@ -190,10 +184,10 @@ export default function OfficeList() {
         />
 
         <Card>
-          <OfficeTableToolbar filterName={filterName} onFilterName={handleFilterName} />
+          <OfficeTableToolbar filterName={filterName} onFilterName={handleFilterName}/>
 
           <Scrollbar>
-            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
+            <TableContainer sx={{minWidth: 800, position: 'relative'}}>
               {selected.length > 0 && (
                 <TableSelectedActions
                   dense={dense}
@@ -202,13 +196,13 @@ export default function OfficeList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row.id)
                     )
                   }
                   actions={
                     <Tooltip title="Delete">
                       <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
-                        <Iconify icon={'eva:trash-2-outline'} />
+                        <Iconify icon={'eva:trash-2-outline'}/>
                       </IconButton>
                     </Tooltip>
                   }
@@ -226,7 +220,7 @@ export default function OfficeList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row.id)
                     )
                   }
                 />
@@ -236,12 +230,12 @@ export default function OfficeList() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <OfficeTableRow
-                        key={row._id}
+                        key={row.id}
                         row={row}
-                        selected={selected.includes(row._id)}
-                        onSelectRow={() => onSelectRow(row._id)}
-                        onDeleteRow={() => handleDeleteRow(row._id)}
-                        onEditRow={() => handleEditRow(row._id)}
+                        selected={selected.includes(row.id)}
+                        onSelectRow={() => onSelectRow(row.id)}
+                        onDeleteRow={() => handleDeleteRow(row.id)}
+                        onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
 
@@ -250,13 +244,13 @@ export default function OfficeList() {
                     emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
                   />
 
-                  <TableNoData isNotFound={isNotFound} />
+                  <TableNoData isNotFound={isNotFound}/>
                 </TableBody>
               </Table>
             </TableContainer>
           </Scrollbar>
 
-          <Box sx={{ position: 'relative' }}>
+          <Box sx={{position: 'relative'}}>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
@@ -268,9 +262,9 @@ export default function OfficeList() {
             />
 
             <FormControlLabel
-              control={<Switch checked={dense} onChange={onChangeDense} />}
+              control={<Switch checked={dense} onChange={onChangeDense}/>}
               label="Dense"
-              sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
+              sx={{px: 3, py: 1.5, top: 0, position: {md: 'absolute'}}}
             />
           </Box>
         </Card>
@@ -282,10 +276,10 @@ export default function OfficeList() {
 // ----------------------------------------------------------------------
 
 function applySortFilter({
-  tableData,
-  comparator,
-  filterName,
-}: {
+                           tableData,
+                           comparator,
+                           filterName,
+                         }: {
   tableData: Office[];
   comparator: (a: any, b: any) => number;
   filterName: string;

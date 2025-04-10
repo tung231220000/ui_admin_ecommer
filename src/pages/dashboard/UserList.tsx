@@ -27,12 +27,12 @@ import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
 import { UserMock } from 'src/@types/user';
-import { _userList } from '../../_mock';
-import { paramCase } from 'change-case';
+import { _userList } from '@/_mock';
+import { kebabCase } from 'change-case';
 import useSettings from '../../hooks/useSettings';
 import { useState } from 'react';
 import useTabs from '../../hooks/useTabs';
@@ -119,7 +119,7 @@ export default function UserList() {
   };
 
   const handleEditRow = (id: string) => {
-    navigate(PATH_DASHBOARD.user.edit(paramCase(id)));
+    navigate(PATH_DASHBOARD.user.edit(kebabCase(id)));
   };
 
   const dataFiltered = applySortFilter({

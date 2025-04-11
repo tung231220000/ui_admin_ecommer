@@ -73,7 +73,7 @@ const ApiInformationRepository = {
 
     return data;
   },
-  async fetchInformationDetail(variables: string): Promise<GetInformationDetailResponse> {
+  async fetchInformationDetail(variables: { id: string }): Promise<GetInformationDetailResponse> {
     const { data } = await apiBackend.get<GetInformationDetailResponse>('/information/detail/' + variables, {});
 
     return data;

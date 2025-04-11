@@ -1,10 +1,8 @@
 import { useLocation, useParams } from 'react-router-dom';
 
 import { Container } from '@mui/material';
-import GraphqlServiceRepository from 'src/apis/graphql/service';
-import GraphqlSolutionRepository from 'src/apis/graphql/solution';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import { Service } from 'src/@types/service';
 import { Solution } from 'src/@types/solution';
@@ -16,6 +14,8 @@ import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import useSolutionCategory from 'src/hooks/useSolutionCategory';
 import { useState } from 'react';
+import ServiceApiRepository from '@/apis/apiService/service.api';
+import ApiSolutionRepository from '@/apis/apiService/solution.api';
 
 // ----------------------------------------------------------------------
 
@@ -31,50 +31,53 @@ export default function SolutionCreate() {
   const [services, setServices] = useState<Service[]>([]);
   const [currentSolution, setCurrentSolution] = useState<Solution>();
 
-  useQuery(['fetchServices'], () => GraphqlServiceRepository.fetchServices(), {
-    refetchOnWindowFocus: false,
-    onError() {
-      enqueueSnackbar('Không thể lấy danh sách linh kiện!', {
-        variant: 'error',
-      });
-    },
-    onSuccess: (data) => {
-      if (!data.errors) {
-        setServices(data.data.services);
-      } else {
-        enqueueSnackbar(data.errors[0].message, {
+  useQuery({
+    queryKey: ['fetchServices'],
+    queryFn: async () => {
+      try {
+        const data = await ServiceApiRepository.fetchServices();
+        {
+          if (!data.error) {
+            setServices(data.data.services);
+          } else {
+            enqueueSnackbar(data.message, {
+              variant: 'error',
+            });
+          }
+        }
+      } catch (e) {
+        enqueueSnackbar('Không thể lấy danh sách linh kiện!', {
           variant: 'error',
         });
       }
     },
+    refetchOnWindowFocus: false,
   });
-  useQuery(
-    ['fetchSolutionDetail', key],
-    () =>
-      GraphqlSolutionRepository.fetchSolutionDetail({
-        solutionInput: {
-          key,
-        },
-      }),
-    {
-      enabled: key.length > 0,
-      refetchOnWindowFocus: false,
-      onError() {
-        enqueueSnackbar('Không thể lấy chi tiết giải pháp!', {
-          variant: 'error',
+  useQuery({
+    queryKey: ['fetchSolutionDetail', key],
+    queryFn: async () => {
+      try {
+        const data = await ApiSolutionRepository.fetchSolutionDetail({
+          solutionInput: {
+            key,
+          },
         });
-      },
-      onSuccess: (data) => {
-        if (!data.errors) {
+        if (!data.error) {
           setCurrentSolution(data.data.solutionDetail);
         } else {
-          enqueueSnackbar(data.errors[0].message, {
+          enqueueSnackbar(data.message, {
             variant: 'error',
           });
         }
-      },
-    }
-  );
+      } catch (e) {
+        enqueueSnackbar('Không thể lấy chi tiết giải pháp!', {
+          variant: 'error',
+        });
+      }
+    },
+    enabled: key.length > 0,
+    refetchOnWindowFocus: false,
+  });
 
   const isEdit = pathname.includes('edit');
 

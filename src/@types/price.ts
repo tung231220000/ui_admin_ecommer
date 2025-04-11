@@ -13,3 +13,14 @@ export type Price = {
   currency: Currency;
   unit: TimeUnit;
 };
+
+export type PriceState = {
+  prices: Price[];
+};
+
+export type SetPrices = {
+  type: 'SET_PRICES';
+  payload: Price[];
+};
+
+export type PriceActions = SetPrices;

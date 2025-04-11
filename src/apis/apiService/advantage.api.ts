@@ -1,7 +1,6 @@
 import { Advantage } from 'src/@types/advantage';
-import apiBackend from "@/apis/connection/api-backend";
+import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
-
 
 export type CreateAdvantagePayload = {
   advantageInput: {
@@ -14,13 +13,13 @@ type CreateAdvantageResponse = {
   data: {
     createAdvantage: Advantage;
   };
-} & GraphQLErrorResponse;
+} & RESTErrorResponse;
 
 type GetAdvantagesResponse = {
   data: {
     advantages: Advantage[];
   };
-} & GraphQLErrorResponse;
+} & RESTErrorResponse;
 
 export type UpdateAdvantagePayload = {
   advantageInput: {
@@ -34,7 +33,7 @@ type UpdateAdvantageResponse = {
   data: {
     updateAdvantage: Advantage;
   };
-} & GraphQLErrorResponse;
+} & RESTErrorResponse;
 
 export type DeleteAdvantagePayload = {
   advantageInput: {
@@ -46,7 +45,7 @@ type DeleteAdvantageResponse = {
   data: {
     deleteAdvantage: Advantage;
   };
-} & GraphQLErrorResponse;
+} & RESTErrorResponse;
 
 export type DeleteManyAdvantagesPayload = {
   advantageInput: {
@@ -58,45 +57,39 @@ type DeleteManyAdvantagesResponse = {
   data: {
     deleteManyAdvantages: string;
   };
-} & GraphQLErrorResponse;
+} & RESTErrorResponse;
 
-const GraphqlAdvantageRepository = {
+const ApiAdvantageRepository = {
   async createAdvantage(variables: CreateAdvantagePayload): Promise<CreateAdvantageResponse> {
-    const { data } = await DTSTelecomBackendAPI.post<CreateAdvantageResponse>('/graphql', {
-      query: CREATE_ADVANTAGE_MUTATION,
+    const { data } = await apiBackend.post<CreateAdvantageResponse>('/create-advantage', {
       variables,
     });
 
     return data;
   },
   async fetchAdvantages(): Promise<GetAdvantagesResponse> {
-    const { data } = await DTSTelecomBackendAPI.post<GetAdvantagesResponse>('/graphql', {
-      query: GET_ADVANTAGES_QUERY,
-    });
+    const { data } = await apiBackend.get<GetAdvantagesResponse>('/advantages', {});
 
     return data;
   },
   async updateAdvantage(variables: UpdateAdvantagePayload): Promise<UpdateAdvantageResponse> {
-    const { data } = await DTSTelecomBackendAPI.post<UpdateAdvantageResponse>('/graphql', {
-      query: UPDATE_ADVANTAGE_MUTATION,
+    const { data } = await apiBackend.post<UpdateAdvantageResponse>('/update-advantage', {
       variables,
     });
 
     return data;
   },
   async deleteAdvantage(variables: DeleteAdvantagePayload): Promise<DeleteAdvantageResponse> {
-    const { data } = await DTSTelecomBackendAPI.post<DeleteAdvantageResponse>('/graphql', {
-      query: DELETE_ADVANTAGE_MUTATION,
+    const { data } = await apiBackend.post<DeleteAdvantageResponse>('/delete-advantage', {
       variables,
     });
 
     return data;
   },
   async deleteManyAdvantages(
-    variables: DeleteManyAdvantagesPayload
+    variables: DeleteManyAdvantagesPayload,
   ): Promise<DeleteManyAdvantagesResponse> {
-    const { data } = await DTSTelecomBackendAPI.post<DeleteManyAdvantagesResponse>('/graphql', {
-      query: DELETE_MANY_ADVANTAGES_MUTATION,
+    const { data } = await apiBackend.post<DeleteManyAdvantagesResponse>('/delete-advantages', {
       variables,
     });
 
@@ -104,4 +97,4 @@ const GraphqlAdvantageRepository = {
   },
 };
 
-export default GraphqlAdvantageRepository;
+export default ApiAdvantageRepository;

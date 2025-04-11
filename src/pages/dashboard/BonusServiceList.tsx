@@ -29,10 +29,10 @@ import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 import { BonusService } from 'src/@types/bonus-service';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import { paramCase } from 'change-case';
+import { kebabCase } from 'change-case';
 import useBonusService from 'src/hooks/useBonusService';
 import useSettings from '../../hooks/useSettings';
 
@@ -103,7 +103,7 @@ export default function BonusServiceList() {
   };
 
   const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.bonusService.edit(paramCase(_id)));
+    navigate(PATH_DASHBOARD.bonusService.edit(kebabCase(_id)));
   };
 
   const dataFiltered = applySortFilter({
@@ -151,7 +151,7 @@ export default function BonusServiceList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                   actions={
@@ -175,7 +175,7 @@ export default function BonusServiceList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                 />
@@ -252,7 +252,7 @@ function applySortFilter({
   if (filterName) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1,
     );
   }
 

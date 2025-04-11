@@ -1,17 +1,16 @@
-import GraphqlAdvantageRepository, {
-  CreateAdvantagePayload,
-  DeleteAdvantagePayload,
-  DeleteManyAdvantagesPayload,
-  UpdateAdvantagePayload,
-} from 'src/apis/graphql/advantage';
 import { useMutation, useQuery } from '@tanstack/react-query';
-
 import { Advantage } from 'src/@types/advantage';
 import AdvantageContext from 'src/contexts/Advantage';
 import { PATH_DASHBOARD } from 'src/routes/paths';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
+import ApiAdvantageRepository, {
+  CreateAdvantagePayload,
+  DeleteAdvantagePayload,
+  DeleteManyAdvantagesPayload,
+  UpdateAdvantagePayload,
+} from '@/apis/apiService/advantage.api';
 
 export type UseAdvantageProps = {
   isLoading: boolean;
@@ -29,113 +28,109 @@ export default function useAdvantage(): UseAdvantageProps {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { mutateAsync: mutateAsyncCreateAdvantage, isLoading: isCreatingAdvantage } = useMutation(
-    (payload: CreateAdvantagePayload) => GraphqlAdvantageRepository.createAdvantage(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể tạo ưu điểm!', {
+  const { mutateAsync: mutateAsyncCreateAdvantage, isPending: isCreatingAdvantage } = useMutation({
+    mutationFn: (payload: CreateAdvantagePayload) =>
+      ApiAdvantageRepository.createAdvantage(payload),
+
+    onError: () => {
+      enqueueSnackbar('Không thể tạo ưu điểm!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Tạo ưu điểm thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.advantage.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Tạo ưu điểm thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.advantage.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { refetch: refetchAdvantages, isLoading: isRefreshingAdvantages } = useQuery(
-    ['fetchAdvantages'],
-    () => GraphqlAdvantageRepository.fetchAdvantages(),
-    {
-      refetchOnWindowFocus: false,
-      onError() {
-        enqueueSnackbar('Không thể lấy danh sách ưu điểm!', {
-          variant: 'error',
-        });
-      },
-      onSuccess: (data) => {
-        if (!data.errors) {
+      }
+    },
+  });
+  const { refetch: refetchAdvantages, isLoading: isRefreshingAdvantages } = useQuery({
+    queryKey: ['fetchAdvantages'],
+    queryFn: async () => {
+      try {
+        const data = await ApiAdvantageRepository.fetchAdvantages();
+        if (!data.error) {
           dispatch({
             type: 'SET_ADVANTAGES',
             payload: data.data.advantages,
           });
         } else {
-          enqueueSnackbar(data.errors[0].message, {
+          enqueueSnackbar(data.message, {
             variant: 'error',
           });
         }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncUpdateAdvantage, isLoading: isUpdatingAdvantage } = useMutation(
-    (payload: UpdateAdvantagePayload) => GraphqlAdvantageRepository.updateAdvantage(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể cập nhật ưu điểm!', {
+      } catch (e) {
+        enqueueSnackbar('Không thể lấy danh sách ưu điểm!', {
           variant: 'error',
         });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Cập nhật ưu điểm thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.advantage.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncDeleteAdvantage, isLoading: isDeletingAdvantage } = useMutation(
-    (payload: DeleteAdvantagePayload) => GraphqlAdvantageRepository.deleteAdvantage(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa ưu điểm!', {
-          variant: 'error',
-        });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          dispatch({
-            type: 'SET_ADVANTAGES',
-            payload: state.advantages.filter(
-              (advantage) => advantage._id !== data.data.deleteAdvantage._id
-            ),
-          });
-          enqueueSnackbar('Xóa ưu điểm thành công!', {
-            variant: 'success',
-          });
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncDeleteManyAdvantages, isLoading: isDeletingManyAdvantages } =
-    useMutation(
-      (payload: DeleteManyAdvantagesPayload) =>
-        GraphqlAdvantageRepository.deleteManyAdvantages(payload),
-      {
-        onError() {
-          enqueueSnackbar('Không thể xóa nhiều ưu điểm!', {
-            variant: 'error',
-          });
-        },
       }
-    );
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  const { mutateAsync: mutateAsyncUpdateAdvantage, isPending: isUpdatingAdvantage } = useMutation({
+    mutationFn: (payload: UpdateAdvantagePayload) =>
+      ApiAdvantageRepository.updateAdvantage(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể cập nhật ưu điểm!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Cập nhật ưu điểm thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.advantage.list);
+      } else {
+        enqueueSnackbar(data.message, {
+          variant: 'error',
+        });
+      }
+    },
+  });
+  const { mutateAsync: mutateAsyncDeleteAdvantage, isPending: isDeletingAdvantage } = useMutation({
+    mutationFn: (payload: DeleteAdvantagePayload) =>
+      ApiAdvantageRepository.deleteAdvantage(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa ưu điểm!', {
+        variant: 'error',
+      });
+    },
+    onSuccess(data) {
+      if (!data.error) {
+        dispatch({
+          type: 'SET_ADVANTAGES',
+          payload: state.advantages.filter(
+            (advantage) => advantage._id !== data.data.deleteAdvantage._id,
+          ),
+        });
+        enqueueSnackbar('Xóa ưu điểm thành công!', {
+          variant: 'success',
+        });
+      } else {
+        enqueueSnackbar(data.message, {
+          variant: 'error',
+        });
+      }
+    },
+  });
+  const { mutateAsync: mutateAsyncDeleteManyAdvantages, isPending: isDeletingManyAdvantages } =
+    useMutation({
+      mutationFn: (payload: DeleteManyAdvantagesPayload) =>
+        ApiAdvantageRepository.deleteManyAdvantages(payload),
+      onError: () => {
+        enqueueSnackbar('Không thể xóa nhiều ưu điểm!', {
+          variant: 'error',
+        });
+      },
+    });
 
   const createAdvantage = async (payload: CreateAdvantagePayload) => {
     mutateAsyncCreateAdvantage(payload);
@@ -155,7 +150,7 @@ export default function useAdvantage(): UseAdvantageProps {
     dispatch({
       type: 'SET_ADVANTAGES',
       payload: state.advantages.filter(
-        (advantage) => !payload.advantageInput._ids.includes(advantage._id)
+        (advantage) => !payload.advantageInput._ids.includes(advantage._id),
       ),
     });
     enqueueSnackbar(response.data.deleteManyAdvantages, {

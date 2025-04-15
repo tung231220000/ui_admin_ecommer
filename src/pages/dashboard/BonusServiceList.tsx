@@ -1,7 +1,7 @@
 import {
   BonusServiceTableRow,
   BonusServiceTableToolbar,
-} from 'src/sections/@dashboard/bonus-service/list';
+} from '@/sections/@dashboard/bonus-service/list';
 import {
   Box,
   Button,
@@ -26,14 +26,14 @@ import {
 import { useEffect, useState } from 'react';
 import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
-import { BonusService } from 'src/@types/bonus-service';
+import { BonusService } from '@/@types/bonus-service';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
 import { kebabCase } from 'change-case';
-import useBonusService from 'src/hooks/useBonusService';
+import useBonusService from '@/hooks/useBonusService';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------

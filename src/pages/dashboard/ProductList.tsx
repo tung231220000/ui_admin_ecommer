@@ -12,10 +12,6 @@ import {
   TablePagination,
   Tooltip,
 } from '@mui/material';
-import GraphqlProductRepository, {
-  DeleteManyProductsPayload,
-  DeleteProductPayload,
-} from 'src/apis/graphql/product';
 import { ProductTableRow, ProductTableToolbar } from 'src/sections/@dashboard/product/list';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
@@ -26,17 +22,20 @@ import {
 } from '../../components/table';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
-
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import { Product } from 'src/@types/product';
+import { Product } from '@/@types/product';
 import Scrollbar from '../../components/Scrollbar';
-import { paramCase } from 'change-case';
+import { kebabCase } from 'change-case';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
+import ApiProductRepository, {
+  DeleteManyProductsPayload,
+  DeleteProductPayload,
+} from '@/apis/apiService/product.api';
 
 // ----------------------------------------------------------------------
 
@@ -74,55 +73,55 @@ export default function ProductList() {
   const [tableData, setTableData] = useState<Product[]>([]);
   const [filterTitle, setFilterTitle] = useState('');
 
-  useQuery(['fetchProducts'], () => GraphqlProductRepository.fetchProducts(), {
+  useQuery({
+    queryKey: ['fetchProducts'],
+    queryFn: async () => {
+      try {
+        const data = await ApiProductRepository.fetchProducts();
+        if (!data.error) {
+          setTableData(data.data.products);
+        } else {
+          enqueueSnackbar(data.message, {
+            variant: 'error',
+          });
+        }
+      } catch (e) {
+        enqueueSnackbar('Không thể lấy danh sách sản phẩm!', {
+          variant: 'error',
+        });
+      }
+    },
     refetchOnWindowFocus: false,
-    onError() {
-      enqueueSnackbar('Không thể lấy danh sách sản phẩm!', {
+  });
+  const { mutateAsync: mutateAsyncDeleteProduct } = useMutation({
+    mutationFn: (payload: DeleteProductPayload) => ApiProductRepository.deleteProduct(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa sản phẩm!', {
         variant: 'error',
       });
     },
     onSuccess: (data) => {
-      if (!data.errors) {
-        setTableData(data.data.products);
+      if (!data.error) {
+        setTableData(tableData.filter((product) => product._id !== data.data.deleteProduct._id));
+        enqueueSnackbar('Xóa sản phẩm thành công!', {
+          variant: 'success',
+        });
       } else {
-        enqueueSnackbar(data.errors[0].message, {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
       }
     },
   });
-  const { mutateAsync: mutateAsyncDeleteProduct } = useMutation(
-    (payload: DeleteProductPayload) => GraphqlProductRepository.deleteProduct(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa sản phẩm!', {
-          variant: 'error',
-        });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          setTableData(tableData.filter((product) => product._id !== data.data.deleteProduct._id));
-          enqueueSnackbar('Xóa sản phẩm thành công!', {
-            variant: 'success',
-          });
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncDeleteManyProducts } = useMutation(
-    (payload: DeleteManyProductsPayload) => GraphqlProductRepository.deleteManyProducts(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa nhiều sản phẩm!', {
-          variant: 'error',
-        });
-      },
-    }
-  );
+  const { mutateAsync: mutateAsyncDeleteManyProducts } = useMutation({
+    mutationFn: (payload: DeleteManyProductsPayload) =>
+      ApiProductRepository.deleteManyProducts(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa nhiều sản phẩm!', {
+        variant: 'error',
+      });
+    },
+  });
 
   const handleFilterTitle = (filterTitle: string) => {
     setFilterTitle(filterTitle);
@@ -152,7 +151,7 @@ export default function ProductList() {
   };
 
   const handleEditRow = (key: string) => {
-    navigate(PATH_DASHBOARD.product.edit(paramCase(key)));
+    navigate(PATH_DASHBOARD.product.edit(kebabCase(key)));
   };
 
   const dataFiltered = applySortFilter({
@@ -200,7 +199,7 @@ export default function ProductList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                   actions={
@@ -224,7 +223,7 @@ export default function ProductList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                 />
@@ -301,7 +300,7 @@ function applySortFilter({
   if (filterTitle) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.title.toLowerCase().indexOf(filterTitle.toLowerCase()) !== -1
+        item.title.toLowerCase().indexOf(filterTitle.toLowerCase()) !== -1,
     );
   }
 

@@ -6,7 +6,7 @@ import ApiPostRepository from '@/apis/apiService/post.api';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import { Post } from 'src/@types/post';
+import { Post } from '@/@types/post';
 import { capitalCase } from 'change-case';
 import { useQuery } from '@tanstack/react-query';
 import useSettings from '../../hooks/useSettings';
@@ -28,7 +28,7 @@ export default function BlogNewPost() {
     queryKey: ['fetchPost', id],
     queryFn: async () => {
       try {
-        const data = await ApiPostRepository.fetchPost({id: id as string});
+        const data = await ApiPostRepository.fetchPost({ id: id as string });
         if (!data.error) {
           setCurrentPost(data.data.post);
         } else {

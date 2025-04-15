@@ -2,6 +2,20 @@ import { CustomFile } from 'src/components/upload';
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 import { Product } from 'src/@types/product';
+import { PRODUCT_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT } from 'src/utils/constant';
+
+export type UploadBannerImagePayload = FormData;
+
+type UploadBannerImageResponse = {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+} & RESTErrorResponse;
 
 export type CreateProductPayload = {
   productInput: {
@@ -14,7 +28,7 @@ export type CreateProductPayload = {
     advantages: string[];
     questionsAndAnswers: string[];
     tags: string[];
-    isContact: boolean;
+    isContact?: boolean;
     servicePacks: string[];
     bonusServices: string[];
   };
@@ -100,7 +114,21 @@ type DeleteManyProductsResponse = {
   };
 } & RESTErrorResponse;
 
-const GraphqlProductRepository = {
+const ApiProductRepository = {
+  async uploadBannerImage(payload: UploadBannerImagePayload): Promise<UploadBannerImageResponse> {
+    const { data } = await apiBackend.post<UploadBannerImageResponse>(
+      PRODUCT_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+
+    return data;
+  },
+
   async createProduct(variables: CreateProductPayload): Promise<CreateProductResponse> {
     const { data } = await apiBackend.post<CreateProductResponse>('/create-product', {
       variables,
@@ -146,4 +174,4 @@ const GraphqlProductRepository = {
   },
 };
 
-export default GraphqlProductRepository;
+export default ApiProductRepository;

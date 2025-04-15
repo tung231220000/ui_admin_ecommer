@@ -12,12 +12,8 @@ import {
   TablePagination,
   Tooltip,
 } from '@mui/material';
-import GraphqlSolutionRepository, {
-  DeleteManySolutionsPayload,
-  DeleteSolutionPayload,
-} from 'src/apis/graphql/solution';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { SolutionTableRow, SolutionTableToolbar } from 'src/sections/@dashboard/solution/list';
+import { SolutionTableRow, SolutionTableToolbar } from '@/sections/@dashboard/solution/list';
 import {
   TableEmptyRows,
   TableHeadCustom,
@@ -26,17 +22,20 @@ import {
 } from '../../components/table';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
-
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import { Solution } from 'src/@types/solution';
-import { paramCase } from 'change-case';
+import { Solution } from '@/@types/solution';
+import { kebabCase } from 'change-case';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
+import ApiSolutionRepository, {
+  DeleteManySolutionsPayload,
+  DeleteSolutionPayload,
+} from '@/apis/apiService/solution.api';
 
 // ----------------------------------------------------------------------
 
@@ -73,57 +72,55 @@ export default function SolutionList() {
   const [tableData, setTableData] = useState<Solution[]>([]);
   const [filterTitle, setFilterTitle] = useState('');
 
-  useQuery(['fetchSolutions'], () => GraphqlSolutionRepository.fetchSolutions(), {
+  useQuery({
+    queryKey: ['fetchSolutions'],
+    queryFn: async () => {
+      try {
+        const data = await ApiSolutionRepository.fetchSolutions();
+        if (!data.error) {
+          setTableData(data.data.solutions);
+        } else {
+          enqueueSnackbar(data.message, {
+            variant: 'error',
+          });
+        }
+      } catch (e) {
+        enqueueSnackbar('Không thể lấy danh sách giải pháp!', {
+          variant: 'error',
+        });
+      }
+    },
     refetchOnWindowFocus: false,
-    onError() {
-      enqueueSnackbar('Không thể lấy danh sách giải pháp!', {
+  });
+  const { mutateAsync: mutateAsyncDeleteSolution } = useMutation({
+    mutationFn: (payload: DeleteSolutionPayload) => ApiSolutionRepository.deleteSolution(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa giải pháp!', {
         variant: 'error',
       });
     },
     onSuccess: (data) => {
-      if (!data.errors) {
-        setTableData(data.data.solutions);
+      if (!data.error) {
+        setTableData(tableData.filter((solution) => solution._id !== data.data.deleteSolution._id));
+        enqueueSnackbar('Xóa giải pháp thành công!', {
+          variant: 'success',
+        });
       } else {
-        enqueueSnackbar(data.errors[0].message, {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
       }
     },
   });
-  const { mutateAsync: mutateAsyncDeleteSolution } = useMutation(
-    (payload: DeleteSolutionPayload) => GraphqlSolutionRepository.deleteSolution(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa giải pháp!', {
-          variant: 'error',
-        });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          setTableData(
-            tableData.filter((solution) => solution._id !== data.data.deleteSolution._id)
-          );
-          enqueueSnackbar('Xóa giải pháp thành công!', {
-            variant: 'success',
-          });
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncDeleteManySolutions } = useMutation(
-    (payload: DeleteManySolutionsPayload) => GraphqlSolutionRepository.deleteManySolutions(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa nhiều giải pháp!', {
-          variant: 'error',
-        });
-      },
-    }
-  );
+  const { mutateAsync: mutateAsyncDeleteManySolutions } = useMutation({
+    mutationFn: (payload: DeleteManySolutionsPayload) =>
+      ApiSolutionRepository.deleteManySolutions(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa nhiều giải pháp!', {
+        variant: 'error',
+      });
+    },
+  });
 
   const handleFilterTitle = (filterTitle: string) => {
     setFilterTitle(filterTitle);
@@ -153,7 +150,7 @@ export default function SolutionList() {
   };
 
   const handleEditRow = (key: string) => {
-    navigate(PATH_DASHBOARD.solution.edit(paramCase(key)));
+    navigate(PATH_DASHBOARD.solution.edit(kebabCase(key)));
   };
 
   const dataFiltered = applySortFilter({
@@ -201,7 +198,7 @@ export default function SolutionList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                   actions={
@@ -225,7 +222,7 @@ export default function SolutionList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                 />
@@ -302,7 +299,7 @@ function applySortFilter({
   if (filterTitle) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.title.toLowerCase().indexOf(filterTitle.toLowerCase()) !== -1
+        item.title.toLowerCase().indexOf(filterTitle.toLowerCase()) !== -1,
     );
   }
 

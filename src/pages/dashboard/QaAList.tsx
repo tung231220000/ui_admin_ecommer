@@ -12,7 +12,7 @@ import {
   TablePagination,
   Tooltip,
 } from '@mui/material';
-import { QaATableRow, QaATableToolbar } from 'src/sections/@dashboard/QaA/list';
+import { QaATableRow, QaATableToolbar } from '@/sections/@dashboard/QaA/list';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   TableEmptyRows,
@@ -25,12 +25,12 @@ import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import { QaA } from 'src/@types/QaA';
+import { QaA } from '@/@types/QaA';
 import Scrollbar from '../../components/Scrollbar';
-import { paramCase } from 'change-case';
-import useQaA from 'src/hooks/useQaA';
+import { kebabCase } from 'change-case';
+import useQaA from '@/hooks/useQaA';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------
@@ -96,7 +96,7 @@ export default function QaAList() {
   };
 
   const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.QaA.edit(paramCase(_id)));
+    navigate(PATH_DASHBOARD.QaA.edit(kebabCase(_id)));
   };
 
   const dataFiltered = applySortFilter({
@@ -144,7 +144,7 @@ export default function QaAList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                   actions={
@@ -168,7 +168,7 @@ export default function QaAList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                 />
@@ -245,7 +245,7 @@ function applySortFilter({
   if (filterQuestion) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.question.toLowerCase().indexOf(filterQuestion.toLowerCase()) !== -1
+        item.question.toLowerCase().indexOf(filterQuestion.toLowerCase()) !== -1,
     );
   }
 

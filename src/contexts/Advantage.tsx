@@ -1,4 +1,4 @@
-import { AdvantageActions, AdvantageState } from 'src/@types/advantage';
+import { AdvantageActions, AdvantageState } from '@/@types/advantage';
 import { Dispatch, createContext } from 'react';
 
 export const initialState: AdvantageState = {

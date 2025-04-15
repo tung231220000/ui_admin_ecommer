@@ -1,12 +1,12 @@
-import { capitalCase, paramCase } from 'change-case';
+import { capitalCase, kebabCase } from 'change-case';
 import { useLocation, useParams } from 'react-router-dom';
 
-import CategoryNewEditForm from 'src/sections/@dashboard/category/CategoryNewEditForm';
+import CategoryNewEditForm from '@/sections/@dashboard/category/CategoryNewEditForm';
 import { Container } from '@mui/material';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import useCategory from 'src/hooks/useCategory';
+import useCategory from '@/hooks/useCategory';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------
@@ -19,7 +19,7 @@ export default function CategoryCreate() {
   const { categories } = useCategory();
 
   const isEdit = pathname.includes('edit');
-  const currentCategory = categories.find((category) => paramCase(category._id) === _id);
+  const currentCategory = categories.find((category) => kebabCase(category._id) === _id);
 
   return (
     <Page title={!isEdit ? 'Category: Create a new category' : 'Category: Edit a category'}>

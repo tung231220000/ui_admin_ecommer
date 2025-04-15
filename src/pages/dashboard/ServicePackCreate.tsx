@@ -1,12 +1,12 @@
-import { capitalCase, paramCase } from 'change-case';
+import { capitalCase, kebabCase } from 'change-case';
 import { useLocation, useParams } from 'react-router-dom';
 
 import { Container } from '@mui/material';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import ServicePackNewEditForm from 'src/sections/@dashboard/service-pack/ServicePackNewEditForm';
-import useServicePack from 'src/hooks/useServicePack';
+import ServicePackNewEditForm from '@/sections/@dashboard/service-pack/ServicePackNewEditForm';
+import useServicePack from '@/hooks/useServicePack';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------
@@ -19,7 +19,7 @@ export default function ServicePackCreate() {
   const { servicePacks } = useServicePack();
 
   const isEdit = pathname.includes('edit');
-  const currentServicePack = servicePacks.find((servicePack) => paramCase(servicePack._id) === _id);
+  const currentServicePack = servicePacks.find((servicePack) => kebabCase(servicePack._id) === _id);
 
   return (
     <Page

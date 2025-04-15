@@ -5,7 +5,7 @@ import { Container } from '@mui/material';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import QaANewEditForm from 'src/sections/@dashboard/QaA/QaANewEditForm';
+import QaANewEditForm from '@/sections/@dashboard/QaA/QaANewEditForm';
 import useQaA from '@/hooks/useQaA';
 import useSettings from '../../hooks/useSettings';
 

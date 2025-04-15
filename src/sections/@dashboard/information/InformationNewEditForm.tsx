@@ -8,27 +8,32 @@ import {
   RHFUploadMultiFile,
   RHFUploadSingleFile,
 } from '../../../components/hook-form';
-import InformationGraphqlRepository, {
-  UpdateInformationPayload,
-} from 'src/apis/graphql/information';
-import InformationRepository, {
-  UploadAssetsPayload,
-  UploadVariantImagePayload,
-} from 'src/apis/service/information';
+// import InformationGraphqlRepository, {
+//   UpdateInformationPayload,
+// } from 'src/apis/graphql/information';
+// import InformationRepository, {
+//   UploadAssetsPayload,
+//   UploadVariantImagePayload,
+// } from 'src/apis/service/information';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
-import { CustomFile } from 'src/components/upload';
-import { DTS_TELECOM_BACKEND_API_DOMAIN } from 'src/utils/constant';
-import Iconify from 'src/components/Iconify';
+import { CustomFile } from '@/components/upload';
+import {API_DOMAIN} from '@/utils/constant';
+import Iconify from '@/components/Iconify';
 import { Information } from 'src/@types/information';
 import { LoadingButton } from '@mui/lab';
-import { PATH_DASHBOARD } from 'src/routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import { styled } from '@mui/material/styles';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
+import ApiInformationRepository, {
+  UpdateInformationPayload,
+  UploadAssetsPayload,
+  UploadVariantImagePayload,
+} from '@/apis/apiService/information.api';
 
 // ----------------------------------------------------------------------
 
@@ -60,6 +65,7 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
   const { enqueueSnackbar } = useSnackbar();
 
   const NewAdvantageSchema = Yup.object().shape({
+    id: Yup.string(),
     page: Yup.string().required('Page is required'),
     title: Yup.string().required('Title is required'),
     subtitle: Yup.string().required('Subtitle is required'),
@@ -69,11 +75,12 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
         url: Yup.string().nullable(),
         content: Yup.string().nullable(),
         image: Yup.string().nullable(),
-      })
+      }),
     ).min(1, 'at least 1 variant'),
   });
   const defaultValues = useMemo(
     () => ({
+      id: currentInformation?.id || '';
       page: currentInformation?.page || '',
       title: currentInformation?.title || '',
       subtitle: currentInformation?.subtitle || '',
@@ -94,7 +101,7 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
       assets: currentInformation?.assets || [],
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentInformation]
+    [currentInformation],
   );
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewAdvantageSchema),
@@ -114,70 +121,66 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
   });
   const values = watch();
 
-  const { mutateAsync: mutateAsyncUploadAssets } = useMutation(
-    (payload: UploadAssetsPayload) => InformationRepository.uploadAssets(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể upload ảnh tài nguyên!', {
-          variant: 'error',
-        });
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncUploadVariantImage } = useMutation(
-    (payload: UploadVariantImagePayload) => InformationRepository.uploadVariantImage(payload),
-    {
-      onError() {
+  const { mutateAsync: mutateAsyncUploadAssets } = useMutation({
+    mutationFn: (payload: UploadAssetsPayload) => ApiInformationRepository.uploadAssets(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể upload ảnh tài nguyên!', {
+        variant: 'error',
+      });
+    },
+  });
+  const { mutateAsync: mutateAsyncUploadVariantImage } = useMutation({
+    mutationFn: (payload: UploadVariantImagePayload) => ApiInformationRepository.uploadVariantImage(payload),
+      onError:() => {
         enqueueSnackbar('Không thể upload các ảnh biến thể!', {
           variant: 'error',
         });
       },
-    }
+    },
   );
-  // const { mutateAsync: mutateAsyncCreateInformation } = useMutation(
-  //   (payload: CreateInformationPayload) => InformationGraphqlRepository.createInformation(payload),
-  //   {
-  //     onError() {
+  // const { mutateAsync: mutateAsyncCreateInformation } = useMutation({
+  //   mutationFn: (payload: CreateInformationPayload) => ApiInformationRepository.createInformation(payload),
+  //  
+  //     onError:() => {
   //       enqueueSnackbar('Không thể tạo thông tin!', {
   //         variant: 'error',
   //       });
   //     },
-  //     onSuccess(data) {
-  //       if (!data.errors) {
+  //     onSuccess:(data)=> {
+  //       if (!data.error) {
   //         enqueueSnackbar('Tạo thông tin thành công!', {
   //           variant: 'success',
   //         });
   //         navigate(PATH_DASHBOARD.information.list);
   //       } else {
-  //         enqueueSnackbar(data.errors[0].message, {
+  //         enqueueSnackbar(data.message, {
   //           variant: 'error',
   //         });
   //       }
   //     },
-  //   }
+  //   },
   // );
-  const { mutateAsync: mutateAsyncUpdateInformation } = useMutation(
-    (payload: UpdateInformationPayload) => InformationGraphqlRepository.updateInformation(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể cập nhật thông tin!', {
+  const { mutateAsync: mutateAsyncUpdateInformation } = useMutation({
+    mutationFn: (payload: UpdateInformationPayload) =>
+      ApiInformationRepository.updateInformation(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể cập nhật thông tin!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Cập nhật thông tin thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.information.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Cập nhật thông tin thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.information.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
+      }
+    },
+  });
 
   useEffect(() => {
     if (isEdit && currentInformation) {
@@ -214,10 +217,10 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
 
       setValue(`assets`, [
         ...assets,
-        ...response.map((r) => `${DTS_TELECOM_BACKEND_API_DOMAIN}/${r.path}`),
+        ...response.map((r) => `${API_DOMAIN}/${r.path}`),
       ]);
     },
-    [mutateAsyncUploadAssets, setValue, values.assets]
+    [mutateAsyncUploadAssets, setValue, values.assets],
   );
 
   const handleDropVariantImage = useCallback(
@@ -229,16 +232,16 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
           `variants.${index}.image`,
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
+          }),
         );
 
         const filesData = new FormData();
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadVariantImage(filesData);
-        setValue(`variants.${index}.image`, `${DTS_TELECOM_BACKEND_API_DOMAIN}/${response.path}`);
+        setValue(`variants.${index}.image`, `${API_DOMAIN}/${response.path}`);
       }
     },
-    [mutateAsyncUploadVariantImage, setValue]
+    [mutateAsyncUploadVariantImage, setValue],
   );
 
   const handleRemoveAllAssets = () => {
@@ -255,7 +258,7 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
     mutateAsyncUpdateInformation({
       informationInput: {
         ...data,
-        _id: currentInformation?._id as string,
+        _id: currentInformation?.id as string,
       },
     });
 

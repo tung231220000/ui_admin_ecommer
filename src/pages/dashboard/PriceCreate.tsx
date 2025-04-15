@@ -5,8 +5,8 @@ import { Container } from '@mui/material';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { PATH_DASHBOARD } from '../../routes/paths';
 import Page from '../../components/Page';
-import PriceNewEditForm from 'src/sections/@dashboard/price/PriceNewEditForm';
-import usePrice from 'src/hooks/usePrice';
+import PriceNewEditForm from '@/sections/@dashboard/price/PriceNewEditForm';
+import usePrice from '@/hooks/usePrice';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------

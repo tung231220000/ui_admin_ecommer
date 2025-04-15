@@ -31,22 +31,23 @@ import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import { Partner } from 'src/@types/partner';
+import { Partner } from '@/@types/partner';
 import Scrollbar from '../../components/Scrollbar';
 import { kebabCase } from 'change-case';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import ApiPartnerRepository, {
-  DeleteManyPartnersPayload, DeleteManyPartnersResponse,
+  DeleteManyPartnersPayload,
+  DeleteManyPartnersResponse,
   DeletePartnerPayload,
-  DeletePartnerResponse
-} from "@/apis/apiService/partner.api";
+  DeletePartnerResponse,
+} from '@/apis/apiService/partner.api';
 // import AuthRepository, {SignInPayload, SignInResponse} from "@/apis/service/auth";
-import {AxiosError} from "axios";
-import {RESTErrorResponse} from "@/@types/api";
+import { AxiosError } from 'axios';
+import { RESTErrorResponse } from '@/@types/api';
 // import {setSession} from "@/utils/jwt";
-import {PartnerTableRow, PartnerTableToolbar} from "@/sections/@dashboard/partner/list";
+import { PartnerTableRow, PartnerTableToolbar } from '@/sections/@dashboard/partner/list';
 
 // ----------------------------------------------------------------------
 
@@ -99,10 +100,14 @@ export default function PartnerList() {
           variant: 'error',
         });
       }
-    }
-  })
+    },
+  });
 
-  const {mutateAsync: mutateAsyncDeletePartner} = useMutation<DeletePartnerResponse, AxiosError<RESTErrorResponse>, DeletePartnerPayload>({
+  const { mutateAsync: mutateAsyncDeletePartner } = useMutation<
+    DeletePartnerResponse,
+    AxiosError<RESTErrorResponse>,
+    DeletePartnerPayload
+  >({
     mutationFn: (payload: DeletePartnerPayload) => ApiPartnerRepository.deletePartner(payload),
     onError: () => {
       enqueueSnackbar('Không thể xóa đối tác!', {
@@ -123,16 +128,19 @@ export default function PartnerList() {
     },
   });
 
-
-  const {mutateAsync: mutateAsyncDeleteManyPartners} = useMutation<DeleteManyPartnersResponse, AxiosError<RESTErrorResponse>, DeleteManyPartnersPayload>({
-    mutationFn: (payload: DeleteManyPartnersPayload) => ApiPartnerRepository.deleteManyPartners(payload),
+  const { mutateAsync: mutateAsyncDeleteManyPartners } = useMutation<
+    DeleteManyPartnersResponse,
+    AxiosError<RESTErrorResponse>,
+    DeleteManyPartnersPayload
+  >({
+    mutationFn: (payload: DeleteManyPartnersPayload) =>
+      ApiPartnerRepository.deleteManyPartners(payload),
     onError: () => {
       enqueueSnackbar('Không thể xóa nhiều đối tác!', {
         variant: 'error',
       });
     },
   });
-
 
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName);
@@ -142,7 +150,7 @@ export default function PartnerList() {
   const handleDeleteRow = (id: string) => {
     setSelected([]);
     mutateAsyncDeletePartner({
-        id,
+      id,
     });
   };
 
@@ -206,7 +214,7 @@ export default function PartnerList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => row.id),
                     )
                   }
                   actions={
@@ -230,7 +238,7 @@ export default function PartnerList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => row.id),
                     )
                   }
                 />
@@ -307,7 +315,7 @@ function applySortFilter({
   if (filterName) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1,
     );
   }
 

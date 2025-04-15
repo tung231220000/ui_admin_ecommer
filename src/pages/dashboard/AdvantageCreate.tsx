@@ -1,12 +1,12 @@
 import { capitalCase, kebabCase } from 'change-case';
 import { useLocation, useParams } from 'react-router-dom';
 
-import AdvantageNewEditForm from 'src/sections/@dashboard/advantage/AdvantageNewEditForm';
+import AdvantageNewEditForm from '@/sections/@dashboard/advantage/AdvantageNewEditForm';
 import { Container } from '@mui/material';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import useAdvantage from 'src/hooks/useAdvantage';
+import useAdvantage from '@/hooks/useAdvantage';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------

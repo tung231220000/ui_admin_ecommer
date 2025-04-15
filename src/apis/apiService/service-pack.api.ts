@@ -61,7 +61,7 @@ type DeleteManyServicePacksResponse = {
   };
 } & RESTErrorResponse;
 
-const GraphqlServicePackRepository = {
+const ApiServicePackRepository = {
   async createServicePack(variables: CreateServicePackPayload): Promise<CreateServicePackResponse> {
     const { data } = await apiBackend.post<CreateServicePackResponse>('/create-service-pack', {
       variables,
@@ -102,4 +102,4 @@ const GraphqlServicePackRepository = {
   },
 };
 
-export default GraphqlServicePackRepository;
+export default ApiServicePackRepository;

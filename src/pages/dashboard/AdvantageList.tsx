@@ -1,4 +1,4 @@
-import { AdvantageTableRow, AdvantageTableToolbar } from 'src/sections/@dashboard/advantage/list';
+import { AdvantageTableRow, AdvantageTableToolbar } from '@/sections/@dashboard/advantage/list';
 import {
   Box,
   Button,
@@ -23,14 +23,14 @@ import {
 import { useEffect, useState } from 'react';
 import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
-import { Advantage } from 'src/@types/advantage';
+import { Advantage } from '@/@types/advantage';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
 import { kebabCase } from 'change-case';
-import useAdvantage from 'src/hooks/useAdvantage';
+import useAdvantage from '@/hooks/useAdvantage';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------

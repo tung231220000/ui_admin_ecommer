@@ -1,13 +1,13 @@
-import { capitalCase, paramCase } from 'change-case';
+import { capitalCase, kebabCase } from 'change-case';
 import { useLocation, useParams } from 'react-router-dom';
 
 import { Container } from '@mui/material';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import SolutionCategoryNewEditForm from 'src/sections/@dashboard/solution-category/SolutionCategoryNewEditForm';
+import SolutionCategoryNewEditForm from '@/sections/@dashboard/solution-category/SolutionCategoryNewEditForm';
 import useSettings from '../../hooks/useSettings';
-import useSolutionCategory from 'src/hooks/useSolutionCategory';
+import useSolutionCategory from '@/hooks/useSolutionCategory';
 
 // ----------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ export default function SolutionCategoryCreate() {
 
   const isEdit = pathname.includes('edit');
   const currentSolutionCategory = solutionCategories.find(
-    (category) => paramCase(category._id) === _id
+    (category) => kebabCase(category._id) === _id,
   );
 
   return (

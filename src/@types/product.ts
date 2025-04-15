@@ -1,8 +1,8 @@
 import { Advantage } from './advantage';
 import { Category } from './category';
 import { ServicePack } from './service-pack';
-import {QaA} from "@/@types/QaA";
-import {BonusService} from "@/@types/bonus-service";
+import { QaA } from '@/@types/QaA';
+import { BonusService } from '@/@types/bonus-service';
 
 export enum AttributeKey {
   VCPU = 'vCPU',
@@ -24,7 +24,7 @@ export type Product = {
   advantages: Advantage[];
   questionsAndAnswers: QaA[];
   tags: string[];
-  isContact: boolean;
+  isContact?: boolean;
   servicePacks: ServicePack[];
   bonusServices: BonusService[];
 };

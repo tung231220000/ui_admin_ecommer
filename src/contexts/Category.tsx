@@ -1,4 +1,4 @@
-import { CategoryActions, CategoryState } from 'src/@types/category';
+import { CategoryActions, CategoryState } from '@/@types/category';
 import { Dispatch, createContext } from 'react';
 
 export const initialState: CategoryState = {

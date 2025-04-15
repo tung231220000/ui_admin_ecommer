@@ -1,4 +1,4 @@
-import { BonusServiceActions, BonusServiceState } from 'src/@types/bonus-service';
+import { BonusServiceActions, BonusServiceState } from '@/@types/bonus-service';
 import { Dispatch, createContext } from 'react';
 
 export const initialState: BonusServiceState = {

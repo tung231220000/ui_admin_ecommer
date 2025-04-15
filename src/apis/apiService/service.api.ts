@@ -1,7 +1,21 @@
 import { CustomFile } from 'src/components/upload';
-import apiBackend from "@/apis/connection/api-backend";
+import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 import { Service } from 'src/@types/service';
+import { SERVICE_SERVICE_UPLOAD_THUMBNAIL_ENDPOINT } from 'src/utils/constant';
+
+export type UploadThumbnailPayload = FormData;
+
+type UploadThumbnailResponse = {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+} & RESTErrorResponse;
 
 export type CreateServicePayload = {
   serviceInput: {
@@ -24,7 +38,7 @@ type GetServicesResponse = {
 } & RESTErrorResponse;
 
 export type GetServiceDetailPayload = {
-    _id: string;
+  _id: string;
 };
 
 type GetServiceDetailResponse = {
@@ -72,7 +86,21 @@ type DeleteManyServicesResponse = {
   };
 } & RESTErrorResponse;
 
-const ServiceApiRepository = {
+const ApiServiceRepository = {
+  async uploadThumbnail(payload: UploadThumbnailPayload): Promise<UploadThumbnailResponse> {
+    const { data } = await apiBackend.post<UploadThumbnailResponse>(
+      SERVICE_SERVICE_UPLOAD_THUMBNAIL_ENDPOINT,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+
+    return data;
+  },
+
   async createService(variables: CreateServicePayload): Promise<CreateServiceResponse> {
     const { data } = await apiBackend.post<CreateServiceResponse>('/create-service', {
       variables,
@@ -81,13 +109,15 @@ const ServiceApiRepository = {
     return data;
   },
   async fetchServices(): Promise<GetServicesResponse> {
-    const { data } = await apiBackend.get<GetServicesResponse>('/services', {
-    });
+    const { data } = await apiBackend.get<GetServicesResponse>('/services', {});
 
     return data;
   },
   async fetchServiceDetail(variables: GetServiceDetailPayload): Promise<GetServiceDetailResponse> {
-    const { data } = await apiBackend.get<GetServiceDetailResponse>('/service/' + variables._id, {});
+    const { data } = await apiBackend.get<GetServiceDetailResponse>(
+      '/service/' + variables._id,
+      {},
+    );
     return data;
   },
   async updateService(variables: UpdateServicePayload): Promise<UpdateServiceResponse> {
@@ -105,7 +135,7 @@ const ServiceApiRepository = {
     return data;
   },
   async deleteManyServices(
-    variables: DeleteManyServicesPayload
+    variables: DeleteManyServicesPayload,
   ): Promise<DeleteManyServicesResponse> {
     const { data } = await apiBackend.post<DeleteManyServicesResponse>('/delete-services', {
       variables,
@@ -115,4 +145,4 @@ const ServiceApiRepository = {
   },
 };
 
-export default ServiceApiRepository;
+export default ApiServiceRepository;

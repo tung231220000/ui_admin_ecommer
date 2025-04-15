@@ -1,16 +1,17 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { BonusService } from 'src/@types/bonus-service';
-import BonusServiceContext from 'src/contexts/BonusService';
-import { PATH_DASHBOARD } from 'src/routes/paths';
+import { BonusService } from '@/@types/bonus-service';
+import BonusServiceContext from '@/contexts/BonusService';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
 import ApiBonusServiceRepository, {
   CreateBonusServicePayload,
-  DeleteBonusServicePayload, DeleteManyBonusServicesPayload,
-  UpdateBonusServicePayload
-} from "@/apis/apiService/bonus-service.api";
+  DeleteBonusServicePayload,
+  DeleteManyBonusServicesPayload,
+  UpdateBonusServicePayload,
+} from '@/apis/apiService/bonus-service.api';
 
 export type UseBonusServiceProps = {
   isLoading: boolean;
@@ -19,8 +20,7 @@ export type UseBonusServiceProps = {
   refetchBonusServices: VoidFunction;
   updateBonusService: (payload: UpdateBonusServicePayload) => Promise<void>;
   deleteBonusService: (payload: DeleteBonusServicePayload) => void;
-  deleteManyBonusServices: (payload: DeleteManyBonusServicesPayload
-  ) => Promise<void>;
+  deleteManyBonusServices: (payload: DeleteManyBonusServicesPayload) => Promise<void>;
 };
 
 export default function useBonusService(): UseBonusServiceProps {
@@ -52,96 +52,89 @@ export default function useBonusService(): UseBonusServiceProps {
       },
     });
   const { refetch: refetchBonusServices, isLoading: isRefreshingBonusServices } = useQuery({
-    ['fetchBonusServices'],
-    () => ApiBonusServiceRepository.fetchBonusServices(),
-    {
-      refetchOnWindowFocus: false,
-      onError() {
-        enqueueSnackbar('Không thể lấy danh sách tài nguyên tự chọn!', {
-          variant: 'error',
-        });
-      },
-      onSuccess: (data) => {
-        if (!data.errors) {
+    queryKey: ['fetchBonusServices'],
+    queryFn: async () => {
+      try {
+        const data = await ApiBonusServiceRepository.fetchBonusServices();
+        if (!data.error) {
           dispatch({
             type: 'SET_BONUS_SERVICES',
             payload: data.data.bonusServices,
           });
         } else {
-          enqueueSnackbar(data.errors[0].message, {
+          enqueueSnackbar(data.message, {
+            variant: 'error',
+          });
+        }
+      } catch (e) {
+        enqueueSnackbar('Không thể lấy danh sách tài nguyên tự chọn!', {
+          variant: 'error',
+        });
+      }
+    },
+    refetchOnWindowFocus: false,
+  });
+  const { mutateAsync: mutateAsyncUpdateBonusService, isPending: isUpdatingBonusService } =
+    useMutation({
+      mutationFn: (payload: UpdateBonusServicePayload) =>
+        ApiBonusServiceRepository.updateBonusService(payload),
+      onError: () => {
+        enqueueSnackbar('Không thể cập nhật tài nguyên tự chọn!', {
+          variant: 'error',
+        });
+      },
+      onSuccess: (data) => {
+        if (!data.error) {
+          enqueueSnackbar('Cập nhật tài nguyên tự chọn thành công!', {
+            variant: 'success',
+          });
+          navigate(PATH_DASHBOARD.bonusService.list);
+        } else {
+          enqueueSnackbar(data.message, {
             variant: 'error',
           });
         }
       },
-    }
-  );
-  const { mutateAsync: mutateAsyncUpdateBonusService, isPending: isUpdatingBonusService } =
-    useMutation(
-      (payload: UpdateBonusServicePayload) =>
-        ApiBonusServiceRepository.updateBonusService(payload),
-      {
-        onError() {
-          enqueueSnackbar('Không thể cập nhật tài nguyên tự chọn!', {
-            variant: 'error',
-          });
-        },
-        onSuccess(data) {
-          if (!data.errors) {
-            enqueueSnackbar('Cập nhật tài nguyên tự chọn thành công!', {
-              variant: 'success',
-            });
-            navigate(PATH_DASHBOARD.bonusService.list);
-          } else {
-            enqueueSnackbar(data.errors[0].message, {
-              variant: 'error',
-            });
-          }
-        },
-      }
-    );
+    });
   const { mutateAsync: mutateAsyncDeleteBonusService, isPending: isDeletingBonusService } =
-    useMutation(
-      (payload: DeleteBonusServicePayload) =>
+    useMutation({
+      mutationFn: (payload: DeleteBonusServicePayload) =>
         ApiBonusServiceRepository.deleteBonusService(payload),
-      {
-        onError() {
-          enqueueSnackbar('Không thể xóa tài nguyên tự chọn!', {
-            variant: 'error',
-          });
-        },
-        onSuccess(data) {
-          if (!data.errors) {
-            dispatch({
-              type: 'SET_BONUS_SERVICES',
-              payload: state.bonusServices.filter(
-                (service) => service._id !== data.data.deleteBonusService._id
-              ),
-            });
-            enqueueSnackbar('Xóa tài nguyên tự chọn thành công!', {
-              variant: 'success',
-            });
-          } else {
-            enqueueSnackbar(data.errors[0].message, {
-              variant: 'error',
-            });
-          }
-        },
-      }
-    );
-  const {
-    mutateAsync: mutateAsyncDeleteManyBonusServices,
-    isPending: isDeletingManyBonusServices,
-  } = useMutation(
-    (payload: DeleteManyBonusServicesPayload) =>
-      ApiBonusServiceRepository.deleteManyBonusServices(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể xóa nhiều tài nguyên tự chọn!', {
+      onError: () => {
+        enqueueSnackbar('Không thể xóa tài nguyên tự chọn!', {
           variant: 'error',
         });
       },
-    }
-  );
+      onSuccess: (data) => {
+        if (!data.error) {
+          dispatch({
+            type: 'SET_BONUS_SERVICES',
+            payload: state.bonusServices.filter(
+              (service) => service._id !== data.data.deleteBonusService._id,
+            ),
+          });
+          enqueueSnackbar('Xóa tài nguyên tự chọn thành công!', {
+            variant: 'success',
+          });
+        } else {
+          enqueueSnackbar(data.message, {
+            variant: 'error',
+          });
+        }
+      },
+    });
+  const {
+    mutateAsync: mutateAsyncDeleteManyBonusServices,
+    isPending: isDeletingManyBonusServices,
+  } = useMutation({
+    mutationFn: (payload: DeleteManyBonusServicesPayload) =>
+      ApiBonusServiceRepository.deleteManyBonusServices(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể xóa nhiều tài nguyên tự chọn!', {
+        variant: 'error',
+      });
+    },
+  });
 
   const createBonusService = async (payload: CreateBonusServicePayload) => {
     mutateAsyncCreateBonusService(payload);
@@ -161,7 +154,7 @@ export default function useBonusService(): UseBonusServiceProps {
     dispatch({
       type: 'SET_BONUS_SERVICES',
       payload: state.bonusServices.filter(
-        (service) => !payload.bonusServiceInput._ids.includes(service._id)
+        (service) => !payload.bonusServiceInput._ids.includes(service._id),
       ),
     });
     enqueueSnackbar(response.data.deleteManyBonusServices, {

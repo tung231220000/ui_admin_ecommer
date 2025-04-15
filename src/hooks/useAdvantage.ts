@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Advantage } from 'src/@types/advantage';
-import AdvantageContext from 'src/contexts/Advantage';
-import { PATH_DASHBOARD } from 'src/routes/paths';
+import { Advantage } from '@/@types/advantage';
+import AdvantageContext from '@/contexts/Advantage';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';

@@ -2,6 +2,20 @@ import { CustomFile } from '@/components/upload';
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 import { Solution } from '@/@types/solution';
+import { SOLUTION_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT } from 'src/utils/constant';
+
+export type UploadBannerImagePayload = FormData;
+
+type UploadBannerImageResponse = {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+} & RESTErrorResponse;
 
 export type CreateSolutionPayload = {
   solutionInput: {
@@ -85,6 +99,20 @@ type DeleteManySolutionsResponse = {
 } & RESTErrorResponse;
 
 const ApiSolutionRepository = {
+  async uploadBannerImage(payload: UploadBannerImagePayload): Promise<UploadBannerImageResponse> {
+    const { data } = await apiBackend.post<UploadBannerImageResponse>(
+      SOLUTION_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+
+    return data;
+  },
+
   async createSolution(variables: CreateSolutionPayload): Promise<CreateSolutionResponse> {
     const { data } = await apiBackend.post<CreateSolutionResponse>('/create-solution', {
       variables,

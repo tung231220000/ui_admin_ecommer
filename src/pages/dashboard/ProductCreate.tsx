@@ -1,22 +1,22 @@
 import { useLocation, useParams } from 'react-router-dom';
 
 import { Container } from '@mui/material';
-import GraphqlProductRepository from 'src/apis/graphql/product';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import { Product } from 'src/@types/product';
-import ProductNewEditForm from 'src/sections/@dashboard/product/ProductNewEditForm';
+import { Product } from '@/@types/product';
+import ProductNewEditForm from '@/sections/@dashboard/product/ProductNewEditForm';
 import { capitalCase } from 'change-case';
-import useAdvantage from 'src/hooks/useAdvantage';
-import useBonusService from 'src/hooks/useBonusService';
-import useCategory from 'src/hooks/useCategory';
-import useQaA from 'src/hooks/useQaA';
+import useAdvantage from '@/hooks/useAdvantage';
+import useBonusService from '@/hooks/useBonusService';
+import useCategory from '@/hooks/useCategory';
+import useQaA from '@/hooks/useQaA';
 import { useQuery } from '@tanstack/react-query';
-import useServicePack from 'src/hooks/useServicePack';
+import useServicePack from '@/hooks/useServicePack';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
+import ApiProductRepository from '@/apis/apiService/product.api';
 
 // ----------------------------------------------------------------------
 
@@ -34,33 +34,32 @@ export default function ProductCreate() {
 
   const [currentProduct, setCurrentProduct] = useState<Product>();
 
-  useQuery(
-    ['fetchProductDetail', key],
-    () =>
-      GraphqlProductRepository.fetchProductDetail({
-        getProductDetailInput: {
-          key,
-        },
-      }),
-    {
-      enabled: key.length > 0,
-      refetchOnWindowFocus: false,
-      onError() {
-        enqueueSnackbar('Không thể lấy chi tiết sản phẩm!', {
-          variant: 'error',
+  useQuery({
+    queryKey: ['fetchProductDetail', key],
+    queryFn: async () => {
+      try {
+        const data = await ApiProductRepository.fetchProductDetail({
+          getProductDetailInput: {
+            key,
+          },
         });
-      },
-      onSuccess: (data) => {
-        if (!data.errors) {
+        if (!data.error) {
           setCurrentProduct(data.data.productDetail.detail);
         } else {
-          enqueueSnackbar(data.errors[0].message, {
+          enqueueSnackbar(data.message, {
             variant: 'error',
           });
         }
-      },
-    }
-  );
+      } catch (e) {
+        enqueueSnackbar('Không thể lấy chi tiết sản phẩm!', {
+          variant: 'error',
+        });
+      }
+    },
+
+    enabled: key.length > 0,
+    refetchOnWindowFocus: false,
+  });
 
   const isEdit = pathname.includes('edit');
 

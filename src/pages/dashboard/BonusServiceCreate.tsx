@@ -1,12 +1,12 @@
 import { capitalCase, paramCase } from 'change-case';
 import { useLocation, useParams } from 'react-router-dom';
 
-import BonusServiceNewEditForm from 'src/sections/@dashboard/bonus-service/BonusServiceNewEditForm';
+import BonusServiceNewEditForm from '@/sections/@dashboard/bonus-service/BonusServiceNewEditForm';
 import { Container } from '@mui/material';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { PATH_DASHBOARD } from '../../routes/paths';
 import Page from '../../components/Page';
-import useBonusService from 'src/hooks/useBonusService';
+import useBonusService from '@/hooks/useBonusService';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------

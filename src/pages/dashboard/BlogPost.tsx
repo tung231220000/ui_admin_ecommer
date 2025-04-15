@@ -1,11 +1,11 @@
-import { BlogPostHero, BlogPostTags } from 'src/sections/@dashboard/blog';
+import { BlogPostHero, BlogPostTags } from '@/sections/@dashboard/blog';
 import { Box, Button, Card, Container, Divider, Typography } from '@mui/material';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 import { kebabCase, sentenceCase } from 'change-case';
 
-import ApiPostRepository from 'src/apis/apiService/post.api';
+import ApiPostRepository from '@/apis/apiService/post.api';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import Markdown from 'src/components/MarkDown';
+import Markdown from '@/components/MarkDown';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import { Post } from '@/@types/post';

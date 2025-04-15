@@ -1,12 +1,12 @@
 import { useLocation, useParams } from 'react-router-dom';
 
 import { Container } from '@mui/material';
-import GraphqlPartnerRepository from 'src/apis/graphql/partner';
+import GraphqlPartnerRepository from '@/apis/graphql/partner';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { PATH_DASHBOARD } from '../../routes/paths';
 import Page from '../../components/Page';
-import { Partner } from 'src/@types/partner';
-import PartnerNewEditForm from 'src/sections/@dashboard/partner/PartnerNewEditForm';
+import { Partner } from '@/@types/partner';
+import PartnerNewEditForm from '@/sections/@dashboard/partner/PartnerNewEditForm';
 import { capitalCase } from 'change-case';
 import { useQuery } from '@tanstack/react-query';
 import useSettings from '../../hooks/useSettings';
@@ -49,7 +49,7 @@ export default function PartnerCreate() {
           });
         }
       },
-    }
+    },
   );
 
   const isEdit = pathname.includes('edit');

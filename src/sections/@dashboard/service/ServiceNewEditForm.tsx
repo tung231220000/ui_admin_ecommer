@@ -7,24 +7,24 @@ import {
   RHFTextField,
   RHFUploadSingleFile,
 } from '../../../components/hook-form';
-import GraphqlServiceRepository, {
-  CreateServicePayload,
-  UpdateServicePayload,
-} from 'src/apis/graphql/service';
-import ServiceRepository, { UploadThumbnailPayload } from 'src/apis/service/service';
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { CustomFile } from 'src/components/upload';
-import { DTS_TELECOM_BACKEND_API_DOMAIN } from 'src/utils/constant';
+import { CustomFile } from '@/components/upload';
+import { API_DOMAIN } from '@/utils/constant';
 import { LoadingButton } from '@mui/lab';
-import { PATH_DASHBOARD } from 'src/routes/paths';
-import { Service } from 'src/@types/service';
-import { Trademark } from 'src/@types/trademark';
-import { useForm } from 'react-hook-form';
+import { PATH_DASHBOARD } from '@/routes/paths';
+import { Service } from '@/@types/service';
+import { Trademark } from '@/@types/trademark';
+import { Resolver, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
+import ApiServiceRepository, {
+  CreateServicePayload,
+  UpdateServicePayload,
+  UploadThumbnailPayload,
+} from '@/apis/apiService/service.api';
 
 // ----------------------------------------------------------------------
 
@@ -52,21 +52,23 @@ export default function ServiceNewEditForm({ isEdit, trademarks, currentService 
   const { enqueueSnackbar } = useSnackbar();
 
   const NewServiceSchema = Yup.object().shape({
+    _id: Yup.string(),
     key: Yup.string().required('Key is required'),
-    thumbnail: Yup.mixed().test('required', 'Thumbnail is required', (value) => value !== ''),
+    thumbnail: Yup.string(),
     trademark: Yup.string().required('Trademark is required'),
   });
   const defaultValues = useMemo(
     () => ({
+      _id: currentService?._id || '',
       key: currentService?.key || '',
       thumbnail: currentService?.thumbnail || '',
-      trademark: currentService?.trademark._id || trademarks[0]._id,
+      trademark: currentService?.trademark.id || trademarks[0].id,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentService]
+    [currentService],
   );
   const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(NewServiceSchema),
+    resolver: yupResolver(NewServiceSchema) as Resolver<FormValuesProps>,
     defaultValues,
   });
   const {
@@ -76,60 +78,54 @@ export default function ServiceNewEditForm({ isEdit, trademarks, currentService 
     formState: { isSubmitting },
   } = methods;
 
-  const { mutateAsync: mutateAsyncUploadThumbnail } = useMutation(
-    (payload: UploadThumbnailPayload) => ServiceRepository.uploadThumbnail(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể upload ảnh banner!', {
+  const { mutateAsync: mutateAsyncUploadThumbnail } = useMutation({
+    mutationFn: (payload: UploadThumbnailPayload) => ApiServiceRepository.uploadThumbnail(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể upload ảnh banner!', {
+        variant: 'error',
+      });
+    },
+  });
+  const { mutateAsync: mutateAsyncCreateService } = useMutation({
+    mutationFn: (payload: CreateServicePayload) => ApiServiceRepository.createService(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể tạo linh kiện!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Tạo linh kiện thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.service.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncCreateService } = useMutation(
-    (payload: CreateServicePayload) => GraphqlServiceRepository.createService(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể tạo linh kiện!', {
+      }
+    },
+  });
+  const { mutateAsync: mutateAsyncUpdateService } = useMutation({
+    mutationFn: (payload: UpdateServicePayload) => ApiServiceRepository.updateService(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể cập nhật linh kiện!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Cập nhật linh kiện thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.service.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Tạo linh kiện thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.service.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncUpdateService } = useMutation(
-    (payload: UpdateServicePayload) => GraphqlServiceRepository.updateService(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể cập nhật linh kiện!', {
-          variant: 'error',
-        });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Cập nhật linh kiện thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.service.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
+      }
+    },
+  });
 
   useEffect(() => {
     if (isEdit && currentService) {
@@ -150,16 +146,16 @@ export default function ServiceNewEditForm({ isEdit, trademarks, currentService 
           'thumbnail',
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
+          }),
         );
 
         const filesData = new FormData();
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadThumbnail(filesData);
-        setValue(`thumbnail`, `${DTS_TELECOM_BACKEND_API_DOMAIN}/${response.path}`);
+        setValue(`thumbnail`, `${API_DOMAIN}/${response.path}`);
       }
     },
-    [mutateAsyncUploadThumbnail, setValue]
+    [mutateAsyncUploadThumbnail, setValue],
   );
 
   const onSubmit = async (data: FormValuesProps) => {
@@ -203,7 +199,7 @@ export default function ServiceNewEditForm({ isEdit, trademarks, currentService 
 
               <RHFSelect name="trademark" label="Trademark">
                 {trademarks.map((trademark) => (
-                  <option key={trademark._id} value={trademark._id}>
+                  <option key={trademark.id} value={trademark.id}>
                     {trademark.name}
                   </option>
                 ))}

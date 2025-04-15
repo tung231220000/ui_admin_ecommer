@@ -11,7 +11,7 @@ import {
   Typography,
   styled,
 } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, Resolver, useForm } from 'react-hook-form';
 import {
   FormProvider,
   RHFEditor,
@@ -20,27 +20,27 @@ import {
   RHFTextField,
   RHFUploadSingleFile,
 } from '../../../components/hook-form';
-import GraphqlProductRepository, {
-  CreateProductPayload,
-  UpdateProductPayload,
-} from 'src/apis/graphql/product';
-import ProductRepository, { UploadBannerImagePayload } from 'src/apis/service/product';
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { Advantage } from 'src/@types/advantage';
-import { BonusService } from 'src/@types/bonus-service';
-import { Category } from 'src/@types/category';
-import { CustomFile } from 'src/components/upload';
-import { DTS_TELECOM_BACKEND_API_DOMAIN } from 'src/utils/constant';
+import { Advantage } from '@/@types/advantage';
+import { BonusService } from '@/@types/bonus-service';
+import { Category } from '@/@types/category';
+import { CustomFile } from '@/components/upload';
+import { API_DOMAIN } from '@/utils/constant';
 import { LoadingButton } from '@mui/lab';
-import { PATH_DASHBOARD } from 'src/routes/paths';
-import { Product } from 'src/@types/product';
-import { QaA } from 'src/@types/QaA';
-import { ServicePack } from 'src/@types/service-pack';
+import { PATH_DASHBOARD } from '@/routes/paths';
+import { Product } from '@/@types/product';
+import { QaA } from '@/@types/QaA';
+import { ServicePack } from '@/@types/service-pack';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
+import ApiProductRepository, {
+  CreateProductPayload,
+  UpdateProductPayload,
+  UploadBannerImagePayload,
+} from '@/apis/apiService/product.api';
 
 // ----------------------------------------------------------------------
 
@@ -89,63 +89,59 @@ export default function ProductNewEditForm({
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { mutateAsync: mutateAsyncUploadBannerImage } = useMutation(
-    (payload: UploadBannerImagePayload) => ProductRepository.uploadBannerImage(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể upload ảnh banner!', {
+  const { mutateAsync: mutateAsyncUploadBannerImage } = useMutation({
+    mutationFn: (payload: UploadBannerImagePayload) =>
+      ApiProductRepository.uploadBannerImage(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể upload ảnh banner!', {
+        variant: 'error',
+      });
+    },
+  });
+  const { mutateAsync: mutateAsyncCreateProduct } = useMutation({
+    mutationFn: (payload: CreateProductPayload) => ApiProductRepository.createProduct(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể tạo sản phẩm!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Tạo sản phẩm thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.product.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncCreateProduct } = useMutation(
-    (payload: CreateProductPayload) => GraphqlProductRepository.createProduct(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể tạo sản phẩm!', {
+      }
+    },
+  });
+  const { mutateAsync: mutateAsyncUpdateProduct } = useMutation({
+    mutationFn: (payload: UpdateProductPayload) => ApiProductRepository.updateProduct(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể cập nhật sản phẩm!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Cập nhật sản phẩm thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.product.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Tạo sản phẩm thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.product.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncUpdateProduct } = useMutation(
-    (payload: UpdateProductPayload) => GraphqlProductRepository.updateProduct(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể cập nhật sản phẩm!', {
-          variant: 'error',
-        });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Cập nhật sản phẩm thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.product.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
+      }
+    },
+  });
 
   const defaultValues = useMemo(
     () => ({
+      _id: currentProduct?._id || '',
       key: currentProduct?.key || '',
       banner: currentProduct?.banner || '',
       category: currentProduct?.category._id || categories[0]._id,
@@ -160,9 +156,10 @@ export default function ProductNewEditForm({
       bonusServices: currentProduct?.bonusServices.map((service) => service._id) || [],
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentProduct]
+    [currentProduct],
   );
   const NewEditProductSchema = Yup.object().shape({
+    _id: Yup.string(),
     key: Yup.string().required('Key is required'),
     banner: Yup.string().required('Banner is required'),
     category: Yup.string().required('Category is required'),
@@ -174,9 +171,10 @@ export default function ProductNewEditForm({
     tags: Yup.array().min(1, 'Tag is required'),
     servicePacks: Yup.array(),
     bonusServices: Yup.array(),
+    isContact: Yup.boolean(),
   });
   const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(NewEditProductSchema),
+    resolver: yupResolver(NewEditProductSchema) as Resolver<FormValuesProps>,
     defaultValues,
   });
   const {
@@ -219,16 +217,16 @@ export default function ProductNewEditForm({
           'banner',
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
+          }),
         );
 
         const filesData = new FormData();
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadBannerImage(filesData);
-        setValue(`banner`, `${DTS_TELECOM_BACKEND_API_DOMAIN}/${response.path}`);
+        setValue(`banner`, `${API_DOMAIN}/${response.path}`);
       }
     },
-    [mutateAsyncUploadBannerImage, setValue]
+    [mutateAsyncUploadBannerImage, setValue],
   );
 
   const onSubmit = async (data: FormValuesProps) => {
@@ -307,7 +305,7 @@ export default function ProductNewEditForm({
                       options={advantages.map((advantage) => advantage._id)}
                       renderOption={(props, advantageId) => {
                         const { title } = advantages.find(
-                          (a) => a._id === advantageId
+                          (a) => a._id === advantageId,
                         ) as Advantage;
 
                         return <li {...props}>{title}</li>;
@@ -403,7 +401,7 @@ export default function ProductNewEditForm({
                           options={servicePacks.map((service) => service._id)}
                           renderOption={(props, servicePackId) => {
                             const { prices } = servicePacks.find(
-                              (s) => s._id === servicePackId
+                              (s) => s._id === servicePackId,
                             ) as ServicePack;
 
                             return <li {...props}>{prices[0].name}</li>;
@@ -448,7 +446,7 @@ export default function ProductNewEditForm({
                           options={bonusServices.map((service) => service._id)}
                           renderOption={(props, bonusServiceId) => {
                             const { key, minValue, maxValue, unit } = bonusServices.find(
-                              (s) => s._id === bonusServiceId
+                              (s) => s._id === bonusServiceId,
                             ) as BonusService;
 
                             return (
@@ -460,7 +458,7 @@ export default function ProductNewEditForm({
                           renderTags={(value, getTagProps) =>
                             value.map((option, index) => {
                               const { key, minValue, maxValue, unit } = bonusServices.find(
-                                (s) => s._id === option
+                                (s) => s._id === option,
                               ) as BonusService;
 
                               return (

@@ -16,7 +16,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   SolutionCategoryTableRow,
   SolutionCategoryTableToolbar,
-} from 'src/sections/@dashboard/solution-category/list';
+} from '@/sections/@dashboard/solution-category/list';
 import {
   TableEmptyRows,
   TableHeadCustom,
@@ -28,13 +28,13 @@ import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import { SolutionCategory } from 'src/@types/solution-category';
-import { paramCase } from 'change-case';
+import { SolutionCategory } from '@/@types/solution-category';
+import { kebabCase } from 'change-case';
 import useSettings from '../../hooks/useSettings';
-import useSolutionCategory from 'src/hooks/useSolutionCategory';
+import useSolutionCategory from '@/hooks/useSolutionCategory';
 
 // ----------------------------------------------------------------------
 
@@ -92,7 +92,7 @@ export default function SolutionCategoryList() {
   };
 
   const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.solutionCategory.edit(paramCase(_id)));
+    navigate(PATH_DASHBOARD.solutionCategory.edit(kebabCase(_id)));
   };
 
   const dataFiltered = applySortFilter({
@@ -143,7 +143,7 @@ export default function SolutionCategoryList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                   actions={
@@ -167,7 +167,7 @@ export default function SolutionCategoryList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                 />
@@ -244,7 +244,7 @@ function applySortFilter({
   if (filterTitle) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.title.toLowerCase().indexOf(filterTitle.toLowerCase()) !== -1
+        item.title.toLowerCase().indexOf(filterTitle.toLowerCase()) !== -1,
     );
   }
 

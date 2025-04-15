@@ -1,19 +1,19 @@
 import { useLocation, useParams } from 'react-router-dom';
 
 import { Container } from '@mui/material';
-import GraphqlServiceRepository from 'src/apis/graphql/service';
-import GraphqlTrademarkRepository from 'src/apis/graphql/trademark';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import { Service } from 'src/@types/service';
-import ServiceNewEditForm from 'src/sections/@dashboard/service/ServiceNewEditForm';
-import { Trademark } from 'src/@types/trademark';
+import { Service } from '@/@types/service';
+import ServiceNewEditForm from '@/sections/@dashboard/service/ServiceNewEditForm';
+import { Trademark } from '@/@types/trademark';
 import { capitalCase } from 'change-case';
 import { useQuery } from '@tanstack/react-query';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
+import ApiServiceRepository from '@/apis/apiService/service.api';
+import ApiTrademarkRepository from '@/apis/apiService/trademark.api';
 
 // ----------------------------------------------------------------------
 
@@ -27,50 +27,48 @@ export default function ServiceCreate() {
   const [trademarks, setTrademarks] = useState<Trademark[]>([]);
   const [currentService, setCurrentService] = useState<Service>();
 
-  useQuery(['fetchTrademarks'], () => GraphqlTrademarkRepository.fetchTrademarks(), {
-    refetchOnWindowFocus: false,
-    onError() {
-      enqueueSnackbar('Không thể lấy danh sách thương hiệu!', {
-        variant: 'error',
-      });
-    },
-    onSuccess: (data) => {
-      if (!data.errors) {
-        setTrademarks(data.data.trademarks);
-      } else {
-        enqueueSnackbar(data.errors[0].message, {
+  useQuery({
+    queryKey: ['fetchTrademarks'],
+    queryFn: async () => {
+      try {
+        const data = await ApiTrademarkRepository.fetchTrademarks();
+        if (!data.error) {
+          setTrademarks(data.trademarks);
+        } else {
+          enqueueSnackbar(data.message, {
+            variant: 'error',
+          });
+        }
+      } catch (e) {
+        enqueueSnackbar('Không thể lấy danh sách thương hiệu!', {
           variant: 'error',
         });
       }
     },
+    refetchOnWindowFocus: false,
   });
-  useQuery(
-    ['fetchServiceDetail', _id],
-    () =>
-      GraphqlServiceRepository.fetchServiceDetail({
-        serviceInput: {
-          _id,
-        },
-      }),
-    {
-      enabled: _id.length > 0,
-      refetchOnWindowFocus: false,
-      onError() {
-        enqueueSnackbar('Không thể lấy chi tiết linh kiện!', {
-          variant: 'error',
-        });
-      },
-      onSuccess: (data) => {
-        if (!data.errors) {
+
+  useQuery({
+    queryKey: ['fetchServiceDetail', _id],
+    queryFn: async () => {
+      try {
+        const data = await ApiServiceRepository.fetchServiceDetail({ _id });
+        if (!data.error) {
           setCurrentService(data.data.serviceDetail);
         } else {
-          enqueueSnackbar(data.errors[0].message, {
+          enqueueSnackbar(data.message, {
             variant: 'error',
           });
         }
-      },
-    }
-  );
+      } catch (e) {
+        enqueueSnackbar('Không thể lấy chi tiết linh kiện!', {
+          variant: 'error',
+        });
+      }
+    },
+    enabled: _id.length > 0,
+    refetchOnWindowFocus: false,
+  });
 
   const isEdit = pathname.includes('edit');
 

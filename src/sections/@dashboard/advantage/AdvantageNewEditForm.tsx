@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react';
 import * as Yup from 'yup';
 
 import { Card, Stack } from '@mui/material';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
 import { useEffect, useMemo } from 'react';
 
-import { Advantage } from 'src/@types/advantage';
+import { Advantage } from '@/@types/advantage';
 import { LoadingButton } from '@mui/lab';
-import useAdvantage from 'src/hooks/useAdvantage';
-import { useForm } from 'react-hook-form';
+import useAdvantage from '@/hooks/useAdvantage';
+import { Resolver, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 // ----------------------------------------------------------------------
@@ -24,21 +24,23 @@ export default function AdvantageNewEditForm({ isEdit, currentAdvantage }: Props
   const { createAdvantage, updateAdvantage } = useAdvantage();
 
   const NewAdvantageSchema = Yup.object().shape({
+    _id: Yup.string(),
     title: Yup.string().required('Title is required'),
     content: Yup.string().required('Content is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
+      _id: currentAdvantage?._id || '',
       title: currentAdvantage?.title || '',
       content: currentAdvantage?.content || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentAdvantage]
+    [currentAdvantage],
   );
 
   const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(NewAdvantageSchema),
+    resolver: yupResolver(NewAdvantageSchema) as Resolver<FormValuesProps>,
     defaultValues,
   });
 

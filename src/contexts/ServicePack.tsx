@@ -1,5 +1,5 @@
 import { Dispatch, createContext } from 'react';
-import { ServicePackActions, ServicePackState } from 'src/@types/service-pack';
+import { ServicePackActions, ServicePackState } from '@/@types/service-pack';
 
 export const initialState: ServicePackState = {
   servicePacks: [],

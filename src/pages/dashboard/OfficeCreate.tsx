@@ -2,8 +2,8 @@ import { useLocation, useParams } from 'react-router-dom';
 
 import { Container } from '@mui/material';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
-import { Office } from 'src/@types/office';
-import OfficeNewEditForm from 'src/sections/@dashboard/office/OfficeNewEditForm';
+import { Office } from '@/@types/office';
+import OfficeNewEditForm from '@/sections/@dashboard/office/OfficeNewEditForm';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import { capitalCase } from 'change-case';

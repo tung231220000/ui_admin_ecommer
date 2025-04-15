@@ -1,14 +1,17 @@
-import { CustomFile } from 'src/components/upload';
-import apiBackend from "@/apis/connection/api-backend";
-import { Page } from 'src/@types/page';
-import {RESTErrorResponse} from "@/@types/api";
-import {PAGE_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT, PAGE_SERVICE_UPLOAD_CAROUSEL_IMAGE_ENDPOINT} from "@/utils/constant";
+import { CustomFile } from '@/components/upload';
+import apiBackend from '@/apis/connection/api-backend';
+import { Page } from '@/@types/page';
+import { RESTErrorResponse } from '@/@types/api';
+import {
+  PAGE_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT,
+  PAGE_SERVICE_UPLOAD_CAROUSEL_IMAGE_ENDPOINT,
+} from '@/utils/constant';
 
 export type UploadBannerImagePayload = FormData;
 type GetPagesResponse = Page[];
 
 export type GetPageDataPayload = {
-    name: string;
+  name: string;
 };
 
 export type UploadBannerImageResponse = {
@@ -36,7 +39,7 @@ type UploadCarouselImageResponse = {
 } & RESTErrorResponse;
 
 type GetPageDataResponse = {
-  result: Page
+  result: Page;
 } & RESTErrorResponse;
 
 export type UpdatePagePayload = {
@@ -59,20 +62,20 @@ const ApiPageRepository = {
     try {
       const response = await apiBackend.get<GetPagesResponse>('/pages', {});
       return response.data;
-    } catch (error: any){
+    } catch (error: any) {
       if (error.response) {
         const errorData: RESTErrorResponse = error.response.data;
         throw new Error(`${errorData.statusCode}: ${errorData.message}`);
       }
 
       // Nếu lỗi do mạng hoặc server không phản hồi
-      throw new Error("Network error or server is unreachable");
+      throw new Error('Network error or server is unreachable');
     }
   },
   async fetchPageData(variables: string): Promise<GetPageDataResponse> {
-      const { data } = await apiBackend.get<GetPageDataResponse>('/page?name=' + variables, {});
-      console.log("data fetch value: ", data);
-      return data;
+    const { data } = await apiBackend.get<GetPageDataResponse>('/page?name=' + variables, {});
+    console.log('data fetch value: ', data);
+    return data;
   },
   async updatePage(variables: UpdatePagePayload): Promise<UpdatePageResponse> {
     const { data } = await apiBackend.post<UpdatePageResponse>('/page/edit', variables);
@@ -87,13 +90,13 @@ const ApiPageRepository = {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      }
+      },
     );
 
     return data;
   },
   async uploadCarouselImage(
-    payload: UploadCarouselImagePayload
+    payload: UploadCarouselImagePayload,
   ): Promise<UploadCarouselImageResponse> {
     const { data } = await apiBackend.post<UploadCarouselImageResponse>(
       PAGE_SERVICE_UPLOAD_CAROUSEL_IMAGE_ENDPOINT,
@@ -102,7 +105,7 @@ const ApiPageRepository = {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      }
+      },
     );
 
     return data;

@@ -12,7 +12,7 @@ import {
   TablePagination,
   Tooltip,
 } from '@mui/material';
-import { PriceTableRow, PriceTableToolbar } from 'src/sections/@dashboard/price/list';
+import { PriceTableRow, PriceTableToolbar } from '@/sections/@dashboard/price/list';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   TableEmptyRows,
@@ -27,10 +27,10 @@ import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
-import { Price } from 'src/@types/price';
+import { Price } from '@/@types/price';
 import Scrollbar from '../../components/Scrollbar';
 import { kebabCase } from 'change-case';
-import usePrice from 'src/hooks/usePrice';
+import usePrice from '@/hooks/usePrice';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------

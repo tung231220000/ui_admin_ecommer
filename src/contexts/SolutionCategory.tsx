@@ -1,5 +1,5 @@
 import { Dispatch, createContext } from 'react';
-import { SolutionCategoryActions, SolutionCategoryState } from 'src/@types/solution-category';
+import { SolutionCategoryActions, SolutionCategoryState } from '@/@types/solution-category';
 
 export const initialState: SolutionCategoryState = {
   solutionCategories: [],

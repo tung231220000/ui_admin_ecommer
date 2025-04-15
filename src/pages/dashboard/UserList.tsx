@@ -15,26 +15,26 @@ import {
   Tabs,
   Tooltip,
 } from '@mui/material';
-import {Link as RouterLink, useNavigate} from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   TableEmptyRows,
   TableHeadCustom,
   TableNoData,
   TableSelectedActions,
 } from '../../components/table';
-import {UserTableRow, UserTableToolbar} from '../../sections/@dashboard/user/list';
-import useTable, {emptyRows, getComparator} from '../../hooks/useTable';
+import { UserTableRow, UserTableToolbar } from '../../sections/@dashboard/user/list';
+import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import {PATH_DASHBOARD} from '@/routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import {UserMock} from 'src/@types/user';
-import {_userList} from '@/_mock';
-import {kebabCase} from 'change-case';
+import { UserMock } from '@/@types/user';
+import { _userList } from '@/_mock';
+import { kebabCase } from 'change-case';
 import useSettings from '../../hooks/useSettings';
-import {useState} from 'react';
+import { useState } from 'react';
 import useTabs from '../../hooks/useTabs';
 
 // ----------------------------------------------------------------------
@@ -55,12 +55,12 @@ const ROLE_OPTIONS = [
 ];
 
 const TABLE_HEAD = [
-  {id: 'name', label: 'Name', align: 'left'},
-  {id: 'company', label: 'Company', align: 'left'},
-  {id: 'role', label: 'Role', align: 'left'},
-  {id: 'isVerified', label: 'Verified', align: 'center'},
-  {id: 'status', label: 'Status', align: 'left'},
-  {id: ''},
+  { id: 'name', label: 'Name', align: 'left' },
+  { id: 'company', label: 'Company', align: 'left' },
+  { id: 'role', label: 'Role', align: 'left' },
+  { id: 'isVerified', label: 'Verified', align: 'center' },
+  { id: 'status', label: 'Status', align: 'left' },
+  { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -85,7 +85,7 @@ export default function UserList() {
     onChangeRowsPerPage,
   } = useTable();
 
-  const {themeStretch} = useSettings();
+  const { themeStretch } = useSettings();
 
   const navigate = useNavigate();
 
@@ -95,7 +95,7 @@ export default function UserList() {
 
   const [filterRole, setFilterRole] = useState('all');
 
-  const {currentTab: filterStatus, onChangeTab: onChangeFilterStatus} = useTabs('all');
+  const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all');
 
   const handleFilterName = (filterName: string) => {
     setFilterName(filterName);
@@ -144,16 +144,16 @@ export default function UserList() {
         <HeaderBreadcrumbs
           heading="User List"
           links={[
-            {name: 'Dashboard', href: PATH_DASHBOARD.root},
-            {name: 'User', href: PATH_DASHBOARD.user.list},
-            {name: 'List'},
+            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            { name: 'User', href: PATH_DASHBOARD.user.list },
+            { name: 'List' },
           ]}
           action={
             <Button
               variant="contained"
               component={RouterLink}
               to={PATH_DASHBOARD.user.new}
-              startIcon={<Iconify icon={'eva:plus-fill'}/>}
+              startIcon={<Iconify icon={'eva:plus-fill'} />}
             >
               New User
             </Button>
@@ -167,14 +167,14 @@ export default function UserList() {
             scrollButtons="auto"
             value={filterStatus}
             onChange={onChangeFilterStatus}
-            sx={{px: 2, bgcolor: 'background.neutral'}}
+            sx={{ px: 2, bgcolor: 'background.neutral' }}
           >
             {STATUS_OPTIONS.map((tab) => (
-              <Tab disableRipple key={tab} label={tab} value={tab}/>
+              <Tab disableRipple key={tab} label={tab} value={tab} />
             ))}
           </Tabs>
 
-          <Divider/>
+          <Divider />
 
           <UserTableToolbar
             filterName={filterName}
@@ -185,7 +185,7 @@ export default function UserList() {
           />
 
           <Scrollbar>
-            <TableContainer sx={{minWidth: 800, position: 'relative'}}>
+            <TableContainer sx={{ minWidth: 800, position: 'relative' }}>
               {selected.length > 0 && (
                 <TableSelectedActions
                   dense={dense}
@@ -194,13 +194,13 @@ export default function UserList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => row.id),
                     )
                   }
                   actions={
                     <Tooltip title="Delete">
                       <IconButton color="primary" onClick={() => handleDeleteRows(selected)}>
-                        <Iconify icon={'eva:trash-2-outline'}/>
+                        <Iconify icon={'eva:trash-2-outline'} />
                       </IconButton>
                     </Tooltip>
                   }
@@ -218,7 +218,7 @@ export default function UserList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => row.id),
                     )
                   }
                 />
@@ -242,13 +242,13 @@ export default function UserList() {
                     emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
                   />
 
-                  <TableNoData isNotFound={isNotFound}/>
+                  <TableNoData isNotFound={isNotFound} />
                 </TableBody>
               </Table>
             </TableContainer>
           </Scrollbar>
 
-          <Box sx={{position: 'relative'}}>
+          <Box sx={{ position: 'relative' }}>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
@@ -260,9 +260,9 @@ export default function UserList() {
             />
 
             <FormControlLabel
-              control={<Switch checked={dense} onChange={onChangeDense}/>}
+              control={<Switch checked={dense} onChange={onChangeDense} />}
               label="Dense"
-              sx={{px: 3, py: 1.5, top: 0, position: {md: 'absolute'}}}
+              sx={{ px: 3, py: 1.5, top: 0, position: { md: 'absolute' } }}
             />
           </Box>
         </Card>
@@ -274,12 +274,12 @@ export default function UserList() {
 // ----------------------------------------------------------------------
 
 function applySortFilter({
-                           tableData,
-                           comparator,
-                           filterName,
-                           filterStatus,
-                           filterRole,
-                         }: {
+  tableData,
+  comparator,
+  filterName,
+  filterStatus,
+  filterRole,
+}: {
   tableData: UserMock[];
   comparator: (a: any, b: any) => number;
   filterName: string;
@@ -299,7 +299,7 @@ function applySortFilter({
   if (filterName) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1,
     );
   }
 

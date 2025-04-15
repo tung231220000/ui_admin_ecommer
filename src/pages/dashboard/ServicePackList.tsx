@@ -16,7 +16,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   ServicePackTableRow,
   ServicePackTableToolbar,
-} from 'src/sections/@dashboard/service-pack/list';
+} from '@/sections/@dashboard/service-pack/list';
 import {
   TableEmptyRows,
   TableHeadCustom,
@@ -28,12 +28,12 @@ import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
 
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import Iconify from '../../components/Iconify';
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import { ServicePack } from 'src/@types/service-pack';
-import { paramCase } from 'change-case';
-import useServicePack from 'src/hooks/useServicePack';
+import { ServicePack } from '@/@types/service-pack';
+import { kebabCase } from 'change-case';
+import useServicePack from '@/hooks/useServicePack';
 import useSettings from '../../hooks/useSettings';
 
 // ----------------------------------------------------------------------
@@ -100,7 +100,7 @@ export default function ServicePackList() {
   };
 
   const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.servicePack.edit(paramCase(_id)));
+    navigate(PATH_DASHBOARD.servicePack.edit(kebabCase(_id)));
   };
 
   const dataFiltered = applySortFilter({
@@ -151,7 +151,7 @@ export default function ServicePackList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                   actions={
@@ -175,7 +175,7 @@ export default function ServicePackList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row._id),
                     )
                   }
                 />
@@ -252,7 +252,7 @@ function applySortFilter({
   if (filterPriceName) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.prices[0].name.toLowerCase().indexOf(filterPriceName.toLowerCase()) !== -1
+        item.prices[0].name.toLowerCase().indexOf(filterPriceName.toLowerCase()) !== -1,
     );
   }
 

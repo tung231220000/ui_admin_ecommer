@@ -1,5 +1,5 @@
 export type Trademark = {
-  id: string;
+  id?: string;
   name: string;
   logo: string;
 };

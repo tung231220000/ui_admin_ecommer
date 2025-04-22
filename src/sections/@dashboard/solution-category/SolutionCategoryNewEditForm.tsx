@@ -4,12 +4,12 @@ import { Box, Card, Grid, Stack, Typography } from '@mui/material';
 import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { CustomFile } from '../../../components/upload';
+import { CustomFile } from '@/components/upload';
 import { LoadingButton } from '@mui/lab';
-import { SolutionCategory } from 'src/@types/solution-category';
-import { fData } from '../../../utils/formatNumber';
+import { SolutionCategory } from '@/@types/solution-category';
+import { fData } from '@/utils/formatNumber';
 import { useForm } from 'react-hook-form';
-import useSolutionCategory from 'src/hooks/useSolutionCategory';
+import useSolutionCategory from '@/hooks/useSolutionCategory';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 // ----------------------------------------------------------------------
@@ -27,16 +27,18 @@ export default function SolutionCategoryNewEditForm({ isEdit, currentSolutionCat
   const { createSolutionCategory, updateSolutionCategory } = useSolutionCategory();
 
   const NewSolutionCategorySchema = Yup.object().shape({
-    icon: Yup.mixed().test('required', 'Icon is required', (value) => value !== ''),
+    _id: Yup.string(),
+    icon: Yup.mixed<CustomFile | string>().required('Icon is required'),
     title: Yup.string().required('Title is required'),
   });
   const defaultValues = useMemo(
     () => ({
+      _id: currentSolutionCategory?._id || '',
       icon: currentSolutionCategory?.icon || '',
       title: currentSolutionCategory?.title || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentSolutionCategory]
+    [currentSolutionCategory],
   );
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewSolutionCategorySchema),
@@ -83,11 +85,11 @@ export default function SolutionCategoryNewEditForm({ isEdit, currentSolutionCat
           'icon',
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
+          }),
         );
       }
     },
-    [setValue]
+    [setValue],
   );
 
   return (

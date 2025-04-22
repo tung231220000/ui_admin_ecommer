@@ -5,10 +5,10 @@ import { FormProvider, RHFEditor, RHFTextField } from '../../../components/hook-
 import { useEffect, useMemo } from 'react';
 
 import { LoadingButton } from '@mui/lab';
-import { QaA } from 'src/@types/QaA';
+import { QaA } from '@/@types/QaA';
 import { styled } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
-import useQaA from 'src/hooks/useQaA';
+import useQaA from '@/hooks/useQaA';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 // ----------------------------------------------------------------------
@@ -32,17 +32,19 @@ export default function QaANewEditForm({ isEdit, currentQaA }: Props) {
   const { createQaA, updateQaA } = useQaA();
 
   const NewQaASchema = Yup.object().shape({
+    _id: Yup.string(),
     question: Yup.string().required('Question is required'),
     answer: Yup.string().required('Answer is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
+      _id: currentQaA?._id || '',
       question: currentQaA?.question || '',
       answer: currentQaA?.answer || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentQaA]
+    [currentQaA],
   );
 
   const methods = useForm<FormValuesProps>({

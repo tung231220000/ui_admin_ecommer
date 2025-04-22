@@ -1,7 +1,23 @@
-import apiBackend from "@/apis/connection/api-backend";
-import { RESTErrorResponse } from "@/@types/api";
-import {Trademark} from "@/@types/trademark";
+import apiBackend from '@/apis/connection/api-backend';
+import { RESTErrorResponse } from '@/@types/api';
+import { Trademark } from '@/@types/trademark';
+import { TRADEMARK_SERVICE_UPLOAD_LOGO_ENDPOINT } from 'src/utils/constant';
+import { CustomFile } from '@/components/upload';
 
+export type UploadLogoPayload = {
+  file: CustomFile | string;
+};
+
+type UploadLogoResponse = {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+} & RESTErrorResponse;
 export type CreateTrademarkPayload = {
   trademarkInput: {
     name: string;
@@ -56,6 +72,19 @@ export type DeleteManyTrademarksResponse = {
 } & RESTErrorResponse;
 
 const ApiTrademarkRepository = {
+  async uploadLogo(payload: UploadLogoPayload): Promise<UploadLogoResponse> {
+    const { data } = await apiBackend.post<UploadLogoResponse>(
+      TRADEMARK_SERVICE_UPLOAD_LOGO_ENDPOINT,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+
+    return data;
+  },
   async createTrademark(variables: CreateTrademarkPayload): Promise<CreateTrademarkResponse> {
     const { data } = await apiBackend.post<CreateTrademarkResponse>('/trademark-new', {
       variables,
@@ -64,15 +93,16 @@ const ApiTrademarkRepository = {
     return data;
   },
   async fetchTrademarks(): Promise<GetTrademarksResponse> {
-    const { data } = await apiBackend.get<GetTrademarksResponse>('/trademarks', {
-    });
+    const { data } = await apiBackend.get<GetTrademarksResponse>('/trademarks', {});
 
     return data;
   },
   async fetchTrademarkDetail(
-    variables: GetTrademarkDetailPayload
+    variables: GetTrademarkDetailPayload,
   ): Promise<GetTrademarkDetailResponse> {
-    const { data } = await apiBackend.get<GetTrademarkDetailResponse>('/trademark-detail/' + variables.id)
+    const { data } = await apiBackend.get<GetTrademarkDetailResponse>(
+      '/trademark-detail/' + variables.id,
+    );
 
     return data;
   },
@@ -91,7 +121,7 @@ const ApiTrademarkRepository = {
     return data;
   },
   async deleteManyTrademarks(
-    variables: DeleteManyTrademarksPayload
+    variables: DeleteManyTrademarksPayload,
   ): Promise<DeleteManyTrademarksResponse> {
     const { data } = await apiBackend.post<DeleteManyTrademarksResponse>('/trademark-deletes', {
       variables,

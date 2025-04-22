@@ -1,26 +1,25 @@
-import React from "react";
+import React from 'react';
 import * as Yup from 'yup';
 
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
 import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
-import GraphqlPartnerRepository, {
-  CreatePartnerPayload,
-  UpdatePartnerPayload,
-} from 'src/apis/graphql/partner';
-import PartnerRepository, { UploadLogoPayload } from 'src/apis/service/partner';
 import { useCallback, useEffect, useMemo } from 'react';
-
-import { CustomFile } from 'src/components/upload';
-import { DTS_TELECOM_BACKEND_API_DOMAIN } from 'src/utils/constant';
+import { CustomFile } from '@/components/upload';
+import { API_DOMAIN } from '@/utils/constant';
 import { LoadingButton } from '@mui/lab';
-import { PATH_DASHBOARD } from 'src/routes/paths';
-import { Partner } from 'src/@types/partner';
-import { fData } from 'src/utils/formatNumber';
-import { useForm } from 'react-hook-form';
+import { PATH_DASHBOARD } from '@/routes/paths';
+import { Partner } from '@/@types/partner';
+import { fData } from '@/utils/formatNumber';
+import { Resolver, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
+import ApiPartnerRepository, {
+  CreatePartnerPayload,
+  UpdatePartnerPayload,
+  UploadLogoPayload,
+} from '@/apis/apiService/partner.api';
 
 // ----------------------------------------------------------------------
 
@@ -38,16 +37,18 @@ export default function PartnerNewEditForm({ isEdit, currentPartner }: Props) {
   const { enqueueSnackbar } = useSnackbar();
 
   const NewPartnerSchema = Yup.object().shape({
+    id: Yup.string(),
     name: Yup.string().required('Name is required'),
-    logo: Yup.mixed().test('required', 'Logo is required', (value) => value !== ''),
+    logo: Yup.mixed<CustomFile | string>().required('Logo is required').defined(),
   });
   const defaultValues = useMemo(
     () => ({
+      id: currentPartner?.id || '',
       name: currentPartner?.name || '',
       logo: currentPartner?.logo || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentPartner]
+    [currentPartner],
   );
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewPartnerSchema),
@@ -60,60 +61,54 @@ export default function PartnerNewEditForm({ isEdit, currentPartner }: Props) {
     formState: { isSubmitting },
   } = methods;
 
-  const { mutateAsync: mutateAsyncUploadLogo } = useMutation(
-    (payload: UploadLogoPayload) => PartnerRepository.uploadLogo(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể upload logo!', {
+  const { mutateAsync: mutateAsyncUploadLogo } = useMutation({
+    mutationFn: (payload: UploadLogoPayload) => ApiPartnerRepository.uploadLogo(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể upload logo!', {
+        variant: 'error',
+      });
+    },
+  });
+  const { mutateAsync: mutateAsyncCreatePartner } = useMutation({
+    mutationFn: (payload: CreatePartnerPayload) => ApiPartnerRepository.createPartner(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể tạo đối tác!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Tạo đối tác thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.partner.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncCreatePartner } = useMutation(
-    (payload: CreatePartnerPayload) => GraphqlPartnerRepository.createPartner(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể tạo đối tác!', {
+      }
+    },
+  });
+  const { mutateAsync: mutateAsyncUpdatePartner } = useMutation({
+    mutationFn: (payload: UpdatePartnerPayload) => ApiPartnerRepository.updatePartner(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể cập nhật đối tác!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Cập nhật đối tác thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.partner.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Tạo đối tác thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.partner.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncUpdatePartner } = useMutation(
-    (payload: UpdatePartnerPayload) => GraphqlPartnerRepository.updatePartner(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể cập nhật đối tác!', {
-          variant: 'error',
-        });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Cập nhật đối tác thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.partner.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
+      }
+    },
+  });
 
   useEffect(() => {
     if (isEdit && currentPartner) {
@@ -134,11 +129,11 @@ export default function PartnerNewEditForm({ isEdit, currentPartner }: Props) {
           'logo',
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
+          }),
         );
       }
     },
-    [setValue]
+    [setValue],
   );
 
   const onSubmit = async (data: FormValuesProps) => {
@@ -158,7 +153,7 @@ export default function PartnerNewEditForm({ isEdit, currentPartner }: Props) {
       payload = {
         partnerInput: {
           name,
-          logo: `${DTS_TELECOM_BACKEND_API_DOMAIN}/${response.path}`,
+          logo: `${API_DOMAIN}/${response.path}`,
         },
       };
     }
@@ -169,7 +164,7 @@ export default function PartnerNewEditForm({ isEdit, currentPartner }: Props) {
       mutateAsyncUpdatePartner({
         partnerInput: {
           ...payload.partnerInput,
-          _id: currentPartner?._id as string,
+          id: currentPartner?.id as string,
         },
       });
     }

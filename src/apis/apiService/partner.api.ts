@@ -1,6 +1,23 @@
-import apiBackend from "@/apis/connection/api-backend";
-import {RESTErrorResponse} from "@/@types/api";
+import apiBackend from '@/apis/connection/api-backend';
+import { RESTErrorResponse } from '@/@types/api';
 import { Partner } from 'src/@types/partner';
+import { PARTNER_SERVICE_UPLOAD_LOGO_ENDPOINT } from 'src/utils/constant';
+import { CustomFile } from 'src/components/upload';
+
+export type UploadLogoPayload = {
+  file: CustomFile | string;
+};
+
+type UploadLogoResponse = {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+} & RESTErrorResponse;
 
 export type CreatePartnerPayload = {
   partnerInput: {
@@ -16,11 +33,11 @@ type CreatePartnerResponse = {
 } & RESTErrorResponse;
 
 type GetPartnersResponse = {
-   partners: Partner[];
+  partners: Partner[];
 } & RESTErrorResponse;
 
 export type GetPartnerDetailPayload = {
-    id: string;
+  id: string;
 };
 
 type GetPartnerDetailResponse = {
@@ -40,11 +57,11 @@ type UpdatePartnerResponse = {
 } & RESTErrorResponse;
 
 export type DeletePartnerPayload = {
-    id: string;
+  id: string;
 };
 
 export type DeletePartnerResponse = {
-   deletePartner: Partner;
+  deletePartner: Partner;
 } & RESTErrorResponse;
 
 export type DeleteManyPartnersPayload = {
@@ -56,6 +73,20 @@ export type DeleteManyPartnersResponse = {
 } & RESTErrorResponse;
 
 const ApiPartnerRepository = {
+  async uploadLogo(payload: UploadLogoPayload): Promise<UploadLogoResponse> {
+    const { data } = await apiBackend.post<UploadLogoResponse>(
+      PARTNER_SERVICE_UPLOAD_LOGO_ENDPOINT,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+
+    return data;
+  },
+
   async createPartner(variables: CreatePartnerPayload): Promise<CreatePartnerResponse> {
     const { data } = await apiBackend.post<CreatePartnerResponse>('/partner-create', {
       variables,
@@ -64,14 +95,12 @@ const ApiPartnerRepository = {
     return data;
   },
   async fetchPartners(): Promise<GetPartnersResponse> {
-    const { data } = await apiBackend.get<GetPartnersResponse>('/partners', {
-    });
+    const { data } = await apiBackend.get<GetPartnersResponse>('/partners', {});
 
     return data;
   },
   async fetchPartnerDetail(variables: GetPartnerDetailPayload): Promise<GetPartnerDetailResponse> {
-    const { data } = await apiBackend.get<GetPartnerDetailResponse>('/partner/' + variables.id, {
-    });
+    const { data } = await apiBackend.get<GetPartnerDetailResponse>('/partner/' + variables.id, {});
 
     return data;
   },
@@ -90,7 +119,7 @@ const ApiPartnerRepository = {
     return data;
   },
   async deleteManyPartners(
-    variables: DeleteManyPartnersPayload
+    variables: DeleteManyPartnersPayload,
   ): Promise<DeleteManyPartnersResponse> {
     const { data } = await apiBackend.post<DeleteManyPartnersResponse>('/partner-deletes', {
       variables,

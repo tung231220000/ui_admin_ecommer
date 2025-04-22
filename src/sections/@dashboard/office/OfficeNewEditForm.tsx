@@ -1,12 +1,8 @@
-import React from "react";
+import React from 'react';
 import * as Yup from 'yup';
 
 import { Card, Grid, Stack } from '@mui/material';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
-import GraphqlOfficeRepository, {
-  CreateOfficePayload,
-  UpdateOfficePayload,
-} from 'src/apis/graphql/office';
 import { useEffect, useMemo } from 'react';
 
 import { LoadingButton } from '@mui/lab';
@@ -17,6 +13,10 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
+import ApiOfficeRepository, {
+  CreateOfficePayload,
+  UpdateOfficePayload,
+} from '@/apis/apiService/office.api';
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +32,7 @@ export default function OfficeNewEditForm({ isEdit, currentOffice }: Props) {
   const { enqueueSnackbar } = useSnackbar();
 
   const NewOfficeSchema = Yup.object().shape({
+    id: Yup.string(),
     name: Yup.string().required('Name is required'),
     hotline: Yup.string().required('Hotline is required'),
     fax: Yup.string().required('Fax is required'),
@@ -40,6 +41,7 @@ export default function OfficeNewEditForm({ isEdit, currentOffice }: Props) {
   });
   const defaultValues = useMemo(
     () => ({
+      id: currentOffice?.id || '',
       name: currentOffice?.name || '',
       hotline: currentOffice?.hotline || '',
       fax: currentOffice?.fax || '',
@@ -47,7 +49,7 @@ export default function OfficeNewEditForm({ isEdit, currentOffice }: Props) {
       email: currentOffice?.email || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentOffice]
+    [currentOffice],
   );
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewOfficeSchema),
@@ -59,50 +61,46 @@ export default function OfficeNewEditForm({ isEdit, currentOffice }: Props) {
     formState: { isSubmitting },
   } = methods;
 
-  const { mutateAsync: mutateAsyncCreateOffice } = useMutation(
-    (payload: CreateOfficePayload) => GraphqlOfficeRepository.createOffice(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể tạo văn phòng!', {
+  const { mutateAsync: mutateAsyncCreateOffice } = useMutation({
+    mutationFn: (payload: CreateOfficePayload) => ApiOfficeRepository.createOffice(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể tạo văn phòng!', {
+        variant: 'error',
+      });
+    },
+    onSuccess(data) {
+      if (!data.error) {
+        enqueueSnackbar('Tạo văn phòng thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.office.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Tạo văn phòng thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.office.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncUpdateOffice } = useMutation(
-    (payload: UpdateOfficePayload) => GraphqlOfficeRepository.updateOffice(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể cập nhật văn phòng!', {
+      }
+    },
+  });
+  const { mutateAsync: mutateAsyncUpdateOffice } = useMutation({
+    mutationFn: (payload: UpdateOfficePayload) => ApiOfficeRepository.updateOffice(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể cập nhật văn phòng!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Cập nhật văn phòng thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.office.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Cập nhật văn phòng thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.office.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
+      }
+    },
+  });
 
   useEffect(() => {
     if (isEdit && currentOffice) {
@@ -123,7 +121,7 @@ export default function OfficeNewEditForm({ isEdit, currentOffice }: Props) {
       mutateAsyncUpdateOffice({
         officeInput: {
           ...data,
-          _id: currentOffice?._id as string,
+          id: currentOffice?.id as string,
         },
       });
     }

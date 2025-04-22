@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import * as Yup from 'yup';
 
 import { ATTRIBUTE_KEYS, CURRENCIES, TIME_UNITS } from 'src/utils/constant';
@@ -15,14 +15,16 @@ import {
 } from '@mui/material';
 import { FormProvider, RHFSelect, RHFTextField } from '../../../components/hook-form';
 import { useEffect, useMemo } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { Resolver, useFieldArray, useForm } from 'react-hook-form';
 
-import { BonusService } from 'src/@types/bonus-service';
-import Iconify from 'src/components/Iconify';
+import { BonusService } from '@/@types/bonus-service';
+import Iconify from '@/components/Iconify';
 import { LoadingButton } from '@mui/lab';
-import useBonusService from 'src/hooks/useBonusService';
+import useBonusService from '@/hooks/useBonusService';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Currency } from '@/@types/price';
+import { AttributeKey } from '@/@types/product';
 
 // ----------------------------------------------------------------------
 
@@ -37,12 +39,11 @@ export default function BonusServiceNewEditForm({ isEdit, currentBonusService }:
   const { enqueueSnackbar } = useSnackbar();
 
   const { createBonusService, updateBonusService } = useBonusService();
-
   const defaultValues = useMemo(
     () => ({
       key: currentBonusService?.key || ATTRIBUTE_KEYS[0],
-      minValue: currentBonusService?.minValue || '',
-      maxValue: currentBonusService?.maxValue || '',
+      minValue: currentBonusService?.minValue ?? '', // Ensure default is compatible with schema
+      maxValue: currentBonusService?.maxValue ?? '', // Same for maxValue
       name: currentBonusService?.name || '',
       unitPrices: currentBonusService?.unitPrices || [
         {
@@ -53,41 +54,58 @@ export default function BonusServiceNewEditForm({ isEdit, currentBonusService }:
       currency: currentBonusService?.currency || CURRENCIES[0],
       unit: currentBonusService?.unit || TIME_UNITS[0],
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentBonusService]
+    [currentBonusService],
   );
 
   const NewBonusServiceSchema = Yup.object().shape({
-    key: Yup.string().required('Key is required'),
-    minValue: Yup.mixed()
-      .when('isNumber', {
-        is: !Number.isNaN,
-        then: Yup.number(),
-        otherwise: Yup.string(),
-      })
-      .required('Min value is required'),
-    maxValue: Yup.mixed()
-      .when('isNumber', {
-        is: !Number.isNaN,
-        then: Yup.number(),
-        otherwise: Yup.string(),
-      })
-      .test('minValue', 'Max value must be greater than min value', function () {
-        return Number(this.parent.maxValue) > Number(this.parent.minValue);
-      })
-      .required('Max value is required'),
+    _id: Yup.string(),
+    key: Yup.mixed<AttributeKey>()
+      .oneOf(Object.values(AttributeKey) as AttributeKey[])
+      .required('Key is required'),
+
+    minValue: Yup.lazy((_, context) => {
+      const isNumber = context?.parent?.isNumber;
+
+      return isNumber
+        ? Yup.number().required('Min value is required')
+        : Yup.string().required('Min value is required');
+    }),
+
+    maxValue: Yup.mixed().when('isNumber', {
+      is: true,
+      then: () =>
+        Yup.number()
+          .nullable()
+          .required('Max value is required')
+          .test('minValue', 'Max value must be greater than min value', function (value) {
+            const { minValue } = this.parent;
+            if (minValue === undefined || value === undefined) return true;
+            return Number(value) > Number(minValue);
+          }),
+      otherwise: () => Yup.string().nullable().required('Max value is required'),
+    }),
+
     name: Yup.string().required('Name is required'),
-    unitPrices: Yup.array(
-      Yup.object().shape({
-        minValue: Yup.string().required('Unit price min value is required'),
-        price: Yup.number().required('Unit price price is required'),
-      })
-    ).min(1, 'at least 1 price'),
+
+    unitPrices: Yup.array()
+      .of(
+        Yup.object({
+          minValue: Yup.mixed<string | number>().required('Min value is required'),
+          price: Yup.number().required('Price is required'),
+        }),
+      )
+      .optional(),
+
+    currency: Yup.mixed<Currency>()
+      .oneOf(Object.values(Currency) as Currency[])
+      .required('Currency is required'),
   });
+
   const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(NewBonusServiceSchema),
+    resolver: yupResolver(NewBonusServiceSchema) as Resolver<FormValuesProps>,
     defaultValues,
   });
+
   const {
     reset,
     control,
@@ -268,7 +286,7 @@ export default function BonusServiceNewEditForm({ isEdit, currentBonusService }:
 
                 <RHFSelect name="unit" label="Unit">
                   {TIME_UNITS.map((timeUnit) => (
-                    <option key={timeUnit} value={timeUnit}>
+                    <option key={String(timeUnit)} value={timeUnit}>
                       {timeUnit}
                     </option>
                   ))}

@@ -1,25 +1,23 @@
 import * as Yup from 'yup';
-
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
 import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
-import GraphqlTrademarkRepository, {
-  CreateTrademarkPayload,
-  UpdateTrademarkPayload,
-} from 'src/apis/graphql/trademark';
-import TrademarkRepository, { UploadLogoPayload } from 'src/apis/service/trademark';
 import { useCallback, useEffect, useMemo } from 'react';
-
-import { CustomFile } from 'src/components/upload';
-import { DTS_TELECOM_BACKEND_API_DOMAIN } from 'src/utils/constant';
+import { CustomFile } from '@/components/upload';
+import { API_DOMAIN } from '@/utils/constant';
 import { LoadingButton } from '@mui/lab';
-import { PATH_DASHBOARD } from 'src/routes/paths';
-import { Trademark } from 'src/@types/trademark';
-import { fData } from 'src/utils/formatNumber';
+import { PATH_DASHBOARD } from '@/routes/paths';
+import { Trademark } from '@/@types/trademark';
+import { fData } from '@/utils/formatNumber';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
+import ApiTrademarkRepository, {
+  CreateTrademarkPayload,
+  UpdateTrademarkPayload,
+  UploadLogoPayload,
+} from '@/apis/apiService/trademark.api';
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +36,7 @@ export default function TrademarkNewEditForm({ isEdit, currentTrademark }: Props
 
   const NewTrademarkSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
-    logo: Yup.mixed().test('required', 'Logo is required', (value) => value !== ''),
+    logo: Yup.mixed<CustomFile | string>().required('Logo is required'),
   });
   const defaultValues = useMemo(
     () => ({
@@ -46,7 +44,7 @@ export default function TrademarkNewEditForm({ isEdit, currentTrademark }: Props
       logo: currentTrademark?.logo || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentTrademark]
+    [currentTrademark],
   );
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewTrademarkSchema),
@@ -59,60 +57,56 @@ export default function TrademarkNewEditForm({ isEdit, currentTrademark }: Props
     formState: { isSubmitting },
   } = methods;
 
-  const { mutateAsync: mutateAsyncUploadLogo } = useMutation(
-    (payload: UploadLogoPayload) => TrademarkRepository.uploadLogo(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể upload logo!', {
+  const { mutateAsync: mutateAsyncUploadLogo } = useMutation({
+    mutationFn: (payload: UploadLogoPayload) => ApiTrademarkRepository.uploadLogo(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể upload logo!', {
+        variant: 'error',
+      });
+    },
+  });
+  const { mutateAsync: mutateAsyncCreateTrademark } = useMutation({
+    mutationFn: (payload: CreateTrademarkPayload) =>
+      ApiTrademarkRepository.createTrademark(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể tạo thương hiệu!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Tạo thương hiệu thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.trademark.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncCreateTrademark } = useMutation(
-    (payload: CreateTrademarkPayload) => GraphqlTrademarkRepository.createTrademark(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể tạo thương hiệu!', {
+      }
+    },
+  });
+  const { mutateAsync: mutateAsyncUpdateTrademark } = useMutation({
+    mutationFn: (payload: UpdateTrademarkPayload) =>
+      ApiTrademarkRepository.updateTrademark(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể cập nhật thương hiệu!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.error) {
+        enqueueSnackbar('Cập nhật thương hiệu thành công!', {
+          variant: 'success',
+        });
+        navigate(PATH_DASHBOARD.trademark.list);
+      } else {
+        enqueueSnackbar(data.message, {
           variant: 'error',
         });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Tạo thương hiệu thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.trademark.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
-  const { mutateAsync: mutateAsyncUpdateTrademark } = useMutation(
-    (payload: UpdateTrademarkPayload) => GraphqlTrademarkRepository.updateTrademark(payload),
-    {
-      onError() {
-        enqueueSnackbar('Không thể cập nhật thương hiệu!', {
-          variant: 'error',
-        });
-      },
-      onSuccess(data) {
-        if (!data.errors) {
-          enqueueSnackbar('Cập nhật thương hiệu thành công!', {
-            variant: 'success',
-          });
-          navigate(PATH_DASHBOARD.trademark.list);
-        } else {
-          enqueueSnackbar(data.errors[0].message, {
-            variant: 'error',
-          });
-        }
-      },
-    }
-  );
+      }
+    },
+  });
 
   useEffect(() => {
     if (isEdit && currentTrademark) {
@@ -133,11 +127,11 @@ export default function TrademarkNewEditForm({ isEdit, currentTrademark }: Props
           'logo',
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
+          }),
         );
       }
     },
-    [setValue]
+    [setValue],
   );
 
   const onSubmit = async (data: FormValuesProps) => {
@@ -157,7 +151,7 @@ export default function TrademarkNewEditForm({ isEdit, currentTrademark }: Props
       payload = {
         trademarkInput: {
           name,
-          logo: `${DTS_TELECOM_BACKEND_API_DOMAIN}/${response.path}`,
+          logo: `${API_DOMAIN}/${response.path}`,
         },
       };
     }
@@ -168,7 +162,7 @@ export default function TrademarkNewEditForm({ isEdit, currentTrademark }: Props
       mutateAsyncUpdateTrademark({
         trademarkInput: {
           ...payload.trademarkInput,
-          _id: currentTrademark?._id as string,
+          id: currentTrademark?.id as string,
         },
       });
     }

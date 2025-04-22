@@ -1,5 +1,5 @@
 export type QaA = {
-  _id: string;
+  _id?: string;
   question: string;
   answer: string;
 };

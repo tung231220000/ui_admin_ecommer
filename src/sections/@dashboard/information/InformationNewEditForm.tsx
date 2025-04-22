@@ -8,20 +8,12 @@ import {
   RHFUploadMultiFile,
   RHFUploadSingleFile,
 } from '../../../components/hook-form';
-// import InformationGraphqlRepository, {
-//   UpdateInformationPayload,
-// } from 'src/apis/graphql/information';
-// import InformationRepository, {
-//   UploadAssetsPayload,
-//   UploadVariantImagePayload,
-// } from 'src/apis/service/information';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
-
+import { Resolver, useFieldArray, useForm } from 'react-hook-form';
 import { CustomFile } from '@/components/upload';
-import {API_DOMAIN} from '@/utils/constant';
+import { API_DOMAIN } from '@/utils/constant';
 import Iconify from '@/components/Iconify';
-import { Information } from 'src/@types/information';
+import { Information } from '@/@types/information';
 import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import { styled } from '@mui/material/styles';
@@ -74,13 +66,14 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
         title: Yup.string().nullable(),
         url: Yup.string().nullable(),
         content: Yup.string().nullable(),
-        image: Yup.string().nullable(),
+        image: Yup.mixed<string | CustomFile>().nullable(),
       }),
     ).min(1, 'at least 1 variant'),
+    assets: Yup.array().of(Yup.mixed<string | CustomFile>()),
   });
   const defaultValues = useMemo(
     () => ({
-      id: currentInformation?.id || '';
+      id: currentInformation?.id || '',
       page: currentInformation?.page || '',
       title: currentInformation?.title || '',
       subtitle: currentInformation?.subtitle || '',
@@ -104,7 +97,7 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
     [currentInformation],
   );
   const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(NewAdvantageSchema),
+    resolver: yupResolver(NewAdvantageSchema) as Resolver<FormValuesProps>,
     defaultValues,
   });
   const {
@@ -130,17 +123,17 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
     },
   });
   const { mutateAsync: mutateAsyncUploadVariantImage } = useMutation({
-    mutationFn: (payload: UploadVariantImagePayload) => ApiInformationRepository.uploadVariantImage(payload),
-      onError:() => {
-        enqueueSnackbar('Không thể upload các ảnh biến thể!', {
-          variant: 'error',
-        });
-      },
+    mutationFn: (payload: UploadVariantImagePayload) =>
+      ApiInformationRepository.uploadVariantImage(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể upload các ảnh biến thể!', {
+        variant: 'error',
+      });
     },
-  );
+  });
   // const { mutateAsync: mutateAsyncCreateInformation } = useMutation({
   //   mutationFn: (payload: CreateInformationPayload) => ApiInformationRepository.createInformation(payload),
-  //  
+  //
   //     onError:() => {
   //       enqueueSnackbar('Không thể tạo thông tin!', {
   //         variant: 'error',
@@ -215,10 +208,7 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
       }
       const response = await mutateAsyncUploadAssets(filesData);
 
-      setValue(`assets`, [
-        ...assets,
-        ...response.map((r) => `${API_DOMAIN}/${r.path}`),
-      ]);
+      setValue(`assets`, [...assets, ...response.map((r) => `${API_DOMAIN}/${r.path}`)]);
     },
     [mutateAsyncUploadAssets, setValue, values.assets],
   );
@@ -255,11 +245,9 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
   };
 
   const onSubmit = async (data: FormValuesProps) => {
-    mutateAsyncUpdateInformation({
-      informationInput: {
-        ...data,
-        _id: currentInformation?.id as string,
-      },
+    await mutateAsyncUpdateInformation({
+      ...data,
+      id: currentInformation?.id as string,
     });
 
     // if (!isEdit) {

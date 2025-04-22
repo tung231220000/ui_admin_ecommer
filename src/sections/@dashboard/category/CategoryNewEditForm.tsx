@@ -1,15 +1,15 @@
-import React from "react";
+import React from 'react';
 import * as Yup from 'yup';
 
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
 import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { Category } from 'src/@types/category';
-import { CustomFile } from '../../../components/upload';
+import { Category } from '@/@types/category';
+import { CustomFile } from '@/components/upload';
 import { LoadingButton } from '@mui/lab';
-import { fData } from '../../../utils/formatNumber';
-import useCategory from 'src/hooks/useCategory';
+import { fData } from '@/utils/formatNumber';
+import useCategory from '@/hooks/useCategory';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -28,17 +28,19 @@ export default function CategoryNewEditForm({ isEdit, currentCategory }: Props) 
   const { createCategory, updateCategory } = useCategory();
 
   const NewCategorySchema = Yup.object().shape({
-    icon: Yup.mixed().test('required', 'Icon is required', (value) => value !== ''),
+    _id: Yup.string(),
+    icon: Yup.mixed<CustomFile | string>().required('Icon is required').defined(),
     title: Yup.string().required('Title is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
+      _id: currentCategory?._id || '',
       icon: currentCategory?.icon || '',
       title: currentCategory?.title || '',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentCategory]
+    [currentCategory],
   );
 
   const methods = useForm<FormValuesProps>({
@@ -87,11 +89,11 @@ export default function CategoryNewEditForm({ isEdit, currentCategory }: Props) 
           'icon',
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
+          }),
         );
       }
     },
-    [setValue]
+    [setValue],
   );
 
   return (

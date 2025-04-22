@@ -1,5 +1,5 @@
-import {AttributeKey} from "@/@types/product";
-import {Price} from "@/@types/price";
+import { AttributeKey } from '@/@types/product';
+import { Price } from '@/@types/price';
 
 export type Attribute = {
   key: AttributeKey;
@@ -9,7 +9,7 @@ export type Attribute = {
 };
 
 export type ServicePack = {
-  _id: string;
+  _id?: string;
   prices: Price[];
   attributes: Attribute[];
 };

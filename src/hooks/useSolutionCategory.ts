@@ -4,14 +4,14 @@ import SolutionCategoryRepository, {
   DeleteSolutionCategoryPayload,
   UpdateSolutionCategoryPayload,
   UploadIconPayload,
-} from 'src/apis/apiService/solution-category.api';
+} from '@/apis/apiService/solution-category.api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { CustomFile } from 'src/components/upload';
-import { API_DOMAIN } from 'src/utils/constant';
-import { PATH_DASHBOARD } from 'src/routes/paths';
-import { SolutionCategory } from 'src/@types/solution-category';
-import SolutionCategoryContext from 'src/contexts/SolutionCategory';
+import { CustomFile } from '@/components/upload';
+import { API_DOMAIN } from '@/utils/constant';
+import { PATH_DASHBOARD } from '@/routes/paths';
+import { SolutionCategory } from '@/@types/solution-category';
+import SolutionCategoryContext from '@/contexts/SolutionCategory';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';

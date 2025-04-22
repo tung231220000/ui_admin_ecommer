@@ -7,7 +7,7 @@ export type BonusServiceUnitPrice = {
 };
 
 export type BonusService = {
-  _id: string;
+  _id?: string;
   key: AttributeKey;
   minValue: string | number;
   maxValue: string | number;

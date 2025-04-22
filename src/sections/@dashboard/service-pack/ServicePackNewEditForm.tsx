@@ -1,5 +1,4 @@
 import * as Yup from 'yup';
-
 import {
   Autocomplete,
   Button,
@@ -14,16 +13,15 @@ import {
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { FormProvider, RHFSelect, RHFTextField } from '../../../components/hook-form';
 import { useEffect, useMemo } from 'react';
-
-import { ATTRIBUTE_KEYS } from 'src/utils/constant';
-import { AttributeKey } from 'src/@types/product';
-import Iconify from 'src/components/Iconify';
+import { ATTRIBUTE_KEYS } from '@/utils/constant';
+import { AttributeKey } from '@/@types/product';
+import Iconify from '@/components/Iconify';
 import { LoadingButton } from '@mui/lab';
-import NumberFormat from 'react-number-format';
-import { Price } from 'src/@types/price';
-import { ServicePack } from 'src/@types/service-pack';
-import usePrice from 'src/hooks/usePrice';
-import useServicePack from 'src/hooks/useServicePack';
+import { NumericFormat } from 'react-number-format';
+import { Price } from '@/@types/price';
+import { ServicePack } from '@/@types/service-pack';
+import usePrice from '@/hooks/usePrice';
+import useServicePack from '@/hooks/useServicePack';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -55,7 +53,7 @@ export default function ServicePackNewEditForm({ isEdit, currentServicePack }: P
       ],
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentServicePack]
+    [currentServicePack],
   );
 
   const { prices: PRICES } = usePrice();
@@ -64,15 +62,23 @@ export default function ServicePackNewEditForm({ isEdit, currentServicePack }: P
   const { createServicePack, updateServicePack } = useServicePack();
 
   const NewServicePackSchema = Yup.object().shape({
-    prices: Yup.array().of(Yup.string()).min(1, 'Prices is required'),
+    prices: Yup.array()
+      .of(Yup.string().required('Không được để trống'))
+      .min(1, 'Cần ít nhất một giá trị')
+      .required('Giá bắt buộc')
+      .default([]),
     attributes: Yup.array(
       Yup.object().shape({
-        key: Yup.string().required('Attribute key is required'),
-        value: Yup.string().required('Attribute value is required'),
+        key: Yup.mixed<AttributeKey>()
+          .oneOf(Object.values(AttributeKey))
+          .required('Attribute key is required'),
+        value: Yup.mixed<string | number>().required('Attribute value is required'),
         name: Yup.string().required('Attribute name is required'),
         unit: Yup.string(),
-      })
-    ).min(1, 'at least 1 attribute'),
+      }),
+    )
+      .min(1, 'at least 1 attribute')
+      .default([]),
   });
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewServicePackSchema),
@@ -155,7 +161,7 @@ export default function ServicePackNewEditForm({ isEdit, currentServicePack }: P
                   <li {...props}>
                     {name}
                     &nbsp; (
-                    <NumberFormat
+                    <NumericFormat
                       value={defaultPrice}
                       displayType={'text'}
                       thousandSeparator
@@ -172,7 +178,7 @@ export default function ServicePackNewEditForm({ isEdit, currentServicePack }: P
                     <>
                       {foundPrice?.name}
                       &nbsp; (
-                      <NumberFormat
+                      <NumericFormat
                         value={foundPrice?.defaultPrice}
                         displayType={'text'}
                         thousandSeparator

@@ -12,7 +12,7 @@ import {
   TablePagination,
   Tooltip,
 } from '@mui/material';
-import { ProductTableRow, ProductTableToolbar } from 'src/sections/@dashboard/product/list';
+import { ProductTableRow, ProductTableToolbar } from '@/sections/@dashboard/product/list';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   TableEmptyRows,

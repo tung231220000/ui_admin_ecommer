@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { PATH_DASHBOARD } from 'src/routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import { Price } from '@/@types/price';
 import PriceContext from '@/contexts/Price';
 import { useContext } from 'react';
@@ -145,7 +145,7 @@ export default function usePrice(): UsePriceProps {
 
     dispatch({
       type: 'SET_PRICES',
-      payload: state.prices.filter((price) => !payload.priceInput._ids.includes(price._id)),
+      payload: state.prices.filter((price) => !payload.priceInput._ids.includes(<string>price._id)),
     });
     enqueueSnackbar(response.data.deleteManyPrices, {
       variant: 'success',

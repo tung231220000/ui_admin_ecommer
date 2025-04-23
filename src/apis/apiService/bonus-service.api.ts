@@ -1,4 +1,4 @@
-import { BonusService } from 'src/@types/bonus-service';
+import { BonusService } from '@/@types/bonus-service';
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 

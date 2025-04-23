@@ -1,6 +1,6 @@
-import apiBackend from "@/apis/connection/api-backend";
+import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
-import { QaA } from 'src/@types/QaA';
+import { QaA } from '@/@types/QaA';
 
 export type CreateQaAPayload = {
   questionAndAnswerInput: {
@@ -68,8 +68,7 @@ const ApiQaARepository = {
     return data;
   },
   async fetchQaAs(): Promise<GetQaAsResponse> {
-    const { data } = await apiBackend.get<GetQaAsResponse>('/QaAs', {
-    });
+    const { data } = await apiBackend.get<GetQaAsResponse>('/QaAs', {});
 
     return data;
   },

@@ -1,8 +1,8 @@
-import { CustomFile } from 'src/components/upload';
+import { CustomFile } from '@/components/upload';
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
-import { Product } from 'src/@types/product';
-import { PRODUCT_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT } from 'src/utils/constant';
+import { Product } from '@/@types/product';
+import { PRODUCT_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT } from '@/utils/constant';
 
 export type UploadBannerImagePayload = FormData;
 

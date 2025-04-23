@@ -1,8 +1,8 @@
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
-import { Partner } from 'src/@types/partner';
-import { PARTNER_SERVICE_UPLOAD_LOGO_ENDPOINT } from 'src/utils/constant';
-import { CustomFile } from 'src/components/upload';
+import { Partner } from '@/@types/partner';
+import { PARTNER_SERVICE_UPLOAD_LOGO_ENDPOINT } from '@/utils/constant';
+import { CustomFile } from '@/components/upload';
 
 export type UploadLogoPayload = {
   file: CustomFile | string;

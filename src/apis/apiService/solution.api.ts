@@ -2,7 +2,7 @@ import { CustomFile } from '@/components/upload';
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 import { Solution } from '@/@types/solution';
-import { SOLUTION_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT } from 'src/utils/constant';
+import { SOLUTION_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT } from '@/utils/constant';
 
 export type UploadBannerImagePayload = FormData;
 

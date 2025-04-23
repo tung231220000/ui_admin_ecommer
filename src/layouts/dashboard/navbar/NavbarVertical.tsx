@@ -58,8 +58,8 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
   const renderContent = (
     <Scrollbar
       sx={{
-        height: 1,
-        '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
+        height: '100vh',
+        '& .simplebar-content': { height: '100vh', display: 'flex', flexDirection: 'column' },
       }}
     >
       <Stack

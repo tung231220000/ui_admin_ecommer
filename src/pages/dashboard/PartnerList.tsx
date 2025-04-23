@@ -159,7 +159,11 @@ export default function PartnerList() {
     const response = await mutateAsyncDeleteManyPartners({
       ids,
     });
-    setTableData(tableData.filter((partner) => !ids.includes(partner.id)));
+    setTableData(
+      tableData.filter((partner) => {
+        return partner.id && !(ids as string[]).includes(partner.id);
+      }),
+    );
     enqueueSnackbar(response.deleteManyPartners, {
       variant: 'success',
     });
@@ -214,7 +218,7 @@ export default function PartnerList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id),
+                      tableData.map((row) => row.id).filter((id): id is string => id !== undefined),
                     )
                   }
                   actions={
@@ -238,22 +242,23 @@ export default function PartnerList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id),
+                      tableData.map((row) => row.id).filter((id): id is string => id !== undefined),
                     )
                   }
                 />
 
                 <TableBody>
                   {dataFiltered
+                    .filter((row) => !!row.id)
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <PartnerTableRow
                         key={row.id}
                         row={row}
-                        selected={selected.includes(row.id)}
-                        onSelectRow={() => onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
+                        selected={selected.includes(row.id!)}
+                        onSelectRow={() => onSelectRow(row.id!)}
+                        onDeleteRow={() => handleDeleteRow(row.id!)}
+                        onEditRow={() => handleEditRow(row.id!)}
                       />
                     ))}
 

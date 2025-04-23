@@ -1,8 +1,8 @@
-import { CustomFile } from 'src/components/upload';
+import { CustomFile } from '@/components/upload';
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
-import { Service } from 'src/@types/service';
-import { SERVICE_SERVICE_UPLOAD_THUMBNAIL_ENDPOINT } from 'src/utils/constant';
+import { Service } from '@/@types/service';
+import { SERVICE_SERVICE_UPLOAD_THUMBNAIL_ENDPOINT } from '@/utils/constant';
 
 export type UploadThumbnailPayload = FormData;
 

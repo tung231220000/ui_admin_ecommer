@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 import { Avatar, Checkbox, MenuItem, TableCell, TableRow } from '@mui/material';
 
-import { Category } from 'src/@types/category';
+import { Category } from '@/@types/category';
 import Iconify from '../../../../components/Iconify';
 import { TableMoreMenu } from '../../../../components/table';
 import { useState } from 'react';

@@ -1,4 +1,4 @@
-import { Attribute, ServicePack } from 'src/@types/service-pack';
+import { Attribute, ServicePack } from '@/@types/service-pack';
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 

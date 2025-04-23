@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 // @mui
 import { Box, Tooltip, ListItemButtonProps, ListItemText, ListItemIcon } from '@mui/material';
 // config
-import { ICON } from '../../../config';
+import { ICON } from '@/config';
 //
 import { NavItemProps } from '../type';
 import Iconify from '../../Iconify';
@@ -81,7 +81,7 @@ const NavItem = forwardRef<HTMLDivElement & HTMLAnchorElement, Props>(
     );
 
     return renderContent;
-  }
+  },
 );
 
 export default NavItem;

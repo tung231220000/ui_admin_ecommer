@@ -1,16 +1,17 @@
-import React from "react";
+import React from 'react';
 import * as Yup from 'yup';
 
-import { CURRENCIES, TIME_UNITS } from 'src/utils/constant';
+import { CURRENCIES, TIME_UNITS } from '@/utils/constant';
 import { Card, Grid, InputAdornment, Stack } from '@mui/material';
 import { FormProvider, RHFSelect, RHFTextField } from '../../../components/hook-form';
 import { useEffect, useMemo } from 'react';
 
 import { LoadingButton } from '@mui/lab';
-import { Price } from 'src/@types/price';
-import { useForm } from 'react-hook-form';
-import usePrice from 'src/hooks/usePrice';
+import { Currency, Price, TimeUnit } from '@/@types/price';
+import { Resolver, useForm } from 'react-hook-form';
+import usePrice from '@/hooks/usePrice';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { BonusService } from '@/@types/bonus-service';
 
 // ----------------------------------------------------------------------
 
@@ -25,25 +26,36 @@ export default function PriceNewEditForm({ isEdit, currentPrice }: Props) {
   const { createPrice, updatePrice } = usePrice();
 
   const NewPriceSchema = Yup.object().shape({
+    _id: Yup.string(),
     name: Yup.string().required('Name is required'),
-    defaultPrice: Yup.number().integer().moreThan(0, 'Price must be greater than 0'),
-    salePrice: Yup.number().integer().min(0),
+    defaultPrice: Yup.number()
+      .integer()
+      .moreThan(0, 'Price must be greater than 0')
+      .required('defaultPrice is required'),
+    salePrice: Yup.number().nullable().required('Sale price is required'),
+    currency: Yup.mixed<Currency>()
+      .oneOf(Object.values(Currency) as Currency[])
+      .required('Currency is required'),
+    unit: Yup.mixed<TimeUnit>()
+      .oneOf(Object.values(TimeUnit) as TimeUnit[])
+      .required('Unit is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
+      _id: currentPrice?._id || '',
       name: currentPrice?.name || '',
       defaultPrice: currentPrice?.defaultPrice || 0,
-      salePrice: currentPrice?.salePrice || 0,
+      salePrice: currentPrice?.salePrice ?? null,
       currency: currentPrice?.currency || CURRENCIES[0],
       unit: currentPrice?.unit || TIME_UNITS[0],
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentPrice]
+    [currentPrice],
   );
 
   const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(NewPriceSchema),
+    resolver: yupResolver(NewPriceSchema) as unknown as Resolver<FormValuesProps>,
     defaultValues,
   });
 

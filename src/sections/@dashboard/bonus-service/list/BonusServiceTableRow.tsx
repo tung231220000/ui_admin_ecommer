@@ -1,6 +1,6 @@
 import { Checkbox, MenuItem, TableCell, TableRow } from '@mui/material';
 
-import { BonusService } from 'src/@types/bonus-service';
+import { BonusService } from '@/@types/bonus-service';
 import Iconify from '../../../../components/Iconify';
 import { TableMoreMenu } from '../../../../components/table';
 import { useState } from 'react';

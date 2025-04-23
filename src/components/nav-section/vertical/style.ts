@@ -11,7 +11,7 @@ import {
 // utils
 import cssStyles from '../../../utils/cssStyles';
 // config
-import { ICON, NAVBAR } from '../../../config';
+import { ICON, NAVBAR } from '@/config';
 
 // ----------------------------------------------------------------------
 

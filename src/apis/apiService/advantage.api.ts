@@ -1,4 +1,4 @@
-import { Advantage } from 'src/@types/advantage';
+import { Advantage } from '@/@types/advantage';
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 

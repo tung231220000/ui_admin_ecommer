@@ -2,7 +2,7 @@ import { Avatar, Checkbox, MenuItem, TableCell, TableRow } from '@mui/material';
 
 import Iconify from '../../../../components/Iconify';
 import { TableMoreMenu } from '../../../../components/table';
-import { Trademark } from 'src/@types/trademark';
+import { Trademark } from '@/@types/trademark';
 import { useState } from 'react';
 
 // ----------------------------------------------------------------------

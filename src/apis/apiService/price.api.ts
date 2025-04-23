@@ -1,4 +1,4 @@
-import { Currency, Price, TimeUnit } from 'src/@types/price';
+import { Currency, Price, TimeUnit } from '@/@types/price';
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 

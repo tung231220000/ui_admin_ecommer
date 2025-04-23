@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 import { MenuItem, TableCell, TableRow } from '@mui/material';
 
 import Iconify from '../../../../components/Iconify';
-import { Page } from 'src/@types/page';
+import { Page } from '@/@types/page';
 import { TableMoreMenu } from '../../../../components/table';
 import { useState } from 'react';
 

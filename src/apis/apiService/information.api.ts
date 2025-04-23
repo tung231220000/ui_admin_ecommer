@@ -1,12 +1,12 @@
-import { Information, InformationVariant } from 'src/@types/information';
-import { CustomFile } from 'src/components/upload';
+import { Information, InformationVariant } from '@/@types/information';
+import { CustomFile } from '@/components/upload';
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 import {
   INFORMATION_SERVICE_UPLOAD_ASSETS_ENDPOINT,
   INFORMATION_SERVICE_UPLOAD_VARIANT_IMAGES_ENDPOINT,
   INFORMATION_SERVICE_UPLOAD_VARIANT_IMAGE_ENDPOINT,
-} from 'src/utils/constant';
+} from '@/utils/constant';
 
 export type UploadAssetsPayload = FormData;
 

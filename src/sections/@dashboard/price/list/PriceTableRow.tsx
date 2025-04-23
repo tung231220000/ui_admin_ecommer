@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 import { Checkbox, MenuItem, TableCell, TableRow } from '@mui/material';
 
 import Iconify from '../../../../components/Iconify';
-import NumberFormat from 'react-number-format';
-import { Price } from 'src/@types/price';
+import { NumericFormat } from 'react-number-format';
+import { Price } from '@/@types/price';
 import { TableMoreMenu } from '../../../../components/table';
 import { useState } from 'react';
 
@@ -45,11 +45,11 @@ export default function PriceTableRow({
       <TableCell align="left">{name}</TableCell>
 
       <TableCell align="left">
-        <NumberFormat value={defaultPrice} displayType={'text'} thousandSeparator />
+        <NumericFormat value={defaultPrice} displayType={'text'} thousandSeparator />
       </TableCell>
 
       <TableCell align="left">
-        {salePrice ? <NumberFormat value={salePrice} displayType={'text'} thousandSeparator /> : 0}
+        {salePrice ? <NumericFormat value={salePrice} displayType={'text'} thousandSeparator /> : 0}
       </TableCell>
 
       <TableCell align="left">{currency}</TableCell>

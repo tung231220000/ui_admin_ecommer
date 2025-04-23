@@ -1,8 +1,8 @@
-import { CustomFile } from 'src/components/upload';
-import apiBackend from "@/apis/connection/api-backend";
-import { Post } from 'src/@types/post';
-import {RESTErrorResponse} from "@/@types/api";
-import {POST_SERVICE_UPLOAD_COVER_IMAGE_ENDPOINT} from "@/utils/constant";
+import { CustomFile } from '@/components/upload';
+import apiBackend from '@/apis/connection/api-backend';
+import { Post } from '@/@types/post';
+import { RESTErrorResponse } from '@/@types/api';
+import { POST_SERVICE_UPLOAD_COVER_IMAGE_ENDPOINT } from '@/utils/constant';
 
 export type UploadCoverImagePayload = FormData;
 
@@ -79,14 +79,12 @@ const ApiPostRepository = {
     return data;
   },
   async fetchPosts(): Promise<GetPostsResponse> {
-    const { data } = await apiBackend.get<GetPostsResponse>('/posts', {
-    });
+    const { data } = await apiBackend.get<GetPostsResponse>('/posts', {});
 
     return data;
   },
   async fetchPost(variables: GetPostPayload): Promise<GetPostResponse> {
-    const { data } = await apiBackend.post<GetPostResponse>('/post-detail?id=' + variables.id, {
-    });
+    const { data } = await apiBackend.post<GetPostResponse>('/post-detail?id=' + variables.id, {});
 
     return data;
   },
@@ -105,7 +103,7 @@ const ApiPostRepository = {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      }
+      },
     );
 
     return data;

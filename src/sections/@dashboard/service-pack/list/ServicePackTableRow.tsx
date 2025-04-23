@@ -1,8 +1,8 @@
 import { Checkbox, MenuItem, TableCell, TableRow } from '@mui/material';
 
 import Iconify from '../../../../components/Iconify';
-import NumberFormat from 'react-number-format';
-import { ServicePack } from 'src/@types/service-pack';
+import { NumericFormat } from 'react-number-format';
+import { ServicePack } from '@/@types/service-pack';
 import { TableMoreMenu } from '../../../../components/table';
 import { useState } from 'react';
 
@@ -44,7 +44,7 @@ export default function ServicePackTableRow({
       <TableCell align="left">{prices[0].name}</TableCell>
 
       <TableCell align="left">
-        <NumberFormat
+        <NumericFormat
           value={prices[0].defaultPrice}
           displayType={'text'}
           thousandSeparator
@@ -53,7 +53,7 @@ export default function ServicePackTableRow({
       </TableCell>
 
       <TableCell align="left">
-        <NumberFormat
+        <NumericFormat
           value={prices[0].salePrice ? prices[0].salePrice : 0}
           displayType={'text'}
           thousandSeparator

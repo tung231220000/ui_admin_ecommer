@@ -1,6 +1,6 @@
-import { BonusServiceActions, BonusServiceState } from 'src/@types/bonus-service';
+import { BonusServiceActions, BonusServiceState } from '@/@types/bonus-service';
 import React, { FC, ReactNode, useReducer } from 'react';
-import BonusServiceContext, {initialState} from "@/contexts/BonusService";
+import BonusServiceContext, { initialState } from '@/contexts/BonusService';
 
 type Props = {
   children: ReactNode;

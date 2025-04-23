@@ -6,8 +6,8 @@ import { FormProvider, RHFTextField } from '../../../components/hook-form';
 import { useEffect, useMemo } from 'react';
 
 import { LoadingButton } from '@mui/lab';
-import { Office } from 'src/@types/office';
-import { PATH_DASHBOARD } from 'src/routes/paths';
+import { Office } from '@/@types/office';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';

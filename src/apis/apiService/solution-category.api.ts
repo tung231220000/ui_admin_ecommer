@@ -1,7 +1,7 @@
-import { CustomFile } from 'src/components/upload';
-import { RESTErrorResponse } from 'src/@types/api';
+import { CustomFile } from '@/components/upload';
+import { RESTErrorResponse } from '@/@types/api';
 import apiBackend from '@/apis/connection/api-backend';
-import { SOLUTION_CATEGORY_SERVICE_UPLOAD_ICON_ENDPOINT } from 'src/utils/constant';
+import { SOLUTION_CATEGORY_SERVICE_UPLOAD_ICON_ENDPOINT } from '@/utils/constant';
 import { SolutionCategory } from '@/@types/solution-category';
 
 export type UploadIconPayload = {

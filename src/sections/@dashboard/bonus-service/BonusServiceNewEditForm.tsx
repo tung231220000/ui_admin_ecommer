@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Yup from 'yup';
 
-import { ATTRIBUTE_KEYS, CURRENCIES, TIME_UNITS } from 'src/utils/constant';
+import { ATTRIBUTE_KEYS, CURRENCIES, TIME_UNITS } from '@/utils/constant';
 import {
   Box,
   Button,
@@ -53,6 +53,7 @@ export default function BonusServiceNewEditForm({ isEdit, currentBonusService }:
       ],
       currency: currentBonusService?.currency || CURRENCIES[0],
       unit: currentBonusService?.unit || TIME_UNITS[0],
+      isNumber: typeof currentBonusService?.minValue === 'number',
     }),
     [currentBonusService],
   );
@@ -62,15 +63,13 @@ export default function BonusServiceNewEditForm({ isEdit, currentBonusService }:
     key: Yup.mixed<AttributeKey>()
       .oneOf(Object.values(AttributeKey) as AttributeKey[])
       .required('Key is required'),
-
+    isNumber: Yup.boolean().required(),
     minValue: Yup.lazy((_, context) => {
       const isNumber = context?.parent?.isNumber;
-
       return isNumber
         ? Yup.number().required('Min value is required')
         : Yup.string().required('Min value is required');
     }),
-
     maxValue: Yup.mixed().when('isNumber', {
       is: true,
       then: () =>
@@ -84,9 +83,7 @@ export default function BonusServiceNewEditForm({ isEdit, currentBonusService }:
           }),
       otherwise: () => Yup.string().nullable().required('Max value is required'),
     }),
-
     name: Yup.string().required('Name is required'),
-
     unitPrices: Yup.array()
       .of(
         Yup.object({
@@ -102,7 +99,7 @@ export default function BonusServiceNewEditForm({ isEdit, currentBonusService }:
   });
 
   const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(NewBonusServiceSchema) as Resolver<FormValuesProps>,
+    resolver: yupResolver(NewBonusServiceSchema) as unknown as Resolver<BonusService>,
     defaultValues,
   });
 

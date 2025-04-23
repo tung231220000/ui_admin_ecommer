@@ -1,7 +1,7 @@
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 import { Trademark } from '@/@types/trademark';
-import { TRADEMARK_SERVICE_UPLOAD_LOGO_ENDPOINT } from 'src/utils/constant';
+import { TRADEMARK_SERVICE_UPLOAD_LOGO_ENDPOINT } from '@/utils/constant';
 import { CustomFile } from '@/components/upload';
 
 export type UploadLogoPayload = {

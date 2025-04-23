@@ -1,6 +1,6 @@
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
-import { User } from 'src/@types/user';
+import { User } from '@/@types/user';
 
 export enum Gender {
   MR = 'Ông',

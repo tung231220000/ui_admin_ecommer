@@ -23,11 +23,10 @@ export default function PageEdit() {
 
   useQuery({
     queryKey: ['fetchPageData', name],
-    queryFn: async () =>  {
+    queryFn: async () => {
       try {
         const data = await ApiPageRepository.fetchPageData(name);
         if (!data.error && data.result) {
-          console.log("data fetch: ", data.result);
           setCurrentPage(data.result);
         } else {
           enqueueSnackbar(data.error, {

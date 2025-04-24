@@ -15,26 +15,25 @@ export type GetPageDataPayload = {
 };
 
 export type UploadBannerImageResponse = {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
+  fieldName: string;
+  originalName: string;
+  // encoding: string;
   mimetype: string;
   destination: string;
-  filename: string;
-  path: string;
+  fileName: string;
+  url: string;
   size: number;
 } & RESTErrorResponse;
 
 export type UploadCarouselImagePayload = FormData;
 
 type UploadCarouselImageResponse = {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
+  fieldName: string;
+  originalName: string;
   mimetype: string;
   destination: string;
-  filename: string;
-  path: string;
+  fileName: string;
+  url: string;
   size: number;
 } & RESTErrorResponse;
 
@@ -43,6 +42,7 @@ type GetPageDataResponse = {
 } & RESTErrorResponse;
 
 export type UpdatePagePayload = {
+  id: string;
   name: string;
   title: string;
   banner?: string | CustomFile | null;

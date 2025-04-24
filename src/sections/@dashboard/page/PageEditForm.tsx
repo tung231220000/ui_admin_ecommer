@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import * as Yup from 'yup';
 
 import { Box, Button, Card, Divider, Grid, Stack, Typography } from '@mui/material';
@@ -6,7 +6,7 @@ import { FormProvider, RHFTextField, RHFUploadSingleFile } from '../../../compon
 import ApiPageRepository, {
   UpdatePagePayload,
   UploadBannerImagePayload,
-  UploadCarouselImagePayload
+  UploadCarouselImagePayload,
 } from '@/apis/apiService/page.api';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -16,13 +16,12 @@ import { API_DOMAIN } from '@/utils/constant';
 import Iconify from '@/components/Iconify';
 import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from '@/routes/paths';
-import {Carousel, Page} from '@/@types/page';
+import { Carousel, Page } from '@/@types/page';
 import { styled } from '@mui/material/styles';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
-
 
 const LabelStyle = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -54,15 +53,16 @@ export default function PageEditForm({ currentPage }: Props) {
     name: Yup.string().required('Name is required'),
     title: Yup.string().required('Title is required'),
     banner: Yup.mixed<CustomFile | string>().defined(),
-    carousels: Yup.array().of(
-      Yup.object().shape({
-        title: Yup.string(),
-        description: Yup.string(),
-        image: Yup.mixed<CustomFile | string>().required("Image is required").defined(),
-      })
-    )
-    .default([])
-    .defined(),
+    carousels: Yup.array()
+      .of(
+        Yup.object().shape({
+          title: Yup.string(),
+          description: Yup.string(),
+          image: Yup.mixed<CustomFile | string>().required('Image is required').defined(),
+        }),
+      )
+      .default([])
+      .defined(),
     updatedDatetime: Yup.date(),
     createDatetime: Yup.date(),
   });
@@ -73,9 +73,10 @@ export default function PageEditForm({ currentPage }: Props) {
     banner: string;
     title: string;
     carousels: Carousel[];
-    updatedDatetime: Date
+    updatedDatetime: Date;
   } = useMemo(
     () => ({
+      id: currentPage?.id || '',
       name: currentPage?.name || '',
       title: currentPage?.title || '',
       banner: currentPage?.banner || '',
@@ -90,7 +91,7 @@ export default function PageEditForm({ currentPage }: Props) {
       createDatetime: currentPage?.createDatetime || new Date(),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentPage]
+    [currentPage],
   );
 
   const methods = useForm<FormValuesProps>({
@@ -113,25 +114,30 @@ export default function PageEditForm({ currentPage }: Props) {
   });
   watch();
 
-  const {mutateAsync: mutateAsyncUploadBannerImage} = useMutation({
-      mutationFn: (payload: UploadBannerImagePayload) => ApiPageRepository.uploadBannerImage(payload),
-      onError: () => {
-        enqueueSnackbar('Không thể upload ảnh banner!', {
-          variant: 'error',
-        });
-      },
-    }
-  );
-  const {mutateAsync: mutateAsyncUploadCarouselImage} = useMutation({
-      mutationFn: (payload: UploadCarouselImagePayload) => ApiPageRepository.uploadCarouselImage(payload),
-      onError: () => {
-        enqueueSnackbar('Không thể upload ảnh carousel!', {
-          variant: 'error',
-        });
-      }
-    }
-  );
-  const {mutateAsync: mutateAsyncUpdatePage} = useMutation({
+  const { mutateAsync: mutateAsyncUploadBannerImage } = useMutation({
+    mutationFn: (payload: UploadBannerImagePayload) => ApiPageRepository.uploadBannerImage(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể upload ảnh banner!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      console.log(data);
+    },
+  });
+  const { mutateAsync: mutateAsyncUploadCarouselImage } = useMutation({
+    mutationFn: (payload: UploadCarouselImagePayload) =>
+      ApiPageRepository.uploadCarouselImage(payload),
+    onError: () => {
+      enqueueSnackbar('Không thể upload ảnh carousel!', {
+        variant: 'error',
+      });
+    },
+    onSuccess: (data) => {
+      console.log(data);
+    },
+  });
+  const { mutateAsync: mutateAsyncUpdatePage } = useMutation({
     mutationFn: (payload: UpdatePagePayload) => ApiPageRepository.updatePage(payload),
     onError: () => {
       enqueueSnackbar('Không thể cập nhật trang!', {
@@ -149,9 +155,8 @@ export default function PageEditForm({ currentPage }: Props) {
           variant: 'error',
         });
       }
-    }
-  })
-
+    },
+  });
 
   useEffect(() => {
     if (currentPage) {
@@ -169,16 +174,17 @@ export default function PageEditForm({ currentPage }: Props) {
           'banner',
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
+          }),
         );
 
         const filesData = new FormData();
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadBannerImage(filesData);
-        setValue(`banner`, `${API_DOMAIN}/${response.path}`);
+        console.log(response.url);
+        setValue(`banner`, `${response.url}`);
       }
     },
-    [mutateAsyncUploadBannerImage, setValue]
+    [mutateAsyncUploadBannerImage, setValue],
   );
 
   const handleDropCarousel = useCallback(
@@ -190,16 +196,18 @@ export default function PageEditForm({ currentPage }: Props) {
           `carousels.${index}.image`,
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
+          }),
         );
 
         const filesData = new FormData();
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadCarouselImage(filesData);
-        setValue(`carousels.${index}.image`, `${API_DOMAIN}/${response.path}`);
+        console.log('index: ', index);
+        console.log('');
+        setValue(`carousels.${index}.image`, `${response.url}`);
       }
     },
-    [mutateAsyncUploadCarouselImage, setValue]
+    [mutateAsyncUploadCarouselImage, setValue],
   );
 
   const handleAdd = () => {
@@ -216,8 +224,8 @@ export default function PageEditForm({ currentPage }: Props) {
 
   const onSubmit = async (data: FormValuesProps) => {
     mutateAsyncUpdatePage({
-        ...data,
-        banner: (data.banner as string).length > 0 ? data.banner : null,
+      ...data,
+      banner: (data.banner as string).length > 0 ? data.banner : null,
     });
   };
 

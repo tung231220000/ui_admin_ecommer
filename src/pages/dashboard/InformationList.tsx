@@ -20,15 +20,15 @@ import {
   TableSelectedActions,
 } from '../../components/table';
 import useTable, { emptyRows, getComparator } from '../../hooks/useTable';
-import ApiInformationRepository from '@/apis/apiService/information.api'
+import ApiInformationRepository from '@/apis/apiService/information.api';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 import { Information } from '@/@types/information';
-import {PATH_DASHBOARD} from '@/routes/paths';
+import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
 import { kebabCase } from 'change-case';
 import { useNavigate } from 'react-router-dom';
-import {useQuery} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
@@ -75,7 +75,6 @@ export default function InformationList() {
       try {
         const data = await ApiInformationRepository.fetchInformation();
         if (!data.error && data.result) {
-          console.log("data fetch: ", data.result);
           setTableData(data.result);
         } else {
           enqueueSnackbar(data.error, {
@@ -124,7 +123,6 @@ export default function InformationList() {
   //       });
   //   },
   // });
-
 
   const handleFilterTitle = (filterTitle: string) => {
     setFilterTitle(filterTitle);
@@ -192,7 +190,7 @@ export default function InformationList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => row.id),
                     )
                   }
                   // actions={
@@ -216,7 +214,7 @@ export default function InformationList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => row.id),
                     )
                   }
                 />
@@ -293,7 +291,7 @@ function applySortFilter({
   if (filterTitle) {
     tableData = tableData.filter(
       (item: Record<string, any>) =>
-        item.title.toLowerCase().indexOf(filterTitle.toLowerCase()) !== -1
+        item.title.toLowerCase().indexOf(filterTitle.toLowerCase()) !== -1,
     );
   }
 

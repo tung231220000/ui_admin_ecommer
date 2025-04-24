@@ -74,7 +74,7 @@ const ApiPageRepository = {
   },
   async fetchPageData(variables: string): Promise<GetPageDataResponse> {
     const { data } = await apiBackend.get<GetPageDataResponse>('/page?name=' + variables, {});
-    console.log('data fetch value: ', data);
+    console.log('data fetch value: ', variables);
     return data;
   },
   async updatePage(variables: UpdatePagePayload): Promise<UpdatePageResponse> {

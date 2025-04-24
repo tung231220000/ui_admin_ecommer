@@ -12,7 +12,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import { CustomFile } from '@/components/upload';
-import { API_DOMAIN } from '@/utils/constant';
 import Iconify from '@/components/Iconify';
 import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from '@/routes/paths';
@@ -64,16 +63,16 @@ export default function PageEditForm({ currentPage }: Props) {
       .default([])
       .defined(),
     updatedDatetime: Yup.date(),
-    createDatetime: Yup.date(),
+    createdDatetime: Yup.date(),
   });
 
   const defaultValues: {
-    createDatetime: Date;
     name: string;
     banner: string;
     title: string;
     carousels: Carousel[];
     updatedDatetime: Date;
+    createdDatetime: Date;
   } = useMemo(
     () => ({
       id: currentPage?.id || '',
@@ -88,7 +87,7 @@ export default function PageEditForm({ currentPage }: Props) {
         },
       ],
       updatedDatetime: currentPage?.updatedDatetime || new Date(),
-      createDatetime: currentPage?.createDatetime || new Date(),
+      createdDatetime: currentPage?.createdDatetime || new Date(),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentPage],
@@ -132,9 +131,6 @@ export default function PageEditForm({ currentPage }: Props) {
       enqueueSnackbar('Không thể upload ảnh carousel!', {
         variant: 'error',
       });
-    },
-    onSuccess: (data) => {
-      console.log(data);
     },
   });
   const { mutateAsync: mutateAsyncUpdatePage } = useMutation({
@@ -180,7 +176,6 @@ export default function PageEditForm({ currentPage }: Props) {
         const filesData = new FormData();
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadBannerImage(filesData);
-        console.log(response.url);
         setValue(`banner`, `${response.url}`);
       }
     },
@@ -203,7 +198,7 @@ export default function PageEditForm({ currentPage }: Props) {
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadCarouselImage(filesData);
         console.log('index: ', index);
-        console.log('');
+
         setValue(`carousels.${index}.image`, `${response.url}`);
       }
     },

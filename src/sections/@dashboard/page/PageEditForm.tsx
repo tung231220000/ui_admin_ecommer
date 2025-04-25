@@ -260,7 +260,7 @@ export default function PageEditForm({ currentPage }: Props) {
                   <Box sx={{ width: '100%' }}>
                     <LabelStyle>Image</LabelStyle>
                     <RHFUploadSingleFile
-                      name={`carousel[${index}].image`}
+                      name={`carousels.${index}.image`}
                       maxSize={3145728}
                       onDrop={(acceptedFiles) => handleDropCarousel(acceptedFiles, index)}
                     />

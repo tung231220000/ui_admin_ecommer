@@ -197,7 +197,6 @@ export default function PageEditForm({ currentPage }: Props) {
         const filesData = new FormData();
         filesData.append(`file`, file);
         const response = await mutateAsyncUploadCarouselImage(filesData);
-        console.log('index: ', index);
 
         setValue(`carousels.${index}.image`, `${response.url}`);
       }
@@ -243,14 +242,14 @@ export default function PageEditForm({ currentPage }: Props) {
                 <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
                   <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
                     <RHFTextField
-                      name={`carousel[${index}].title`}
+                      name={`carousels.${index}.title`}
                       size="small"
                       type="text"
                       label="Title"
                     />
 
                     <RHFTextField
-                      name={`carousel[${index}].description`}
+                      name={`carousels.${index}.description`}
                       size="small"
                       type="text"
                       label="Description"

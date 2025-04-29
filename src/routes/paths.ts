@@ -31,7 +31,7 @@ export const PATH_DASHBOARD = {
   information: {
     root: path(ROOTS_DASHBOARD, '/information'),
     list: path(ROOTS_DASHBOARD, '/information/list'),
-    edit: (_id: string) => path(ROOTS_DASHBOARD, `/information/${_id}/edit`),
+    edit: (id: string) => path(ROOTS_DASHBOARD, `/information/${id}/edit`),
   },
   blog: {
     root: path(ROOTS_DASHBOARD, '/blog'),

@@ -18,7 +18,7 @@ import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import { styled } from '@mui/material/styles';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { yupResolver } from '@hookform/resolvers/yup';
 import ApiInformationRepository, {

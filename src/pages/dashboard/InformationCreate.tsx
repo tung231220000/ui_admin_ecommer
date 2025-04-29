@@ -18,7 +18,7 @@ import ApiInformationRepository from '@/apis/apiService/information.api';
 export default function InformationCreate() {
   const { pathname } = useLocation();
   const { id = '' } = useParams();
-
+  const numericId = id ? Number(id) : 0;
   const { enqueueSnackbar } = useSnackbar();
   const { themeStretch } = useSettings();
 
@@ -28,9 +28,9 @@ export default function InformationCreate() {
     queryKey: ['fetchInformationDetail', id],
     queryFn: async () => {
       try {
-        const data = await ApiInformationRepository.fetchInformationDetail({ id });
+        const data = await ApiInformationRepository.fetchInformationDetail({ id: numericId });
         if (!data.error) {
-          setCurrentInformation(data.result);
+          setCurrentInformation(data);
         } else {
           enqueueSnackbar(data.message, {
             variant: 'error',
@@ -42,7 +42,6 @@ export default function InformationCreate() {
         });
       }
     },
-    enabled: id.length > 0,
     refetchOnWindowFocus: false,
   });
 
@@ -58,7 +57,7 @@ export default function InformationCreate() {
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             { name: 'Information', href: PATH_DASHBOARD.information.list },
-            { name: !isEdit ? 'New Information' : capitalCase(id) },
+            { name: !isEdit ? 'New Information' : capitalCase(String(id)) },
           ]}
         />
 

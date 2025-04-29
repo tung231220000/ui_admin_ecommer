@@ -53,9 +53,7 @@ type UploadVariantImagesResponse = [
 ] &
   RESTErrorResponse;
 
-type GetInformationResponse = {
-  result: Information[];
-} & RESTErrorResponse;
+type GetInformationResponse = Information[] & RESTErrorResponse;
 
 export type CreateInformationPayload = {
   page: string;
@@ -70,9 +68,7 @@ type CreateInformationResponse = {
   result: Information;
 } & RESTErrorResponse;
 
-type GetInformationDetailResponse = {
-  result: Information;
-} & RESTErrorResponse;
+type GetInformationDetailResponse = Information & RESTErrorResponse;
 
 export type UpdateInformationPayload = {
   id: string;
@@ -162,13 +158,13 @@ const ApiInformationRepository = {
     return data;
   },
   async fetchInformation(): Promise<GetInformationResponse> {
-    const { data } = await apiBackend.get<GetInformationResponse>('/information-list', {});
-
+    const { data } = await apiBackend.get<GetInformationResponse>('/information/list', {});
     return data;
   },
-  async fetchInformationDetail(variables: { id: string }): Promise<GetInformationDetailResponse> {
+  async fetchInformationDetail(variables: { id: number }): Promise<GetInformationDetailResponse> {
+    console.log(variables.id);
     const { data } = await apiBackend.get<GetInformationDetailResponse>(
-      '/information/detail/' + variables,
+      '/information/detail?id=' + variables.id,
       {},
     );
 

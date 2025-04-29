@@ -74,8 +74,9 @@ export default function InformationList() {
     queryFn: async () => {
       try {
         const data = await ApiInformationRepository.fetchInformation();
-        if (!data.error && data.result) {
-          setTableData(data.result);
+        if (!data.error && data) {
+          console.log(data);
+          setTableData(data);
         } else {
           enqueueSnackbar(data.error, {
             variant: 'error',
@@ -152,7 +153,7 @@ export default function InformationList() {
   // };
 
   const handleEditRow = (id: string) => {
-    navigate(PATH_DASHBOARD.information.edit(kebabCase(id)));
+    navigate(PATH_DASHBOARD.information.edit(kebabCase(String(id))));
   };
 
   const dataFiltered = applySortFilter({
@@ -190,7 +191,7 @@ export default function InformationList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id),
+                      tableData.map((row) => String(row.id)),
                     )
                   }
                   // actions={
@@ -214,7 +215,7 @@ export default function InformationList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id),
+                      tableData.map((row) => String(row.id)),
                     )
                   }
                 />
@@ -226,10 +227,10 @@ export default function InformationList() {
                       <InformationTableRow
                         key={row.id}
                         row={row}
-                        selected={selected.includes(row.id)}
-                        onSelectRow={() => onSelectRow(row.id)}
+                        selected={selected.includes(String(row.id))}
+                        onSelectRow={() => onSelectRow(String(row.id))}
                         // onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
+                        onEditRow={() => handleEditRow(String(row.id))}
                       />
                     ))}
 

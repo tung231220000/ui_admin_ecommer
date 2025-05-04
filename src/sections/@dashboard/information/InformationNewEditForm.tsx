@@ -14,7 +14,7 @@ import { CustomFile } from '@/components/upload';
 import { API_DOMAIN } from '@/utils/constant';
 import Iconify from '@/components/Iconify';
 import { Information } from '@/@types/information';
-import { LoadingButton } from '@mui/lab';
+// import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import { styled } from '@mui/material/styles';
 import { useMutation } from '@tanstack/react-query';
@@ -371,9 +371,9 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
               </Stack>
             </Card>
 
-            <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
+            <Button type="submit" variant="contained" size="large" loading={isSubmitting}>
               {!isEdit ? 'Create Information' : 'Save Changes'}
-            </LoadingButton>
+            </Button>
           </Stack>
         </Grid>
       </Grid>

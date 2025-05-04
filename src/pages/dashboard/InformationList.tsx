@@ -31,7 +31,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import useSettings from '../../hooks/useSettings';
 import { useSnackbar } from 'notistack';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -68,28 +68,35 @@ export default function InformationList() {
 
   const [tableData, setTableData] = useState<Information[]>([]);
   const [filterTitle, setFilterTitle] = useState('');
-
-  useQuery({
-    queryKey: ['fetchInformation'],
-    queryFn: async () => {
-      try {
-        const data = await ApiInformationRepository.fetchInformation();
-        if (!data.error && data) {
-          console.log(data);
-          setTableData(data);
-        } else {
-          enqueueSnackbar(data.error, {
-            variant: 'error',
-          });
-        }
-      } catch (error) {
-        enqueueSnackbar('Không thể lấy danh sách thông tin!', {
-          variant: 'error',
-        });
-      }
-    },
+  const { data, error, isLoading, isFetching } = useQuery({
+    queryKey: ['fetchInformations'],
+    queryFn: () =>  ApiInformationRepository.fetchInformation(),
     refetchOnWindowFocus: false,
   });
+
+  useEffect(() => {
+    if (isLoading || isFetching) {
+      return;
+    }
+    if (error) {
+      enqueueSnackbar(error?.message || 'Không thể lấy danh sách các trang!', {
+        variant: 'error',
+      });
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (isLoading || isFetching) {
+      return;
+    }
+    if (!data?.error && data) {
+      setTableData(data);
+    } else {
+      enqueueSnackbar(error?.message, {
+        variant: 'error',
+      });
+    }
+  }, [data]);
 
   // const {mutateAsync: mutateAsyncDeleteInformation} = useMutation<DeleteInformationResponse, AxiosError, DeleteInformationPayload>({
   //   mutationFn: (payload: DeleteInformationPayload) =>

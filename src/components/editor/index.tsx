@@ -81,7 +81,7 @@
             ...sx,
           }}
         >
-          {/*<EditorToolbar id={id} isSimple={simple} />*/}
+          <EditorToolbar id={id} isSimple={simple} />
           <ReactQuill
             value={value || ''}
             onChange={onChange}

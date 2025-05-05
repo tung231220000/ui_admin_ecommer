@@ -1,4 +1,4 @@
-import React, {ElementType, Suspense, lazy} from 'react';
+import React, {ElementType, Suspense, lazy, Component} from 'react';
 import {Navigate, useLocation, useRoutes} from 'react-router-dom';
 // import useAuth from "@/hooks/useAuth";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -87,7 +87,7 @@ export default function Router() {
           children: [
             { element: <Navigate to="/dashboard/information/list" replace />, index: true },
             { path: 'list', element: <InformationList /> },
-            { path: ':_id/edit', element: <InformationCreate /> },
+            { path: ':id/edit', element: <InformationCreate /> },
           ],
         },
         {

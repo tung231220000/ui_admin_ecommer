@@ -18,38 +18,17 @@ import ApiInformationRepository from '@/apis/apiService/information.api';
 export default function InformationCreate() {
   const { pathname } = useLocation();
   const { id = '' } = useParams();
+
   const numericId = id ? Number(id) : 0;
-  const { enqueueSnackbar } = useSnackbar();
+  // const { enqueueSnackbar } = useSnackbar();
   const { themeStretch } = useSettings();
 
   const [currentInformation, setCurrentInformation] = useState<Information>();
 
-  // useQuery({
-  //   queryKey: ['fetchInformationDetail', id],
-  //   queryFn: async () => {
-  //     try {
-  //       const data = await ApiInformationRepository.fetchInformationDetail({ id: numericId });
-  //       if (!data.error) {
-  //         setCurrentInformation(data);
-  //       } else {
-  //         enqueueSnackbar(data.message, {
-  //           variant: 'error',
-  //         });
-  //       }
-  //     } catch (e) {
-  //       enqueueSnackbar('Không thể lấy chi tiết thông tin!', {
-  //         variant: 'error',
-  //       });
-  //     }
-  //   },
-  //   enabled: id && !isNaN(Number(id)) ? Number(id) > 0 : id.length > 0,
-  //   refetchOnWindowFocus: false,
-  // });
-
   const { data, error, isLoading, isFetching } = useQuery({
-    queryKey: ['fetchInformationDetail', id],
-    queryFn: () =>  ApiInformationRepository.fetchInformationDetail({id: numericId}),
-    enabled: id && !isNaN(Number(id)) ? Number(id) > 0 : id.length > 0,
+    queryKey: ['fetchInformationDetail', numericId],
+    queryFn: () =>  ApiInformationRepository.fetchInformationDetail(numericId),
+    enabled: numericId > 0 ,
     refetchOnWindowFocus: false,
   });
 
@@ -58,24 +37,28 @@ export default function InformationCreate() {
       return;
     }
     if (error) {
-      enqueueSnackbar(error?.message || 'Không thể lấy chi tiết thông tin!', {
-        variant: 'error',
-      });
+      console.log(error)
+      // enqueueSnackbar(error?.message || 'Không thể lấy chi tiết thông tin!', {
+      //   variant: 'error',
+      // });
     }
-  }, [error]);
+  }, [error, isLoading, isFetching]);
 
   useEffect(() => {
     if (isLoading || isFetching) {
       return;
     }
     if (!data?.error && data) {
+      console.log('data:', data)
       setCurrentInformation(data);
     } else {
-      enqueueSnackbar(error?.message, {
-        variant: 'error',
-      });
+      console.log('data', data)
+      console.log(error)
+      // enqueueSnackbar(error?.message, {
+      //   variant: 'error',
+      // });
     }
-  }, [data]);
+  }, [data, isLoading, isFetching, error]);
 
   const isEdit = pathname.includes('edit');
 

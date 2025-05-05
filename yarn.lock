@@ -1291,13 +1291,13 @@ __metadata:
   linkType: hard
 
 "@tanstack/react-query@npm:^5.59.20":
-  version: 5.75.1
-  resolution: "@tanstack/react-query@npm:5.75.1"
+  version: 5.75.2
+  resolution: "@tanstack/react-query@npm:5.75.2"
   dependencies:
     "@tanstack/query-core": "npm:5.75.0"
   peerDependencies:
     react: ^18 || ^19
-  checksum: 10c0/dbaaed4ca3b6c3dd1cedad0ce4d0a8a8e3553573665d2a1281ca3983e28f7984bb833f17935885a38ac8c35e36b69a4a4fabb3f6aca0e16e8b91cecfbf56008f
+  checksum: 10c0/b265a89f9166747589ce80019505be24a43a6cffc7af09700fadb35a91d28a0da380f7e18bcf2ffb7396cd0f2ca45d3322f5f3758d3265b68533a59dad6dd487
   languageName: node
   linkType: hard
 
@@ -1964,9 +1964,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001716":
-  version: 1.0.30001716
-  resolution: "caniuse-lite@npm:1.0.30001716"
-  checksum: 10c0/5cca5089f7ee214a346ea38ecbd114c1a675c94254675150e535aa0766fe2c446961990637f25f65dc29ce9c543aed12006d679dd797d2e6159c46aa518da0cb
+  version: 1.0.30001717
+  resolution: "caniuse-lite@npm:1.0.30001717"
+  checksum: 10c0/6c0bb1e5182fd578ebe97ee2203250849754a4e17d985839fab527ad27e125a4c4ffce3ece5505217fedf30ea0bbc17ac9f93e9ac525c0389ccba61c6e8345dc
   languageName: node
   linkType: hard
 
@@ -2489,8 +2489,8 @@ __metadata:
   linkType: hard
 
 "eslint-plugin-prettier@npm:^5.1.3":
-  version: 5.2.6
-  resolution: "eslint-plugin-prettier@npm:5.2.6"
+  version: 5.4.0
+  resolution: "eslint-plugin-prettier@npm:5.4.0"
   dependencies:
     prettier-linter-helpers: "npm:^1.0.0"
     synckit: "npm:^0.11.0"
@@ -2504,7 +2504,7 @@ __metadata:
       optional: true
     eslint-config-prettier:
       optional: true
-  checksum: 10c0/9911740a5edac7933d92671381908671c61ffa32a3cee7aed667ebab89831ee2c0b69eb9530f68dbe172ca9d4b3fa3d47350762dc1eb096a3ce125fa31c0e616
+  checksum: 10c0/50718d16266dfbe6909697f9d7c9188d2664f5be50fa1de4decc0c8236565570823fdf5973f89cd51254af5551b6160650e092716002a62aaa0f0b2c18e8fc3e
   languageName: node
   linkType: hard
 
@@ -4912,11 +4912,11 @@ __metadata:
   linkType: hard
 
 "react-hook-form@npm:^7.54.2":
-  version: 7.56.1
-  resolution: "react-hook-form@npm:7.56.1"
+  version: 7.56.2
+  resolution: "react-hook-form@npm:7.56.2"
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18 || ^19
-  checksum: 10c0/26eafd54bf47167628e34c2f22ea27ea7bdd5b4231a56af5be31ccedfb2a721708b308026ea4a17f2fb15c7b5fff83c0feb4acc7aa07bd6faa8506e917810cab
+  checksum: 10c0/9eeca7525c5c0b1356670e7cc77687298c7280a31c99bca396596124371467c310cad22f2c10efd9c75b4570d07740ee1c6ad481d59c1b725c7600767f0a35af
   languageName: node
   linkType: hard
 
@@ -4999,17 +4999,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-quill@npm:2.0.0-beta.4":
-  version: 2.0.0-beta.4
-  resolution: "react-quill@npm:2.0.0-beta.4"
+"react-quill@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "react-quill@npm:2.0.0"
   dependencies:
     "@types/quill": "npm:^1.3.10"
     lodash: "npm:^4.17.4"
     quill: "npm:^1.3.7"
   peerDependencies:
-    react: ^16 || ^17
-    react-dom: ^16 || ^17
-  checksum: 10c0/81fc0b483c532943d436580cdfb184ea52f7a07c12991af325f8a1c8115f20b6efa0919a3c97e5a5eab491aadf526b777653b06a1477e654ddf0df61cdef1647
+    react: ^16 || ^17 || ^18
+    react-dom: ^16 || ^17 || ^18
+  checksum: 10c0/c850c4d6bd35108a509ce0bd759afd021ca4425be6cba3419a25839979f7e1411fd6d119c0724cdb0619da07e5abf10081af3c139046bc39caf5f217c19d76b0
   languageName: node
   linkType: hard
 
@@ -5994,7 +5994,7 @@ __metadata:
     react-lazy-load-image-component: "npm:^1.6.3"
     react-markdown: "npm:^10.0.0"
     react-number-format: "npm:^5.4.3"
-    react-quill: "npm:2.0.0-beta.4"
+    react-quill: "npm:^2.0.0"
     react-router: "npm:^6.27.0"
     react-router-dom: "npm:^7.1.1"
     rehype-raw: "npm:^7.0.0"

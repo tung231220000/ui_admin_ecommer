@@ -161,13 +161,11 @@ const ApiInformationRepository = {
     const { data } = await apiBackend.get<GetInformationResponse>('/information/list', {});
     return data;
   },
-  async fetchInformationDetail(variables: { id: number }): Promise<GetInformationDetailResponse> {
-    console.log(variables.id);
+  async fetchInformationDetail(id: number ): Promise<GetInformationDetailResponse> {
     const { data } = await apiBackend.get<GetInformationDetailResponse>(
-      '/information/detail?id=' + variables.id,
+      '/information/detail?id=' + id,
       {},
     );
-
     return data;
   },
   async updateInformation(variables: UpdateInformationPayload): Promise<UpdateInformationResponse> {

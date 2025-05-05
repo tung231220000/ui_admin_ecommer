@@ -1,6 +1,6 @@
 import EditorToolbarStyle from './EditorToolbarStyle';
 import Iconify from '../Iconify';
-import { Quill } from 'react-quill';
+import Quill from 'quill';
 
 // ----------------------------------------------------------------------
 
@@ -25,19 +25,21 @@ const FONT_SIZE = [
 const HEADINGS = ['Heading 1', 'Heading 2', 'Heading 3', 'Heading 4', 'Heading 5', 'Heading 6'];
 
 export function undoChange() {
-  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   this.quill.history.undo();
 }
 export function redoChange() {
-  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   this.quill.history.redo();
 }
 
-const Size = Quill.import('attributors/style/size');
+const Size = Quill.import('attributors/style/size') as any;
 Size.whitelist = FONT_SIZE;
 Quill.register(Size, true);
 
-const Font = Quill.import('attributors/style/font');
+const Font = Quill.import('attributors/style/font') as any;
 Font.whitelist = FONT_FAMILY;
 Quill.register(Font, true);
 

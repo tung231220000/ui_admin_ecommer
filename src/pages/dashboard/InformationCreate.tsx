@@ -9,7 +9,7 @@ import Page from '../../components/Page';
 import { capitalCase } from 'change-case';
 import { useQuery } from '@tanstack/react-query';
 import useSettings from '../../hooks/useSettings';
-import { useSnackbar } from 'notistack';
+// import { useSnackbar } from 'notistack';
 import {useEffect, useState} from 'react';
 import ApiInformationRepository from '@/apis/apiService/information.api';
 

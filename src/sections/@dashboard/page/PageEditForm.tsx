@@ -13,7 +13,6 @@ import { useFieldArray, useForm } from 'react-hook-form';
 
 import { CustomFile } from '@/components/upload';
 import Iconify from '@/components/Iconify';
-import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import { Carousel, Page } from '@/@types/page';
 import { styled } from '@mui/material/styles';
@@ -224,88 +223,89 @@ export default function PageEditForm({ currentPage }: Props) {
   };
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <Card sx={{ p: 3 }}>
-            <div>
-              <LabelStyle>Banner</LabelStyle>
-              <RHFUploadSingleFile name="banner" maxSize={3145728} onDrop={handleDrop} />
-            </div>
-
-            <Typography variant="h6" sx={{ color: 'text.disabled', my: 3 }}>
-              Carousel:
-            </Typography>
-
-            <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={3}>
-              {fields.map((item, index) => (
-                <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
-                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
-                    <RHFTextField
-                      name={`carousels.${index}.title`}
-                      size="small"
-                      type="text"
-                      label="Title"
-                    />
-
-                    <RHFTextField
-                      name={`carousels.${index}.description`}
-                      size="small"
-                      type="text"
-                      label="Description"
-                    />
-                  </Stack>
-
-                  <Box sx={{ width: '100%' }}>
-                    <LabelStyle>Image</LabelStyle>
-                    <RHFUploadSingleFile
-                      name={`carousels.${index}.image`}
-                      maxSize={3145728}
-                      onDrop={(acceptedFiles) => handleDropCarousel(acceptedFiles, index)}
-                    />
-                  </Box>
-
-                  <Button
-                    size="small"
-                    color="error"
-                    startIcon={<Iconify icon="eva:trash-2-outline" />}
-                    onClick={() => handleRemove(index)}
-                  >
-                    Remove
-                  </Button>
-                </Stack>
-              ))}
-            </Stack>
-
-            <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
-
-            <Button
-              size="small"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-              sx={{ flexShrink: 0 }}
-              onClick={handleAdd}
-            >
-              Add new carousel
-            </Button>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} md={4}>
-          <Stack spacing={3}>
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={8}>
             <Card sx={{ p: 3 }}>
-              <Stack spacing={3}>
-                <RHFTextField name="name" label="Name" disabled />
+              <div>
+                <LabelStyle>Banner</LabelStyle>
+                <RHFUploadSingleFile name="banner" maxSize={3145728} onDrop={handleDrop} />
+              </div>
 
-                <RHFTextField name="title" label="Title" />
+              <Typography variant="h6" sx={{ color: 'text.disabled', my: 3 }}>
+                Carousel:
+              </Typography>
+
+              <Stack divider={<Divider flexItem sx={{ borderStyle: 'dashed' }} />} spacing={3}>
+                {fields.map((item, index) => (
+                    <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
+                      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
+                        <RHFTextField
+                            name={`carousels.${index}.title`}
+                            size="small"
+                            type="text"
+                            label="Title"
+                        />
+                        <RHFTextField
+                            name={`carousels.${index}.description`}
+                            size="small"
+                            type="text"
+                            label="Description"
+                        />
+                      </Stack>
+
+                      <Box sx={{ width: '100%' }}>
+                        <LabelStyle>Image</LabelStyle>
+                        <RHFUploadSingleFile
+                            name={`carousels.${index}.image`}
+                            maxSize={3145728}
+                            onDrop={(acceptedFiles) => handleDropCarousel(acceptedFiles, index)}
+                        />
+                      </Box>
+
+                      <Button
+                          size="small"
+                          color="error"
+                          startIcon={<Iconify icon="eva:trash-2-outline" />}
+                          onClick={() => handleRemove(index)}
+                      >
+                        Remove
+                      </Button>
+                    </Stack>
+                ))}
               </Stack>
-            </Card>
 
-            <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
-              Save Changes
-            </LoadingButton>
-          </Stack>
+              <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
+
+              <Button
+                  size="small"
+                  startIcon={<Iconify icon="eva:plus-fill" />}
+                  sx={{ flexShrink: 0 }}
+                  onClick={handleAdd}
+              >
+                Add new carousel
+              </Button>
+            </Card>
+          </Grid>
+
+
+
+          <Grid item xs={12} md={4}>
+            <Stack spacing={3}>
+              <Card sx={{ p: 3 }}>
+                <Stack spacing={3}>
+                  <RHFTextField name="name" label="Name" disabled />
+                  <RHFTextField name="title" label="Title" />
+                </Stack>
+              </Card>
+
+              <Button type="submit" variant="contained" size="large" loading={isSubmitting}>
+                Save Changes
+              </Button>
+            </Stack>
+          </Grid>
         </Grid>
-      </Grid>
-    </FormProvider>
+      </FormProvider>
+
   );
 }

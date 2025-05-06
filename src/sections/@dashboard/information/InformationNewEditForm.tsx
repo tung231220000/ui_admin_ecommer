@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 
-import { Box, Button, Card, Divider, Grid, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, Divider, Stack,Grid, Typography } from '@mui/material';
 import {
   FormProvider,
   RHFEditor,
@@ -26,6 +26,7 @@ import ApiInformationRepository, {
   UploadAssetsPayload,
   UploadVariantImagePayload,
 } from '@/apis/apiService/information.api';
+
 
 // ----------------------------------------------------------------------
 
@@ -275,7 +276,7 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+        <Grid size={8}>
           <Card sx={{ p: 3 }}>
             <div>
               <LabelStyle>Description</LabelStyle>
@@ -359,7 +360,7 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid size={8}>
           <Stack spacing={3}>
             <Card sx={{ p: 3 }}>
               <Stack spacing={3}>

@@ -23,7 +23,6 @@ import {
 import BlogNewPostPreview from './BlogNewPostPreview';
 import { CustomFile } from '@/components/upload';
 import { API_DOMAIN } from "@/utils/constant";
-import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import { Post } from '@/@types/post';
 import { styled } from '@mui/material/styles';
@@ -236,7 +235,7 @@ const BlogNewPostForm: FC<Props> = ({ isEdit, currentPost }) => {
     <>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
+          <Grid size={8}>
             <Card sx={{ p: 3 }}>
               <Stack spacing={3}>
                 <div>
@@ -252,7 +251,7 @@ const BlogNewPostForm: FC<Props> = ({ isEdit, currentPost }) => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid size={8}>
             <Card sx={{ p: 3 }}>
               <Stack spacing={3}>
                 <RHFTextField name="title" label="Post Title" />
@@ -305,7 +304,7 @@ const BlogNewPostForm: FC<Props> = ({ isEdit, currentPost }) => {
               >
                 Preview
               </Button>
-              <LoadingButton
+              <Button
                 fullWidth
                 type="submit"
                 variant="contained"
@@ -313,7 +312,7 @@ const BlogNewPostForm: FC<Props> = ({ isEdit, currentPost }) => {
                 loading={isSubmitting}
               >
                 {isEdit ? 'Save Changes' : 'Post'}
-              </LoadingButton>
+              </Button>
             </Stack>
           </Grid>
         </Grid>

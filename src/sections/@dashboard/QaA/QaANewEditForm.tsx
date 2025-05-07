@@ -1,10 +1,9 @@
 import * as Yup from 'yup';
 
-import { Card, Stack, Typography } from '@mui/material';
+import {Button, Card, Stack, Typography} from '@mui/material';
 import { FormProvider, RHFEditor, RHFTextField } from '../../../components/hook-form';
 import { useEffect, useMemo } from 'react';
 
-import { LoadingButton } from '@mui/lab';
 import { QaA } from '@/@types/QaA';
 import { styled } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
@@ -97,9 +96,9 @@ export default function QaANewEditForm({ isEdit, currentQaA }: Props) {
         </Stack>
 
         <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+          <Button type="submit" variant="contained" loading={isSubmitting}>
             {!isEdit ? 'Create QaA' : 'Save Changes'}
-          </LoadingButton>
+          </Button>
         </Stack>
       </Card>
     </FormProvider>

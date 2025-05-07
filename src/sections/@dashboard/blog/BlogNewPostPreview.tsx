@@ -5,7 +5,6 @@ import { DialogAnimate } from '../../../components/animate';
 import EmptyContent from '../../../components/EmptyContent';
 import { FormValuesProps } from './BlogNewPostForm';
 import Image from '../../../components/Image';
-import { LoadingButton } from '@mui/lab';
 import Markdown from '@/components/MarkDown';
 import Scrollbar from '../../../components/Scrollbar';
 import { alpha } from '@mui/material/styles';
@@ -44,7 +43,7 @@ export default function BlogNewPostPreview({
           Preview Post
         </Typography>
         <Button onClick={onClose}>Cancel</Button>
-        <LoadingButton
+        <Button
           type="submit"
           variant="contained"
           disabled={!isValid}
@@ -52,7 +51,7 @@ export default function BlogNewPostPreview({
           onClick={onSubmit}
         >
           Post
-        </LoadingButton>
+        </Button>
       </DialogActions>
 
       {hasContent ? (

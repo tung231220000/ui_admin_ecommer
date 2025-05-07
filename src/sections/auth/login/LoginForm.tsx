@@ -1,10 +1,9 @@
 import * as Yup from 'yup';
 
-import {Alert, IconButton, InputAdornment, Link, Stack} from '@mui/material';
+import {Alert, Button, IconButton, InputAdornment, Link, Stack} from '@mui/material';
 import { FormProvider, RHFCheckbox, RHFTextField } from '../../../components/hook-form';
 
 import Iconify from '../../../components/Iconify';
-import { LoadingButton } from '@mui/lab';
 import { PATH_AUTH } from '@/routes/paths';
 import { Link as RouterLink } from 'react-router-dom';
 import {Resolver, useForm} from 'react-hook-form';
@@ -94,7 +93,7 @@ export default function LoginForm() {
         </Link>
       </Stack>
 
-      <LoadingButton
+      <Button
         fullWidth
         size="large"
         type="submit"
@@ -102,7 +101,7 @@ export default function LoginForm() {
         loading={isSubmitting}
       >
         Login
-      </LoadingButton>
+      </Button>
     </FormProvider>
   );
 }

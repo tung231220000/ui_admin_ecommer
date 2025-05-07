@@ -1,16 +1,16 @@
 import React from 'react';
 import * as Yup from 'yup';
 
-import { Box, Card, Grid, Stack, Typography } from '@mui/material';
+import {Box, Button, Card, Grid, Stack, Typography} from '@mui/material';
 import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
 import { useCallback, useEffect, useMemo } from 'react';
 import { CustomFile } from '@/components/upload';
 import { API_DOMAIN } from '@/utils/constant';
-import { LoadingButton } from '@mui/lab';
+// import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import { Partner } from '@/@types/partner';
 import { fData } from '@/utils/formatNumber';
-import { Resolver, useForm } from 'react-hook-form';
+import {  useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { useSnackbar } from 'notistack';
@@ -173,7 +173,7 @@ export default function PartnerNewEditForm({ isEdit, currentPartner }: Props) {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
+        <Grid size={8}>
           <Card sx={{ py: 10, px: 3 }}>
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar
@@ -200,14 +200,14 @@ export default function PartnerNewEditForm({ isEdit, currentPartner }: Props) {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={8}>
+        <Grid size={8}>
           <Card sx={{ p: 3 }}>
             <RHFTextField name="name" label="Name" />
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+              <Button type="submit" variant="contained" loading={isSubmitting}>
                 {!isEdit ? 'Create Partner' : 'Save Changes'}
-              </LoadingButton>
+              </Button>
             </Stack>
           </Card>
         </Grid>

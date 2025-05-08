@@ -1,11 +1,17 @@
   import { Box, BoxProps } from '@mui/material';
-  import EditorToolbar, { formats, redoChange, undoChange } from './EditorToolbar';
-  import ReactQuill, { ReactQuillProps } from 'react-quill';
+  import EditorToolbar, {formats, redoChange, undoChange} from './EditorToolbar';
+  import ReactQuill from 'react-quill-new';
 
-  import { ReactNode } from 'react';
+
+  import { ReactNode, ComponentProps } from 'react';
   import { styled } from '@mui/material/styles';
+  type ReactQuillProps = ComponentProps<typeof ReactQuill>;
+  import 'highlight.js/styles/atom-one-dark.css';
+  import hljs from 'highlight.js';
 
+  window.hljs = hljs;
   // ----------------------------------------------------------------------
+
 
   const RootStyle = styled(Box)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
@@ -52,14 +58,13 @@
     ...other
   }: Props) {
     const modules = {
-      toolbar: [
-        [{ header: [1, 2, false] }],
-        ['bold', 'italic', 'underline'],
-        ['blockquote', 'code-block'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['link', 'image'],
-        ['clean'],
-      ],
+      toolbar: {
+        container: `#${id}`,
+        handlers: {
+          undo: undoChange,
+          redo: redoChange,
+        },
+      },
       history: {
         delay: 500,
         maxStack: 100,
@@ -84,7 +89,7 @@
           <EditorToolbar id={id} isSimple={simple} />
           <ReactQuill
             value={value || ''}
-            onChange={onChange}
+            onChange={onChange || (() => {})}
             modules={modules}
             formats={formats}
             placeholder="Write something awesome..."

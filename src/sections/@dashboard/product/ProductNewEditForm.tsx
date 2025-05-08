@@ -9,7 +9,7 @@ import {
   Stack,
   TextField,
   Typography,
-  styled,
+  styled, Button,
 } from '@mui/material';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import {
@@ -27,7 +27,6 @@ import { BonusService } from '@/@types/bonus-service';
 import { Category } from '@/@types/category';
 import { CustomFile } from '@/components/upload';
 import { API_DOMAIN } from '@/utils/constant';
-import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import { Product } from '@/@types/product';
 import { QaA } from '@/@types/QaA';
@@ -247,7 +246,7 @@ export default function ProductNewEditForm({
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={7}>
+        <Grid size={8}>
           <Card sx={{ p: 3 }}>
             <div>
               <LabelStyle>Banner</LabelStyle>
@@ -288,7 +287,7 @@ export default function ProductNewEditForm({
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={5}>
+        <Grid size={8}>
           <Stack spacing={3}>
             <Card sx={{ p: 3 }}>
               <Stack spacing={3}>
@@ -524,9 +523,9 @@ export default function ProductNewEditForm({
               />
             </Card>
 
-            <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
+            <Button type="submit" variant="contained" size="large" loading={isSubmitting}>
               {!isEdit ? 'Create Product' : 'Save Changes'}
-            </LoadingButton>
+            </Button>
           </Stack>
         </Grid>
       </Grid>

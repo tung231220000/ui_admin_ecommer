@@ -1,5 +1,6 @@
 import React from "react";
 // import "./App.css";
+import 'react-quill-new/dist/quill.snow.css';
 import MotionLazyContainer from './components/animate/MotionLazyContainer';
 import ThemeProvider from './theme/index';
 import ThemeSettings from "@/components/settings";

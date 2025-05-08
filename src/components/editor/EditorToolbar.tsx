@@ -24,14 +24,12 @@ const FONT_SIZE = [
 ];
 const HEADINGS = ['Heading 1', 'Heading 2', 'Heading 3', 'Heading 4', 'Heading 5', 'Heading 6'];
 
-export function undoChange() {
+export function undoChange(this: any) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
   this.quill.history.undo();
 }
-export function redoChange() {
+export function redoChange(this: any) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
   this.quill.history.redo();
 }
 
@@ -48,7 +46,7 @@ export const formats = [
   'background',
   'blockquote',
   'bold',
-  'bullet',
+  // 'bullet',
   'code',
   'code-block',
   'color',

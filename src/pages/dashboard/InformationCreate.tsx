@@ -77,7 +77,7 @@ export default function InformationCreate() {
         />
 
         <InformationNewEditForm isEdit={isEdit} currentInformation={currentInformation} />
-      </Container>
+      </Container>y
     </Page>
   );
 }

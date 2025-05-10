@@ -79,7 +79,7 @@ export default function InformationNewEditForm({ isEdit, currentInformation }: P
       title: currentInformation?.title || '',
       subtitle: currentInformation?.subtitle || '',
       description: currentInformation?.description || '',
-      variants: currentInformation?.variants.map((variant) => ({
+      variants:(currentInformation?.variants ?? []).map((variant) => ({
         title: variant.title ?? '',
         url: variant.url ?? '',
         content: variant.content ?? '',

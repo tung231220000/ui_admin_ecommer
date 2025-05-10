@@ -6,12 +6,8 @@
   import { ReactNode, ComponentProps } from 'react';
   import { styled } from '@mui/material/styles';
   type ReactQuillProps = ComponentProps<typeof ReactQuill>;
-  import 'highlight.js/styles/atom-one-dark.css';
-  import hljs from 'highlight.js';
 
-  window.hljs = hljs;
   // ----------------------------------------------------------------------
-
 
   const RootStyle = styled(Box)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,

@@ -1,11 +1,10 @@
 import * as Yup from 'yup';
 
-import { Alert, IconButton, InputAdornment, Stack } from '@mui/material';
+import {Alert, Button, IconButton, InputAdornment, Stack} from '@mui/material';
 import { FormProvider, RHFSelect, RHFTextField } from '../../../components/hook-form';
 import { GENDERS, phoneRegExp } from '@/utils/constant';
 
 import Iconify from '../../../components/Iconify';
-import { LoadingButton } from '@mui/lab';
 import useAuth from '../../../hooks/useAuth';
 import {Resolver, useForm} from 'react-hook-form';
 import { useState } from 'react';
@@ -111,7 +110,7 @@ export default function RegisterForm() {
           }}
         />
 
-        <LoadingButton
+        <Button
           fullWidth
           size="large"
           type="submit"
@@ -119,7 +118,7 @@ export default function RegisterForm() {
           loading={isSubmitting}
         >
           Register
-        </LoadingButton>
+        </Button>
       </Stack>
     </FormProvider>
   );

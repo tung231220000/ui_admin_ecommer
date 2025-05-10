@@ -48,7 +48,7 @@ export const formats = [
   'bold',
   // 'bullet',
   'code',
-  'code-block',
+  // 'code-block',
   'color',
   'direction',
   'font',

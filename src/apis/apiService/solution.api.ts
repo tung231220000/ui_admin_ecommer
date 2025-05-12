@@ -25,7 +25,7 @@ export type CreateSolutionPayload = {
     intro: string;
     title: string;
     description: string;
-    advantages: string[];
+    advantages?: string[];
     services: string[];
   };
 };

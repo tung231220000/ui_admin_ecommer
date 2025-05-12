@@ -10,6 +10,7 @@ import {
   TextField,
   Typography,
   styled,
+  Button,
 } from '@mui/material';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import {
@@ -24,7 +25,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { Advantage } from '@/@types/advantage';
 import { CustomFile } from '@/components/upload';
 import { API_DOMAIN } from '@/utils/constant';
-import { LoadingButton } from '@mui/lab';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import { Service } from '@/@types/service';
 import { Solution } from '@/@types/solution';
@@ -130,43 +130,35 @@ export default function SolutionNewEditForm({
       _id: currentSolution?._id || '',
       key: currentSolution?.key || '',
       category: currentSolution?.category._id || categories[0]._id,
-      banner: currentSolution?.banner || '',
+      banner: currentSolution?.banner ?? '',
       intro: currentSolution?.intro || '',
       title: currentSolution?.title || '',
       description: currentSolution?.description || '',
-      advantages: currentSolution?.advantages.map((advantage) => advantage._id) || [],
-      services: currentSolution?.services.map((service) => service._id) || [],
+      advantages: currentSolution?.advantages?.map((adv) => adv?._id ?? '') ?? [],
+      services: currentSolution?.services?.map((svc) => svc?._id ?? '') ?? [],
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentSolution],
+    [currentSolution, categories],
   );
   const NewSolutionSchema = Yup.object().shape({
     _id: Yup.string(),
     key: Yup.string().required('Key is required'),
     category: Yup.string().required('Category is required'),
-    banner: Yup.mixed()
-      .required('Banner is required')
-      .test('is-string-or-file', 'Banner must be a string or a valid file', (value) => {
-        // Allow empty string to fail the test
-        if (typeof value === 'string') {
-          return value.trim().length > 0;
-        }
-        // Here, adjust according to what CustomFile is (if it's a File instance, for example)
-        if (value instanceof File) {
-          return true;
-        }
-        // Alternatively, if CustomFile is a custom type, add your logic here.
-        return false;
-      }),
+    banner: Yup.mixed<string | CustomFile>().required('Banner is required'),
     intro: Yup.string().required('Intro is required'),
     title: Yup.string().required('Title is required'),
     description: Yup.string().required('Description is required'),
-    advantages: Yup.array().min(1, 'Advantage is required'),
-    services: Yup.array().min(1, 'Service is required'),
+    advantages: Yup.array()
+      .of(Yup.string().required('Each advantage is required'))
+      .required('Advantages are required'),
+
+    services: Yup.array()
+      .of(Yup.string().required('Each service is required'))
+      .required('Services are required'),
   });
   const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(NewSolutionSchema),
-    defaultValues,
+    resolver: yupResolver(NewSolutionSchema) as Resolver<FormValuesProps>,
+    defaultValues: defaultValues as FormValuesProps,
   });
   const {
     control,
@@ -225,7 +217,7 @@ export default function SolutionNewEditForm({
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={7}>
+        <Grid size={8}>
           <Card sx={{ p: 3 }}>
             <div>
               <LabelStyle>Banner</LabelStyle>
@@ -258,7 +250,7 @@ export default function SolutionNewEditForm({
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={5}>
+        <Grid size={8}>
           <Stack spacing={3}>
             <Card sx={{ p: 3 }}>
               <Stack spacing={3}>
@@ -360,9 +352,9 @@ export default function SolutionNewEditForm({
               </Stack>
             </Card>
 
-            <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
+            <Button type="submit" variant="contained" size="large" loading={isSubmitting}>
               {!isEdit ? 'Create Solution' : 'Save Changes'}
-            </LoadingButton>
+            </Button>
           </Stack>
         </Grid>
       </Grid>

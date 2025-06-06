@@ -1,36 +1,35 @@
-import React, {ReactNode, useMemo} from "react";
-import {alpha, createTheme, ThemeProvider, useTheme} from "@mui/material/styles";
-import useSettings from "@/hooks/useSettings";
-import ComponentsOverride from "@/theme/overrides";
-
+import React, { ReactNode, useMemo } from 'react';
+import { alpha, createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
+import useSettings from '@/hooks/useSettings';
+import ComponentsOverride from '@/theme/overrides';
 
 type Props = {
   children: ReactNode;
 };
 
-export default function ThemeColorPresets({children}: Props) {
-  const defaultTheme = useTheme();
+export default function ThemeColorPresets({ children }: Props) {
+  const outerTheme = useTheme(); // Dùng để lấy font, spacing, shape,...
+  const { setColor } = useSettings();
 
-  const {setColor} = useSettings();
-
-  const themeOptions = useMemo(
-    () => ({
-      ...defaultTheme,
+  const theme = useMemo(() => {
+    const theme = createTheme({
       palette: {
-        ...defaultTheme.palette,
+        ...outerTheme.palette,
         primary: setColor,
       },
-      customShadows: {
-        ...defaultTheme.customShadows,
-        primary: `0 8px 16px 0 ${alpha(setColor.main, 0.24)}`,
-      },
-    }),
-    [setColor, defaultTheme]
-  );
+      shape: outerTheme.shape,
+      spacing: outerTheme.spacing,
+      typography: outerTheme.typography,
+      breakpoints: outerTheme.breakpoints,
+      direction: outerTheme.direction,
+      zIndex: outerTheme.zIndex,
+      shadows: outerTheme.shadows,
+    });
 
-  const theme = createTheme(themeOptions);
+    theme.components = ComponentsOverride(theme);
 
-  theme.components = ComponentsOverride(theme);
+    return theme;
+  }, [setColor, outerTheme]);
 
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 }

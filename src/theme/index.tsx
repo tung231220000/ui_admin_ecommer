@@ -14,7 +14,6 @@ import breakpoints from './breakpoints';
 import shadows, { customShadows } from './shadows';
 import componentsOverride from './overrides';
 
-
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -26,8 +25,9 @@ export default function ThemeProvider({ children }: Props) {
 
   const isLight = themeMode === 'light';
 
-  const themeOptions: ThemeOptions = useMemo(
-    () => ({
+  const theme = useMemo(() => {
+    // Step 1: define base options
+    const baseOptions: ThemeOptions = {
       palette: isLight ? palette.light : palette.dark,
       typography,
       breakpoints,
@@ -35,13 +35,17 @@ export default function ThemeProvider({ children }: Props) {
       direction: themeDirection,
       shadows: isLight ? shadows.light : shadows.dark,
       customShadows: isLight ? customShadows.light : customShadows.dark,
-    }),
-    [isLight, themeDirection]
-  );
+    };
 
-  const theme = createTheme(themeOptions);
+    // Step 2: create the theme once, to pass to component overrides
+    const baseTheme = createTheme(baseOptions);
 
-  theme.components = componentsOverride(theme);
+    // Step 3: return final theme with components override included
+    return createTheme({
+      ...baseOptions,
+      components: componentsOverride(baseTheme),
+    });
+  }, [isLight, themeDirection]);
 
   return (
     <StyledEngineProvider injectFirst>

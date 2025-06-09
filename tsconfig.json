@@ -6,7 +6,7 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "noImplicitAny": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "lib": [
       "DOM",
       "DOM.Iterable",

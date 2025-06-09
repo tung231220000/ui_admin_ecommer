@@ -1,11 +1,22 @@
-import { Currency } from "../@types/price";
+import { Currency, TimeUnit } from '../@types/price';
+import { AttributeKey } from '@/@types/product';
+
+export const phoneRegExp = /(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/;
 
 /**
  * CONSTANT BY ENUM
  */
-export const GENDER = ['Ông', 'Bà'];
-export const CURRENCIES:Currency [] = [Currency.VND];
-
+export const GENDERS = ['Ông', 'Bà'];
+export const CURRENCIES: Currency[] = [Currency.VND];
+export const TIME_UNITS: TimeUnit[] = [TimeUnit.MONTH];
+export const ATTRIBUTE_KEYS: AttributeKey[] = [
+  AttributeKey.VCPU,
+  AttributeKey.RAM,
+  AttributeKey.SSD,
+  AttributeKey.BANDWIDTH,
+  AttributeKey.TRANSMISSION_TRAFFIC,
+  AttributeKey.IP,
+];
 /**
  * * API DOMAINS
  */

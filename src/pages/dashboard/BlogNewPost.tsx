@@ -1,4 +1,4 @@
-import { useLocation, useParams } from 'react-router';
+import { useLocation, useParams } from 'react-router-dom';
 
 import { BlogNewPostForm } from '../../sections/@dashboard/blog';
 import { Container } from '@mui/material';

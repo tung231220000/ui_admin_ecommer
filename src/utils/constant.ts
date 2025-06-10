@@ -20,7 +20,7 @@ export const ATTRIBUTE_KEYS: AttributeKey[] = [
 /**
  * * API DOMAINS
  */
-export const API_DOMAIN = 'http://localhost:8082';
+export const API_DOMAIN = 'http://192.168.91.100:8082';
 
 // ? AUTH ENDPOINTS
 export const AUTH_SERVICE_SIGN_IN_ENDPOINT = '/auth/sign-in';

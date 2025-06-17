@@ -17,10 +17,11 @@ export const ATTRIBUTE_KEYS: AttributeKey[] = [
   AttributeKey.TRANSMISSION_TRAFFIC,
   AttributeKey.IP,
 ];
-/**
+/**z
  * * API DOMAINS
  */
-export const API_DOMAIN = 'http://192.168.91.100:8082';
+// export const API_DOMAIN = 'http://192.168.91.100:8082';
+export const API_DOMAIN = 'http://localhost:8082';
 
 // ? AUTH ENDPOINTS
 export const AUTH_SERVICE_SIGN_IN_ENDPOINT = '/auth/sign-in';
@@ -38,7 +39,7 @@ export const PARTNER_SERVICE_UPLOAD_LOGO_ENDPOINT = '/partner/logo';
 // ? TRADEMARK ENDPOINTS
 export const TRADEMARK_SERVICE_UPLOAD_LOGO_ENDPOINT = '/trademark/logo';
 // ? PAGE ENDPOINTS
-export const PAGE_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT = '/page/banner';
+export const PAGE_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT = '/common/page/banner';
 export const PAGE_SERVICE_UPLOAD_CAROUSEL_IMAGE_ENDPOINT = '/page/carousel';
 // ? POST ENDPOINTS
 export const POST_SERVICE_UPLOAD_COVER_IMAGE_ENDPOINT = '/post/cover';
@@ -48,3 +49,5 @@ export const PRODUCT_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT = '/product/banner';
 export const SOLUTION_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT = '/solution/banner';
 // ? SERVICE ENDPOINTS
 export const SERVICE_SERVICE_UPLOAD_THUMBNAIL_ENDPOINT = '/service/thumbnail';
+// ? API ENDPOINTS
+export const COMMON_API = '/common';

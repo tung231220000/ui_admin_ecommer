@@ -47,6 +47,7 @@ const setSession = (accessToken: string | null) => {
     const {exp} = jwtDecode<{ exp: number }>(accessToken); // ~3 days by minimals server
     handleTokenExpired(exp);
   } else {
+    console.log("tao xóa nhá")
     localStorage.removeItem('accessToken');
     delete API.defaults.headers.common.Authorization;
   }

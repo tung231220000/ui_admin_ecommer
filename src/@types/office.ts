@@ -1,5 +1,6 @@
 export type Office = {
-  id?: string;
+  id: string;
+  pageId: string;
   name: string;
   hotline: string;
   fax: string;

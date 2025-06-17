@@ -6,12 +6,12 @@ export enum Gender {
 }
 
 export type Role = {
-  id: number;
+  id: string;
   name: string;
 };
 
 export type User = {
-  id: number;
+  id: string;
   email: string;
   password: string | null;
   name: string;
@@ -40,7 +40,7 @@ export type UserMock = {
   company: string;
   isVerified: boolean;
   status: string;
-  role: string;
+  role: Role[];
 };
 
 export type SignUpPayload = {

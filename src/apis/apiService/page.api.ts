@@ -3,6 +3,7 @@ import apiBackend from '@/apis/connection/api-backend';
 import { Page } from '@/@types/page';
 import { RESTErrorResponse } from '@/@types/api';
 import {
+  COMMON_API,
   PAGE_SERVICE_UPLOAD_BANNER_IMAGE_ENDPOINT,
   PAGE_SERVICE_UPLOAD_CAROUSEL_IMAGE_ENDPOINT,
 } from '@/utils/constant';
@@ -60,7 +61,7 @@ type UpdatePageResponse = {
 const ApiPageRepository = {
   async fetchPages(): Promise<GetPagesResponse> {
     try {
-      const response = await apiBackend.get<GetPagesResponse>('/pages', {});
+      const response = await apiBackend.get<GetPagesResponse>(COMMON_API + '/pages', {});
       return response.data;
     } catch (error: any) {
       if (error.response) {
@@ -73,12 +74,12 @@ const ApiPageRepository = {
     }
   },
   async fetchPageData(variables: string): Promise<GetPageDataResponse> {
-    const { data } = await apiBackend.get<GetPageDataResponse>('/page?name=' + variables, {});
+    const { data } = await apiBackend.get<GetPageDataResponse>(COMMON_API + '/page?name=' + variables, {});
     console.log('data fetch value: ', variables);
     return data;
   },
   async updatePage(variables: UpdatePagePayload): Promise<UpdatePageResponse> {
-    const { data } = await apiBackend.post<UpdatePageResponse>('/page/edit', variables);
+    const { data } = await apiBackend.post<UpdatePageResponse>(COMMON_API + '/page/edit', variables);
 
     return data;
   },

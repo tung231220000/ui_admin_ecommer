@@ -43,11 +43,12 @@ type GetPageDataResponse = {
 } & RESTErrorResponse;
 
 export type UpdatePagePayload = {
-  id: string;
+  pageId?: number;
   name: string;
   title: string;
   banner?: string | CustomFile | null;
   carousel?: {
+    pageId?: number;
     title?: string;
     description?: string;
     image: string | CustomFile;
@@ -69,7 +70,7 @@ const ApiPageRepository = {
         throw new Error(`${errorData.statusCode}: ${errorData.message}`);
       }
 
-      // Nếu lỗi do mạng hoặc server không phản hồi
+      // if errop internet or error connect
       throw new Error('Network error or server is unreachable');
     }
   },

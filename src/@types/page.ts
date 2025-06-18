@@ -4,15 +4,15 @@ import { Office } from './office';
 // import { Partner } from './partner';
 
 export type Carousel = {
-  id: number;
-  pageId: number;
+  id?: number;
+  pageId?: number;
   title?: string;
   description?: string;
   image: string;
 };
 
 export type Page = {
-  pageId: number;
+  pageId?: number;
   name: string;
   title: string;
   banner?: string;

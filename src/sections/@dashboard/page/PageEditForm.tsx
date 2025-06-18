@@ -32,6 +32,7 @@ const LabelStyle = styled(Typography)(({ theme }) => ({
 interface FormValuesProps extends Omit<Page, 'banner' | 'carousels'> {
   banner: CustomFile | string;
   carousels: {
+    pageId?: number;
     title?: string;
     description?: string;
     image: CustomFile | string;
@@ -47,13 +48,14 @@ export default function PageEditForm({ currentPage }: Props) {
   const { enqueueSnackbar } = useSnackbar();
 
   const NewPageSchema = Yup.object().shape({
-    id: Yup.string().default(''),
+    pageId: Yup.number(),
     name: Yup.string().required('Name is required'),
     title: Yup.string().required('Title is required'),
     banner: Yup.mixed<CustomFile | string>().defined(),
     carousels: Yup.array()
       .of(
         Yup.object().shape({
+          pageId: Yup.number(),
           title: Yup.string(),
           description: Yup.string(),
           image: Yup.mixed<CustomFile | string>().required('Image is required').defined(),
@@ -66,20 +68,22 @@ export default function PageEditForm({ currentPage }: Props) {
   });
 
   const defaultValues: {
+    pageId: number | undefined;
     name: string;
     banner: string;
-    title: string;
-    carousels: Carousel[];
-    updatedDatetime: Date;
     createdDatetime: Date;
+    title: string;
+    carousels: Carousel[] | { image: string; description: string; pageId: number | undefined; title: string }[];
+    updatedDatetime: Date
   } = useMemo(
     () => ({
-      id: currentPage?.id || '',
+      pageId: currentPage?.pageId,
       name: currentPage?.name || '',
       title: currentPage?.title || '',
       banner: currentPage?.banner || '',
       carousels: currentPage?.carousels || [
         {
+          pageId: currentPage?.pageId || -1,
           title: '',
           description: '',
           image: '',
@@ -205,6 +209,7 @@ export default function PageEditForm({ currentPage }: Props) {
 
   const handleAdd = () => {
     append({
+      pageId: -1,
       title: '',
       description: '',
       image: '',
@@ -216,7 +221,7 @@ export default function PageEditForm({ currentPage }: Props) {
   };
 
   const onSubmit = async (data: FormValuesProps) => {
-    mutateAsyncUpdatePage({
+    await mutateAsyncUpdatePage({
       ...data,
       banner: (data.banner as string).length > 0 ? data.banner : null,
     });
@@ -225,7 +230,7 @@ export default function PageEditForm({ currentPage }: Props) {
   return (
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
+          <Grid size={8}>
             <Card sx={{ p: 3 }}>
               <div>
                 <LabelStyle>Banner</LabelStyle>
@@ -290,7 +295,7 @@ export default function PageEditForm({ currentPage }: Props) {
 
 
 
-          <Grid item xs={12} md={4}>
+          <Grid size={4}>
             <Stack spacing={3}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={3}>

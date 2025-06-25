@@ -1,7 +1,7 @@
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 import { Trademark } from '@/@types/trademark';
-import { TRADEMARK_SERVICE_UPLOAD_LOGO_ENDPOINT } from '@/utils/constant';
+import {COMMON_API, TRADEMARK_SERVICE_UPLOAD_LOGO_ENDPOINT} from '@/utils/constant';
 import { CustomFile } from '@/components/upload';
 
 export type UploadLogoPayload = {
@@ -31,9 +31,7 @@ type CreateTrademarkResponse = {
   };
 } & RESTErrorResponse;
 
-type GetTrademarksResponse = {
-  trademarks: Trademark[];
-} & RESTErrorResponse;
+type GetTrademarksResponse = Trademark[] & RESTErrorResponse;
 
 export type GetTrademarkDetailPayload = {
   id: string;
@@ -93,7 +91,7 @@ const ApiTrademarkRepository = {
     return data;
   },
   async fetchTrademarks(): Promise<GetTrademarksResponse> {
-    const { data } = await apiBackend.get<GetTrademarksResponse>('/trademarks', {});
+    const { data } = await apiBackend.get<GetTrademarksResponse>(COMMON_API + '/trademarks', {});
 
     return data;
   },

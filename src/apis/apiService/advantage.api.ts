@@ -1,6 +1,7 @@
 import { Advantage } from '@/@types/advantage';
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
+import {COMMON_API} from "@/utils/constant";
 
 export type CreateAdvantagePayload = {
   advantageInput: {
@@ -15,11 +16,7 @@ type CreateAdvantageResponse = {
   };
 } & RESTErrorResponse;
 
-type GetAdvantagesResponse = {
-  data: {
-    advantages: Advantage[];
-  };
-} & RESTErrorResponse;
+type GetAdvantagesResponse = Advantage[] & RESTErrorResponse;
 
 export type UpdateAdvantagePayload = {
   advantageInput: {
@@ -68,7 +65,7 @@ const ApiAdvantageRepository = {
     return data;
   },
   async fetchAdvantages(): Promise<GetAdvantagesResponse> {
-    const { data } = await apiBackend.get<GetAdvantagesResponse>('/advantages', {});
+    const { data } = await apiBackend.get<GetAdvantagesResponse>(COMMON_API + '/advantages', {});
 
     return data;
   },

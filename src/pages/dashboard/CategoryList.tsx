@@ -77,9 +77,9 @@ export default function CategoryList() {
     setPage(0);
   };
 
-  const handleDeleteRow = (_id: string) => {
+  const handleDeleteRow = (id: number) => {
     setSelected([]);
-    deleteCategory(_id);
+    deleteCategory(id);
   };
 
   const handleDeleteRows = (selected: string[]) => {
@@ -87,8 +87,8 @@ export default function CategoryList() {
     deleteManyCategories(selected);
   };
 
-  const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.category.edit(kebabCase(_id)));
+  const handleEditRow = (id: number) => {
+    navigate(PATH_DASHBOARD.category.edit(kebabCase(String(id))));
   };
 
   const dataFiltered = applySortFilter({
@@ -136,7 +136,8 @@ export default function CategoryList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData  .map((row) => row.id?.toString())
+                          .filter((id): id is string => id !== undefined)
                     )
                   }
                   actions={
@@ -160,7 +161,7 @@ export default function CategoryList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id)
+                      tableData.map((row) => row.id!.toString())
                     )
                   }
                 />
@@ -170,12 +171,12 @@ export default function CategoryList() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <CategoryTableRow
-                        key={row._id}
+                        key={row.id}
                         row={row}
-                        selected={selected.includes(row._id)}
-                        onSelectRow={() => onSelectRow(row._id)}
-                        onDeleteRow={() => handleDeleteRow(row._id)}
-                        onEditRow={() => handleEditRow(row._id)}
+                        selected={row?.id != null && selected.includes(row.id.toString())}
+                        onSelectRow={() => onSelectRow(row.id!)}
+                        onDeleteRow={() => handleDeleteRow(row.id!)}
+                        onEditRow={() => handleEditRow(row.id!)}
                       />
                     ))}
 

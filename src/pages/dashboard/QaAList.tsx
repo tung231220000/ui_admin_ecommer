@@ -29,7 +29,6 @@ import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import { QaA } from '@/@types/QaA';
 import Scrollbar from '../../components/Scrollbar';
-import { kebabCase } from 'change-case';
 import useQaA from '@/hooks/useQaA';
 import useSettings from '../../hooks/useSettings';
 
@@ -63,7 +62,8 @@ export default function QaAList() {
     onChangePage,
     onChangeRowsPerPage,
   } = useTable();
-  const { QaAs, deleteQaA, deleteManyQaAs } = useQaA();
+  // const { QaAs, deleteQaA, deleteManyQaAs } = useQaA();
+  const { QaAs } = useQaA();
 
   const [tableData, setTableData] = useState(QaAs);
   const [filterQuestion, setFilterQuestion] = useState('');
@@ -77,26 +77,26 @@ export default function QaAList() {
     setPage(0);
   };
 
-  const handleDeleteRow = (_id: string) => {
+  const handleDeleteRow = (id: number | undefined) => {
     setSelected([]);
-    deleteQaA({
-      questionAndAnswerInput: {
-        _id,
-      },
-    });
+    // deleteQaA({
+    //   questionAndAnswerInput: {
+    //     id,
+    //   },
+    // });
   };
 
-  const handleDeleteRows = (_ids: string[]) => {
+  const handleDeleteRows = (ids: string[]) => {
     setSelected([]);
-    deleteManyQaAs({
-      questionAndAnswerInput: {
-        _ids,
-      },
-    });
+    // deleteManyQaAs({
+    //   questionAndAnswerInput: {
+    //     _ids,
+    //   },
+    // });
   };
 
-  const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.QaA.edit(kebabCase(_id)));
+  const handleEditRow = (id: number | undefined) => {
+    navigate(PATH_DASHBOARD.QaA.edit(id));
   };
 
   const dataFiltered = applySortFilter({
@@ -144,7 +144,7 @@ export default function QaAList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id),
+                      tableData.map((row) => row.id),
                     )
                   }
                   actions={
@@ -168,7 +168,7 @@ export default function QaAList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id),
+                      tableData.map((row) => row.id),
                     )
                   }
                 />
@@ -178,12 +178,12 @@ export default function QaAList() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <QaATableRow
-                        key={row._id}
+                        key={row.id}
                         row={row}
-                        selected={selected.includes(row._id)}
-                        onSelectRow={() => onSelectRow(row._id)}
-                        onDeleteRow={() => handleDeleteRow(row._id)}
-                        onEditRow={() => handleEditRow(row._id)}
+                        selected={selected.includes(String(row.id!))}
+                        onSelectRow={() => onSelectRow(row.id)}
+                        onDeleteRow={() => handleDeleteRow(row.id)}
+                        onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
 

@@ -75,7 +75,7 @@ export default function useSolutionCategory(): UseCategoryProps {
           if (!data.error) {
             dispatch({
               type: 'SET_SOLUTION_CATEGORIES',
-              payload: data.data.solutionCategories,
+              payload: data,
             });
           } else {
             enqueueSnackbar(data.message, {
@@ -126,7 +126,7 @@ export default function useSolutionCategory(): UseCategoryProps {
           dispatch({
             type: 'SET_SOLUTION_CATEGORIES',
             payload: state.solutionCategories.filter(
-              (category) => category._id !== data.data.deleteSolutionCategory._id,
+              (category) => category.id !== data.data.deleteSolutionCategory.id,
             ),
           });
           enqueueSnackbar('Xóa danh mục giải pháp thành công!', {
@@ -213,7 +213,7 @@ export default function useSolutionCategory(): UseCategoryProps {
 
     dispatch({
       type: 'SET_SOLUTION_CATEGORIES',
-      payload: state.solutionCategories.filter((category) => category._id && !_ids.includes(category._id)),
+      payload: state.solutionCategories.filter((category) => category.id && !_ids.includes(String(category.id))),
     });
     enqueueSnackbar(response.data.deleteManySolutionCategories, {
       variant: 'success',

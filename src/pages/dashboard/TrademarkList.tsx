@@ -79,7 +79,7 @@ export default function TrademarkList() {
       try {
         const data = await ApiTrademarkRepository.fetchTrademarks();
         if (!data.error) {
-          setTableData(data.trademarks);
+          setTableData(data);
         } else {
           enqueueSnackbar(data.message, {
             variant: 'error',
@@ -145,7 +145,7 @@ export default function TrademarkList() {
     const response = await mutateAsyncDeleteManyTrademarks({
       ids,
     });
-    setTableData(tableData.filter((trademark) => !ids.includes(trademark.id)));
+    setTableData(tableData.filter((trademark) => trademark.id !== undefined && !ids.includes(trademark.id)));
     enqueueSnackbar(response.deleteManyTrademarks, {
       variant: 'success',
     });
@@ -201,6 +201,7 @@ export default function TrademarkList() {
                     onSelectAllRows(
                       checked,
                       tableData.map((row) => row.id)
+                          .filter((id): id is string => id !== undefined)
                     )
                   }
                   actions={
@@ -224,7 +225,7 @@ export default function TrademarkList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => row.id) .filter((id): id is string => id !== undefined)
                     )
                   }
                 />
@@ -236,10 +237,10 @@ export default function TrademarkList() {
                       <TrademarkTableRow
                         key={row.id}
                         row={row}
-                        selected={selected.includes(row.id)}
-                        onSelectRow={() => onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
+                        selected={selected.includes(row.id!)}
+                        onSelectRow={() => onSelectRow(row.id!)}
+                        onDeleteRow={() => handleDeleteRow(row.id!)}
+                        onEditRow={() => handleEditRow(row.id!)}
                       />
                     ))}
 

@@ -18,7 +18,7 @@ export type UseAdvantageProps = {
   createAdvantage: (payload: CreateAdvantagePayload) => Promise<void>;
   refetchAdvantages: VoidFunction;
   updateAdvantage: (payload: UpdateAdvantagePayload) => Promise<void>;
-  deleteAdvantage: (payload: DeleteAdvantagePayload) => void;
+  deleteAdvantage: (payload: { advantageInput: { _id: number } }) => void;
   deleteManyAdvantages: (payload: DeleteManyAdvantagesPayload) => Promise<void>;
 };
 
@@ -58,7 +58,7 @@ export default function useAdvantage(): UseAdvantageProps {
         if (!data.error) {
           dispatch({
             type: 'SET_ADVANTAGES',
-            payload: data.data.advantages,
+            payload: data,
           });
         } else {
           enqueueSnackbar(data.message, {
@@ -108,7 +108,7 @@ export default function useAdvantage(): UseAdvantageProps {
         dispatch({
           type: 'SET_ADVANTAGES',
           payload: state.advantages.filter(
-            (advantage) => advantage._id !== data.data.deleteAdvantage._id,
+            (advantage) => advantage.id !== data.data.deleteAdvantage.id,
           ),
         });
         enqueueSnackbar('Xóa ưu điểm thành công!', {
@@ -150,7 +150,7 @@ export default function useAdvantage(): UseAdvantageProps {
     dispatch({
       type: 'SET_ADVANTAGES',
       payload: state.advantages.filter(
-        (advantage) => !payload.advantageInput._ids.includes(advantage._id),
+        (advantage) => !payload.advantageInput._ids.includes(String(advantage.id)),
       ),
     });
     enqueueSnackbar(response.data.deleteManyAdvantages, {

@@ -1,6 +1,7 @@
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 import { QaA } from '@/@types/QaA';
+import {COMMON_API} from "@/utils/constant";
 
 export type CreateQaAPayload = {
   questionAndAnswerInput: {
@@ -9,17 +10,9 @@ export type CreateQaAPayload = {
   };
 };
 
-type CreateQaAResponse = {
-  data: {
-    createQuestionAndAnswer: QaA;
-  };
-} & RESTErrorResponse;
+type CreateQaAResponse = QaA  & RESTErrorResponse;
 
-type GetQaAsResponse = {
-  data: {
-    questionsAndAnswers: QaA[];
-  };
-} & RESTErrorResponse;
+type GetQaAsResponse = QaA[] & RESTErrorResponse;
 
 export type UpdateQaAPayload = {
   questionAndAnswerInput: {
@@ -68,8 +61,7 @@ const ApiQaARepository = {
     return data;
   },
   async fetchQaAs(): Promise<GetQaAsResponse> {
-    const { data } = await apiBackend.get<GetQaAsResponse>('/QaAs', {});
-
+    const { data } = await apiBackend.get<GetQaAsResponse>(COMMON_API + '/QaAs', {});
     return data;
   },
   async updateQaA(variables: UpdateQaAPayload): Promise<UpdateQaAResponse> {

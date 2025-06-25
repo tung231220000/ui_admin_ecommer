@@ -1,5 +1,5 @@
 export type Advantage = {
-  _id: string;
+  id: number;
   title: string;
   content: string;
 };

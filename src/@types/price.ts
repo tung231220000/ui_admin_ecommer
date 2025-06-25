@@ -6,7 +6,7 @@ export enum TimeUnit {
   MONTH = 'Tháng',
 }
 export type Price = {
-  _id?: string;
+  id?: number;
   name: string;
   defaultPrice: number;
   salePrice: number | null;

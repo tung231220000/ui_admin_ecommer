@@ -82,13 +82,13 @@ export const PATH_DASHBOARD = {
     root: path(ROOTS_DASHBOARD, '/advantage'),
     new: path(ROOTS_DASHBOARD, '/advantage/new'),
     list: path(ROOTS_DASHBOARD, '/advantage/list'),
-    edit: (_id: string) => path(ROOTS_DASHBOARD, `/advantage/${_id}/edit`),
+    edit: (_id: number) => path(ROOTS_DASHBOARD, `/advantage/${_id}/edit`),
   },
   QaA: {
     root: path(ROOTS_DASHBOARD, '/QaA'),
     new: path(ROOTS_DASHBOARD, '/QaA/new'),
     list: path(ROOTS_DASHBOARD, '/QaA/list'),
-    edit: (_id: string) => path(ROOTS_DASHBOARD, `/QaA/${_id}/edit`),
+    edit: (_id: number | undefined) => path(ROOTS_DASHBOARD, `/QaA/${_id}/edit`),
   },
   price: {
     root: path(ROOTS_DASHBOARD, '/price'),

@@ -14,7 +14,7 @@ export enum AttributeKey {
 }
 
 export type Product = {
-  _id: string;
+  productId: number;
   key: string;
   banner: string;
   category: Category;

@@ -5,7 +5,7 @@ import { RESTErrorResponse } from '@/@types/api';
 import {
   INFORMATION_SERVICE_UPLOAD_ASSETS_ENDPOINT,
   INFORMATION_SERVICE_UPLOAD_VARIANT_IMAGES_ENDPOINT,
-  INFORMATION_SERVICE_UPLOAD_VARIANT_IMAGE_ENDPOINT,
+  INFORMATION_SERVICE_UPLOAD_VARIANT_IMAGE_ENDPOINT, COMMON_API,
 } from '@/utils/constant';
 
 export type UploadAssetsPayload = FormData;
@@ -151,32 +151,32 @@ const ApiInformationRepository = {
   },
 
   async createInformation(variables: CreateInformationPayload): Promise<CreateInformationResponse> {
-    const { data } = await apiBackend.post<CreateInformationResponse>('/create-information', {
+    const { data } = await apiBackend.post<CreateInformationResponse>(COMMON_API + '/create-information', {
       variables,
     });
 
     return data;
   },
   async fetchInformation(): Promise<GetInformationResponse> {
-    const { data } = await apiBackend.get<GetInformationResponse>('/information/list', {});
+    const { data } = await apiBackend.get<GetInformationResponse>(COMMON_API + '/informations', {});
     return data;
   },
   async fetchInformationDetail(id: number ): Promise<GetInformationDetailResponse> {
-    const { data } = await apiBackend.get<GetInformationDetailResponse>(
-      '/information/detail?id=' + id,
+    const { data } = await apiBackend.get<GetInformationDetailResponse>( COMMON_API +
+        '/information/detail?id=' + id,
       {},
     );
     return data;
   },
   async updateInformation(variables: UpdateInformationPayload): Promise<UpdateInformationResponse> {
-    const { data } = await apiBackend.post<UpdateInformationResponse>('/information/update', {
+    const { data } = await apiBackend.post<UpdateInformationResponse>(COMMON_API + '/information/update', {
       variables,
     });
 
     return data;
   },
   async deleteInformation(variables: DeleteInformationPayload): Promise<DeleteInformationResponse> {
-    const { data } = await apiBackend.post<DeleteInformationResponse>('/information/delete', {
+    const { data } = await apiBackend.post<DeleteInformationResponse>(COMMON_API + '/information/delete', {
       variables,
     });
 

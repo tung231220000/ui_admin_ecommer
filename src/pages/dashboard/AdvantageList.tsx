@@ -29,7 +29,6 @@ import Iconify from '../../components/Iconify';
 import { PATH_DASHBOARD } from '@/routes/paths';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import { kebabCase } from 'change-case';
 import useAdvantage from '@/hooks/useAdvantage';
 import useSettings from '../../hooks/useSettings';
 
@@ -77,7 +76,7 @@ export default function AdvantageList() {
     setPage(0);
   };
 
-  const handleDeleteRow = (_id: string) => {
+  const handleDeleteRow = (_id: number) => {
     setSelected([]);
     deleteAdvantage({
       advantageInput: {
@@ -95,8 +94,8 @@ export default function AdvantageList() {
     });
   };
 
-  const handleEditRow = (_id: string) => {
-    navigate(PATH_DASHBOARD.advantage.edit(kebabCase(_id)));
+  const handleEditRow = (id: number) => {
+    navigate(PATH_DASHBOARD.advantage.edit(id));
   };
 
   const dataFiltered = applySortFilter({
@@ -144,7 +143,7 @@ export default function AdvantageList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id),
+                      tableData.map((row) => row.id),
                     )
                   }
                   actions={
@@ -168,7 +167,7 @@ export default function AdvantageList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row._id),
+                      tableData.map((row) => row.id),
                     )
                   }
                 />
@@ -178,12 +177,12 @@ export default function AdvantageList() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <AdvantageTableRow
-                        key={row._id}
+                        key={row.id}
                         row={row}
-                        selected={selected.includes(row._id)}
-                        onSelectRow={() => onSelectRow(row._id)}
-                        onDeleteRow={() => handleDeleteRow(row._id)}
-                        onEditRow={() => handleEditRow(row._id)}
+                        selected={selected.includes(String(row.id!))}
+                        onSelectRow={() => onSelectRow(row.id)}
+                        onDeleteRow={() => handleDeleteRow(row.id)}
+                        onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
 

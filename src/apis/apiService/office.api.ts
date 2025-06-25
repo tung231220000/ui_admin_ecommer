@@ -1,6 +1,7 @@
 import apiBackend from "@/apis/connection/api-backend";
 import {RESTErrorResponse} from "@/@types/api";
 import { Office } from '@/@types/office';
+import {COMMON_API} from "@/utils/constant";
 
 
 export type CreateOfficePayload = {
@@ -19,9 +20,7 @@ type CreateOfficeResponse = {
   };
 } & RESTErrorResponse;
 
-type GetOfficesResponse = {
-  offices: Office[];
-} & RESTErrorResponse;
+type GetOfficesResponse = Office[] & RESTErrorResponse;
 
 export type GetOfficeDetailPayload = {
     id: string;
@@ -68,33 +67,33 @@ const ApiOfficeRepository = {
     return data;
   },
   async fetchOffices(): Promise<GetOfficesResponse> {
-    const { data } = await apiBackend.get<GetOfficesResponse>('/offices', {
+    const { data } = await apiBackend.get<GetOfficesResponse>(COMMON_API + '/offices', {
     });
 
     return data;
   },
   async fetchOfficeDetail(variables: GetOfficeDetailPayload): Promise<GetOfficeDetailResponse> {
-    const { data } = await apiBackend.get<GetOfficeDetailResponse>('/office-detail/' + variables.id, {
+    const { data } = await apiBackend.get<GetOfficeDetailResponse>(COMMON_API + '/office-detail/' + variables.id, {
     });
 
     return data;
   },
   async updateOffice(variables: UpdateOfficePayload): Promise<UpdateOfficeResponse> {
-    const { data } = await apiBackend.post<UpdateOfficeResponse>('/office-update', {
+    const { data } = await apiBackend.post<UpdateOfficeResponse>(COMMON_API + '/office-update', {
       variables,
     });
 
     return data;
   },
   async deleteOffice(variables: DeleteOfficePayload): Promise<DeleteOfficeResponse> {
-    const { data } = await apiBackend.post<DeleteOfficeResponse>('/office-delete', {
+    const { data } = await apiBackend.post<DeleteOfficeResponse>(COMMON_API +'/office-delete', {
       variables,
     });
 
     return data;
   },
   async deleteManyOffices(variables: DeleteManyOfficesPayload): Promise<DeleteManyOfficesResponse> {
-    const { data } = await apiBackend.post<DeleteManyOfficesResponse>('/office-deletes', {
+    const { data } = await apiBackend.post<DeleteManyOfficesResponse>(COMMON_API + '/office-deletes', {
       variables,
     });
 

@@ -1,5 +1,5 @@
 export type SolutionCategory = {
-  _id?: string;
+  id?: number;
   icon: string;
   title: string;
 };

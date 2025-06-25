@@ -1,4 +1,4 @@
-import { CATEGORY_SERVICE_UPLOAD_ICON_ENDPOINT } from '@/utils/constant';
+import {CATEGORY_SERVICE_UPLOAD_ICON_ENDPOINT, COMMON_API} from '@/utils/constant';
 import { CustomFile } from '@/components/upload';
 import apiBackend from "@/apis/connection/api-backend";
 import { RESTErrorResponse } from '@/@types/api';
@@ -31,11 +31,7 @@ export type CreateCategoryResponse = {
   };
 } & RESTErrorResponse;
 
-type GetCategoriesResponse = {
-  data: {
-    categories: Category[];
-  };
-} & RESTErrorResponse;
+type GetCategoriesResponse =  Category[] & RESTErrorResponse;
 
 export type UpdateCategoryPayload = {
   categoryInput: {
@@ -91,27 +87,27 @@ const CategoryRepository = {
   },
 
   async createCategory(variables: CreateCategoryPayload): Promise<CreateCategoryResponse> {
-    const { data } = await apiBackend.post<CreateCategoryResponse>('/create-post', {
+    const { data } = await apiBackend.post<CreateCategoryResponse>(COMMON_API + '/create-post', {
       variables,
     });
 
     return data;
   },
   async fetchCategories(): Promise<GetCategoriesResponse> {
-    const { data } = await apiBackend.get<GetCategoriesResponse>('/category', {
+    const { data } = await apiBackend.get<GetCategoriesResponse>(COMMON_API + '/categorys', {
     });
 
     return data;
   },
   async updateCategory(variables: UpdateCategoryPayload): Promise<UpdateCategoryResponse> {
-    const { data } = await apiBackend.post<UpdateCategoryResponse>('/update-category', {
+    const { data } = await apiBackend.post<UpdateCategoryResponse>(COMMON_API + '/update-category', {
       variables,
     });
 
     return data;
   },
   async deleteCategory(variables: DeleteCategoryPayload): Promise<DeleteCategoryResponse> {
-    const { data } = await apiBackend.post<DeleteCategoryResponse>('/delete-category', {
+    const { data } = await apiBackend.post<DeleteCategoryResponse>(COMMON_API + '/delete-category', {
       variables,
     });
 
@@ -120,7 +116,7 @@ const CategoryRepository = {
   async deleteManyCategories(
     variables: DeleteManyCategoriesPayload
   ): Promise<DeleteManyCategoriesResponse> {
-    const { data } = await apiBackend.post<DeleteManyCategoriesResponse>('/delete-categorys', {
+    const { data } = await apiBackend.post<DeleteManyCategoriesResponse>(COMMON_API + '/delete-categorys', {
       variables,
     });
 

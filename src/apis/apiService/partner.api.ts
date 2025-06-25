@@ -1,7 +1,7 @@
 import apiBackend from '@/apis/connection/api-backend';
 import { RESTErrorResponse } from '@/@types/api';
 import { Partner } from '@/@types/partner';
-import { PARTNER_SERVICE_UPLOAD_LOGO_ENDPOINT } from '@/utils/constant';
+import {COMMON_API, PARTNER_SERVICE_UPLOAD_LOGO_ENDPOINT} from '@/utils/constant';
 import { CustomFile } from '@/components/upload';
 
 export type UploadLogoPayload = {
@@ -32,9 +32,7 @@ type CreatePartnerResponse = {
   };
 } & RESTErrorResponse;
 
-type GetPartnersResponse = {
-  partners: Partner[];
-} & RESTErrorResponse;
+type GetPartnersResponse =  Partner[] & RESTErrorResponse;
 
 export type GetPartnerDetailPayload = {
   id: string;
@@ -95,24 +93,24 @@ const ApiPartnerRepository = {
     return data;
   },
   async fetchPartners(): Promise<GetPartnersResponse> {
-    const { data } = await apiBackend.get<GetPartnersResponse>('/partners', {});
+    const { data } = await apiBackend.get<GetPartnersResponse>(COMMON_API + '/partners', {});
 
     return data;
   },
   async fetchPartnerDetail(variables: GetPartnerDetailPayload): Promise<GetPartnerDetailResponse> {
-    const { data } = await apiBackend.get<GetPartnerDetailResponse>('/partner/' + variables.id, {});
+    const { data } = await apiBackend.get<GetPartnerDetailResponse>(COMMON_API + '/partner/' + variables.id, {});
 
     return data;
   },
   async updatePartner(variables: UpdatePartnerPayload): Promise<UpdatePartnerResponse> {
-    const { data } = await apiBackend.post<UpdatePartnerResponse>('/partner-edit', {
+    const { data } = await apiBackend.post<UpdatePartnerResponse>(COMMON_API + '/partner-edit', {
       variables,
     });
 
     return data;
   },
   async deletePartner(variables: DeletePartnerPayload): Promise<DeletePartnerResponse> {
-    const { data } = await apiBackend.post<DeletePartnerResponse>('/partner-delete', {
+    const { data } = await apiBackend.post<DeletePartnerResponse>(COMMON_API + '/partner-delete', {
       variables,
     });
 
@@ -121,7 +119,7 @@ const ApiPartnerRepository = {
   async deleteManyPartners(
     variables: DeleteManyPartnersPayload,
   ): Promise<DeleteManyPartnersResponse> {
-    const { data } = await apiBackend.post<DeleteManyPartnersResponse>('/partner-deletes', {
+    const { data } = await apiBackend.post<DeleteManyPartnersResponse>(COMMON_API + '/partner-deletes', {
       variables,
     });
 

@@ -27,7 +27,7 @@ export type UseCategoryProps = {
   createCategory: (payload: { file: CustomFile | string; title: string }) => void;
   refetchCategories: VoidFunction;
   updateCategory: (payload: { _id: string; file: CustomFile | string; title: string }) => void;
-  deleteCategory: (_id: string) => void;
+  deleteCategory: (_id: number) => void;
   deleteManyCategories: (_ids: string[]) => void;
 };
 
@@ -82,7 +82,7 @@ export default function useCategory(): UseCategoryProps {
         if (!data.error) {
           dispatch({
             type: 'SET_CATEGORIES',
-            payload: data.data.categories,
+            payload: data,
           });
         } else {
           enqueueSnackbar(data.message, {
@@ -134,7 +134,7 @@ export default function useCategory(): UseCategoryProps {
           dispatch({
             type: 'SET_CATEGORIES',
             payload: state.categories.filter(
-              (category) => category._id !== data.data.deleteCategory._id
+              (category) => category.id !== data.data.deleteCategory.id
             ),
           });
           enqueueSnackbar('Xóa danh mục sản phẩm thành công!', {
@@ -220,7 +220,7 @@ export default function useCategory(): UseCategoryProps {
 
     dispatch({
       type: 'SET_CATEGORIES',
-      payload: state.categories.filter( (category) => category._id && !_ids.includes(category._id)),
+      payload: state.categories.filter( (category) => category.id && !_ids.includes(String(category.id))),
     });
     enqueueSnackbar(response.data.deleteManyCategories, {
       variant: 'success',

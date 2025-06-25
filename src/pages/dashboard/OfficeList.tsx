@@ -79,7 +79,7 @@ export default function OfficeList() {
       try {
         const data = await ApiOfficeRepository.fetchOffices();
         if (!data.error) {
-          setTableData(data.offices);
+          setTableData(data);
         } else {
           enqueueSnackbar(data.message, {
             variant: 'error',
@@ -103,7 +103,7 @@ export default function OfficeList() {
     },
     onSuccess: (data) => {
       if (!data.error) {
-        setTableData(tableData.filter((office) => office.id !== data.deleteOffice.id));
+        setTableData(tableData.filter((office) => office.officeId !== data.deleteOffice.officeId));
         enqueueSnackbar('Xóa văn phòng thành công!', {
           variant: 'success',
         });
@@ -141,7 +141,7 @@ export default function OfficeList() {
     const response = await mutateAsyncDeleteManyOffices({
       ids,
     });
-    setTableData(tableData.filter((office) => !ids.includes(office.id)));
+    setTableData(tableData.filter((office) => !ids.includes(office.officeId)));
     enqueueSnackbar(response.deleteManyOffices, {
       variant: 'success',
     });
@@ -196,7 +196,7 @@ export default function OfficeList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => row.officeId)
                     )
                   }
                   actions={
@@ -220,7 +220,7 @@ export default function OfficeList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      tableData.map((row) => row.officeId)
                     )
                   }
                 />
@@ -230,12 +230,12 @@ export default function OfficeList() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <OfficeTableRow
-                        key={row.id}
+                        key={row.officeId}
                         row={row}
-                        selected={selected.includes(row.id)}
-                        onSelectRow={() => onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
+                        selected={selected.includes(row.officeId)}
+                        onSelectRow={() => onSelectRow(row.officeId)}
+                        onDeleteRow={() => handleDeleteRow(row.officeId)}
+                        onEditRow={() => handleEditRow(row.officeId)}
                       />
                     ))}
 

@@ -89,7 +89,7 @@ export default function PartnerList() {
       try {
         const data = await ApiPartnerRepository.fetchPartners();
         if (!data.error) {
-          setTableData(data.partners);
+          setTableData(data);
         } else {
           enqueueSnackbar(data.message, {
             variant: 'error',

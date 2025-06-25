@@ -1,7 +1,7 @@
 import { CustomFile } from '@/components/upload';
 import { RESTErrorResponse } from '@/@types/api';
 import apiBackend from '@/apis/connection/api-backend';
-import { SOLUTION_CATEGORY_SERVICE_UPLOAD_ICON_ENDPOINT } from '@/utils/constant';
+import {COMMON_API, SOLUTION_CATEGORY_SERVICE_UPLOAD_ICON_ENDPOINT} from '@/utils/constant';
 import { SolutionCategory } from '@/@types/solution-category';
 
 export type UploadIconPayload = {
@@ -32,11 +32,7 @@ type CreateSolutionCategoryResponse = {
   };
 } & RESTErrorResponse;
 
-type GetSolutionCategoriesResponse = {
-  data: {
-    solutionCategories: SolutionCategory[];
-  };
-} & RESTErrorResponse;
+type GetSolutionCategoriesResponse = SolutionCategory[] & RESTErrorResponse;
 
 export type UpdateSolutionCategoryPayload = {
   solutionCategoryInput: {
@@ -104,7 +100,7 @@ const SolutionCategoryRepository = {
     return data;
   },
   async fetchSolutionCategories(): Promise<GetSolutionCategoriesResponse> {
-    const { data } = await apiBackend.get<GetSolutionCategoriesResponse>('/solution-categorys', {});
+    const { data } = await apiBackend.get<GetSolutionCategoriesResponse>(COMMON_API + '/solution-categorys', {});
 
     return data;
   },

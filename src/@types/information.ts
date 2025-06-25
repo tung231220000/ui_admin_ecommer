@@ -1,4 +1,6 @@
 export type InformationVariant = {
+  id?: number;
+  idInformation?: number;
   title?: string | null;
   url?: string | null;
   content?: string | null;
@@ -6,7 +8,7 @@ export type InformationVariant = {
 };
 
 export type Information = {
-  id: number | string;
+  idInformation?: number;
   page: string;
   title: string;
   subtitle: string;

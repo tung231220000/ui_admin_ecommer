@@ -51,7 +51,7 @@ export default function useTable(props?: Props) {
     }
   };
 
-  const onSelectRow = (id: number | undefined) => {
+  const onSelectRow = (id: string) => {
     const selectedIndex = selected.indexOf(id);
 
     let newSelected: string[] = [];
@@ -71,7 +71,7 @@ export default function useTable(props?: Props) {
     setSelected(newSelected);
   };
 
-  const onSelectAllRows = (checked: boolean, newSelecteds: (number | undefined)[]) => {
+  const onSelectAllRows = (checked: boolean, newSelecteds: string[]) => {
     if (checked) {
       setSelected(newSelecteds);
       return;

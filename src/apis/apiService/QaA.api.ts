@@ -34,7 +34,7 @@ export type DeleteQaAPayload = {
   };
 };
 
-type DeleteQaAResponse = {
+export type DeleteQaAResponse = {
   data: {
     deleteQuestionAndAnswer: QaA;
   };

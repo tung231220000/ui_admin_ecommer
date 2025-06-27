@@ -62,13 +62,12 @@ export default function QaAList() {
     onChangePage,
     onChangeRowsPerPage,
   } = useTable();
-  // const { QaAs, deleteQaA, deleteManyQaAs } = useQaA();
-  const { QaAs } = useQaA();
-
+  const { QaAs, deleteQaA, deleteManyQaAs } = useQaA();
   const [tableData, setTableData] = useState(QaAs);
   const [filterQuestion, setFilterQuestion] = useState('');
 
   useEffect(() => {
+    console.log("TableData cập nhật từ QaAs:", QaAs);
     setTableData(QaAs);
   }, [QaAs]);
 
@@ -77,22 +76,22 @@ export default function QaAList() {
     setPage(0);
   };
 
-  const handleDeleteRow = (id: number | undefined) => {
+  const handleDeleteRow = (_id: string) => {
     setSelected([]);
-    // deleteQaA({
-    //   questionAndAnswerInput: {
-    //     id,
-    //   },
-    // });
+    deleteQaA({
+      questionAndAnswerInput: {
+        _id,
+      },
+    });
   };
 
-  const handleDeleteRows = (ids: string[]) => {
+  const handleDeleteRows = (_ids: string[]) => {
     setSelected([]);
-    // deleteManyQaAs({
-    //   questionAndAnswerInput: {
-    //     _ids,
-    //   },
-    // });
+    deleteManyQaAs({
+      questionAndAnswerInput: {
+        _ids,
+      },
+    });
   };
 
   const handleEditRow = (id: number | undefined) => {
@@ -144,7 +143,7 @@ export default function QaAList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id),
+                      tableData.map((row) => String(row.id)),
                     )
                   }
                   actions={
@@ -168,7 +167,7 @@ export default function QaAList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id),
+                      tableData.map((row) => String(row.id)),
                     )
                   }
                 />
@@ -181,8 +180,8 @@ export default function QaAList() {
                         key={row.id}
                         row={row}
                         selected={selected.includes(String(row.id!))}
-                        onSelectRow={() => onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
+                        onSelectRow={() => onSelectRow(String(row.id))}
+                        onDeleteRow={() => handleDeleteRow(String(row.id))}
                         onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}

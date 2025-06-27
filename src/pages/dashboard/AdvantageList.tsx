@@ -68,6 +68,7 @@ export default function AdvantageList() {
   const [filterTitle, setFilterTitle] = useState('');
 
   useEffect(() => {
+    console.log("TableData cập nhật từ advantages:", advantages);
     setTableData(advantages);
   }, [advantages]);
 
@@ -143,7 +144,7 @@ export default function AdvantageList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id),
+                      tableData.map((row) => String(row.id)),
                     )
                   }
                   actions={
@@ -167,7 +168,7 @@ export default function AdvantageList() {
                   onSelectAllRows={(checked) =>
                     onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id),
+                      tableData.map((row) => String(row.id)),
                     )
                   }
                 />
@@ -180,7 +181,7 @@ export default function AdvantageList() {
                         key={row.id}
                         row={row}
                         selected={selected.includes(String(row.id!))}
-                        onSelectRow={() => onSelectRow(row.id)}
+                        onSelectRow={() => onSelectRow(String(row.id))}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onEditRow={() => handleEditRow(row.id)}
                       />

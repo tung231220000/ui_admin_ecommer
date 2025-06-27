@@ -2,7 +2,7 @@ export enum Currency {
   VND = 'VNĐ',
 }
 
-export enum TimeUnit {
+export enum  TimeUnit {
   MONTH = 'Tháng',
 }
 export type Price = {

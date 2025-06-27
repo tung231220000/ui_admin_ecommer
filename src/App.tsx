@@ -14,6 +14,7 @@ import AdvantageProvider from '@/provides/Advantage';
 import ServicePackProvider from '@/provides/ServicePack';
 import BonusServiceProvider from '@/provides/BonusService';
 import Router from '@/routes';
+import QaAProvider from "@/provides/QaA";
 
 function App() {
   return (
@@ -28,11 +29,13 @@ function App() {
               <CategoryProvider>
                 <SolutionCategoryProvider>
                   <AdvantageProvider>
-                    <ServicePackProvider>
+                    <QaAProvider>
+                      <ServicePackProvider>
                       <BonusServiceProvider>
                         <Router />
                       </BonusServiceProvider>
                     </ServicePackProvider>
+                    </QaAProvider>
                   </AdvantageProvider>
                 </SolutionCategoryProvider>
               </CategoryProvider>

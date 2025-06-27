@@ -34,7 +34,7 @@ type UpdateAdvantageResponse = {
 
 export type DeleteAdvantagePayload = {
   advantageInput: {
-    _id: string;
+    id: string;
   };
 };
 

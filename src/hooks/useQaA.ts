@@ -1,7 +1,7 @@
 import ApiQaARepository, {
   CreateQaAPayload,
   DeleteManyQaAsPayload,
-  // DeleteQaAPayload,
+  DeleteQaAPayload,
   UpdateQaAPayload,
 } from '@/apis/apiService/QaA.api';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -19,7 +19,7 @@ export type UseQaAProps = {
   createQaA: (payload: CreateQaAPayload) => Promise<void>;
   refetchQaAs: VoidFunction;
   updateQaA: (payload: UpdateQaAPayload) => Promise<void>;
-  deleteQaA: (payload: { questionAndAnswerInput: { id: number | undefined } }) => void;
+  deleteQaA: (payload: { questionAndAnswerInput: { _id: string } }) => void;
   deleteManyQaAs: (payload: DeleteManyQaAsPayload) => Promise<void>;
 };
 
@@ -55,11 +55,13 @@ export default function useQaA(): UseQaAProps {
     queryFn: async () => {
       try {
         const data = await ApiQaARepository.fetchQaAs();
+        console.log("📡 Data từ API:", data);
         if (!data.error) {
           dispatch({
             type: 'SET_QaAS',
             payload: data,
           });
+          return data;
         } else {
           enqueueSnackbar(data.message, {
             variant: 'error',
@@ -94,30 +96,30 @@ export default function useQaA(): UseQaAProps {
       }
     }
   });
-  // const {mutateAsync: mutateAsyncDeleteQaA, isPending: isDeletingQaA} = useMutation({
-  //     mutationFn: (payload: DeleteQaAPayload) => ApiQaARepository.deleteQaA(payload),
-  //     onError: () => {
-  //       enqueueSnackbar('Không thể xóa câu hỏi thường gặp!', {
-  //         variant: 'error',
-  //       });
-  //     },
-  //     onSuccess: (data) => {
-  //       if (!data.error) {
-  //         dispatch({
-  //           type: 'SET_QaAS',
-  //           payload: state.QaAs.filter((QaA) => QaA.id !== data.data.deleteQuestionAndAnswer.id),
-  //         });
-  //         enqueueSnackbar('Xóa câu hỏi thường gặp thành công!', {
-  //           variant: 'success',
-  //         });
-  //       } else {
-  //         enqueueSnackbar(data.message, {
-  //           variant: 'error',
-  //         });
-  //       }
-  //     },
-  //   }
-  // );
+  const {mutateAsync: mutateAsyncDeleteQaA, isPending: isDeletingQaA} = useMutation({
+      mutationFn: (payload: DeleteQaAPayload) => ApiQaARepository.deleteQaA(payload),
+      onError: () => {
+        enqueueSnackbar('Không thể xóa câu hỏi thường gặp!', {
+          variant: 'error',
+        });
+      },
+      onSuccess: (data) => {
+        if (!data.error) {
+          dispatch({
+            type: 'SET_QaAS',
+            payload: state.QaAs.filter((QaA) => QaA.id !== data.data.deleteQuestionAndAnswer.id),
+          });
+          enqueueSnackbar('Xóa câu hỏi thường gặp thành công!', {
+            variant: 'success',
+          });
+        } else {
+          enqueueSnackbar(data.message, {
+            variant: 'error',
+          });
+        }
+      },
+    }
+  );
   const {mutateAsync: mutateAsyncDeleteManyQaAs, isPending: isDeletingManyQaAs} = useMutation({
       mutationFn: (payload: DeleteManyQaAsPayload) => ApiQaARepository.deleteManyQaAs(payload),
       onError: () => {
@@ -136,9 +138,9 @@ export default function useQaA(): UseQaAProps {
     await mutateAsyncUpdateQaA(payload);
   };
 
-  // const deleteQaA = (payload: DeleteQaAPayload) => {
-  //   mutateAsyncDeleteQaA(payload);
-  // };
+  const deleteQaA = (payload: DeleteQaAPayload) => {
+    mutateAsyncDeleteQaA(payload);
+  };
 
   const deleteManyQaAs = async (payload: DeleteManyQaAsPayload) => {
     const response = await mutateAsyncDeleteManyQaAs(payload);
@@ -152,15 +154,15 @@ export default function useQaA(): UseQaAProps {
     });
   };
 
+
   return {
     isLoading:
-      // isCreatingQaA || isRefreshingQaAs || isUpdatingQaA || isDeletingQaA || isDeletingManyQaAs,
-      isCreatingQaA || isRefreshingQaAs || isUpdatingQaA || isDeletingManyQaAs,
+      isCreatingQaA || isRefreshingQaAs || isUpdatingQaA || isDeletingQaA || isDeletingManyQaAs,
     QaAs: state.QaAs,
     createQaA,
     refetchQaAs,
     updateQaA,
-    // deleteQaA,
+    deleteQaA,
     deleteManyQaAs,
   };
 }

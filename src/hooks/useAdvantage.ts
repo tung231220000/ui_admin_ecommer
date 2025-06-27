@@ -54,6 +54,7 @@ export default function useAdvantage(): UseAdvantageProps {
     queryKey: ['fetchAdvantages'],
     queryFn: async () => {
       try {
+        console.log('📡 Đang gọi API refetchAdvantages...');
         const data = await ApiAdvantageRepository.fetchAdvantages();
         if (!data.error) {
           dispatch({
